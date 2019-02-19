@@ -1,0 +1,56 @@
+{
+  "name": "p-js-eth",
+  "version": "0.0.1",
+  "description": "eth common of js",
+  "keywords": [
+    "common",
+    "js",
+    "tool",
+    "ether"
+  ],
+  "homepage": "https://gitee.com/pefish/p-js-eth",
+  "bugs": "https://gitee.com/pefish/p-js-eth/issues",
+  "license": "MIT",
+  "author": "pefish",
+  "engines": {
+    "node": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitee.com/pefish/p-js-eth"
+  },
+  "scripts": {
+    "build": "rm -rf lib && babel src -d lib",
+    "test": "mocha -t 20000 -R spec --compilers js:babel-core/register --require babel-polyfill src/*.test.js"
+  },
+  "dependencies": {
+    "p-js-error": "^0.0.3"
+  },
+  "devDependencies": {
+    "@parity/api": "^4.0.3",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-stage-3": "^6.24.1",
+    "bitcore-lib": "^0.16.0",
+    "bn.js": "^4.11.8",
+    "ethereumjs-util": "^6.1.0",
+    "p-js-utils": "^0.0.5",
+    "web3": "^1.0.0-beta.46"
+  },
+  "babel": {
+    "presets": [
+      "env",
+      "stage-3"
+    ],
+    "ignore": [
+      "node_modules"
+    ],
+    "env": {
+      "build": {
+        "optional": [
+          "optimisation",
+          "minification"
+        ]
+      }
+    }
+  }
+}
