@@ -10,7 +10,7 @@ import ErrorHelper from 'p-js-error'
  */
 class EthWalletHelper extends BaseEtherLike {
 
-  constructor (providers = {}) {
+  constructor () {
     super()
   }
 

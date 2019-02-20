@@ -33,6 +33,7 @@
     "bitcore-lib": "^0.16.0",
     "bn.js": "^4.11.8",
     "ethereumjs-util": "^6.1.0",
+    "p-js-rsk-api": "^2.1.16",
     "p-js-utils": "^0.0.5",
     "web3": "^1.0.0-beta.46"
   },

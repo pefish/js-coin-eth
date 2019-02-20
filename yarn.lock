@@ -9,6 +9,15 @@
   dependencies:
     regenerator-runtime "^0.12.0"
 
+"@parity/abi@2.1.x":
+  version "2.1.4"
+  resolved "https://registry.yarnpkg.com/@parity/abi/-/abi-2.1.4.tgz#23e2b9e6d37a54035b76d941d6d74b9c5d21fb99"
+  integrity sha512-4yPqCYXlLhb9jmmAg+0SkA/2Rmf1ZvPzmGF3WBKvgrAjWPAvj5hZYW5rquRqrP3L22KfG+7A9RAw3aZYp45AMQ==
+  dependencies:
+    bignumber.js "4.1.0"
+    js-sha3 "0.5.5"
+    utf8 "^2.1.2"
+
 "@parity/abi@^4.0.3":
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/@parity/abi/-/abi-4.0.3.tgz#83b65ae0c3039f8b14cd2e9b9ca8721fc165bb0a"
@@ -34,6 +43,16 @@
     lodash "^4.17.11"
     store "^2.0.12"
     websocket "^1.0.25"
+
+"@parity/jsonrpc@2.1.x":
+  version "2.1.6"
+  resolved "https://registry.yarnpkg.com/@parity/jsonrpc/-/jsonrpc-2.1.6.tgz#260bbe7dfcec18d59f0bf1668dfd6021452d6452"
+  integrity sha512-9RLsnAmgpl07EwDSDGu+OYW8xZ4cKDPQ/Zhxy4h6LXuPwTsF1eCWc0M3R8201/U+OrDUK/G6RXoUfoKnUpO+LA==
+
+"@parity/wordlist@1.1.x":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@parity/wordlist/-/wordlist-1.1.0.tgz#9e9ed3ab7837f5633b5844e60a355e9e63e427ae"
+  integrity sha1-np7Tq3g39WM7WETmCjVenmPkJ64=
 
 "@types/bn.js@^4.11.4":
   version "4.11.4"
@@ -639,6 +658,16 @@ bcrypt-pbkdf@^1.0.0:
   dependencies:
     tweetnacl "^0.14.3"
 
+bignumber.js@3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-3.0.1.tgz#807652d10e39de37e9e3497247edc798bb746f76"
+  integrity sha1-gHZS0Q453jfp40lyR+3HmLt0b3Y=
+
+bignumber.js@4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-4.1.0.tgz#db6f14067c140bd46624815a7916c92d9b6c24b1"
+  integrity sha512-eJzYkFYy9L4JzXsbymsFn3p54D+llV27oTQ+ziJG7WFRheJcNZilgVXMG0LoZtlQSKBsJdWtLFqOD0u+U0jZKA==
+
 bignumber.js@^6.0.0:
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-6.0.0.tgz#bbfa047644609a5af093e9cbd83b0461fa3f6002"
@@ -1192,6 +1221,11 @@ end-of-stream@^1.0.0:
   dependencies:
     once "^1.4.0"
 
+es6-error@4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/es6-error/-/es6-error-4.0.2.tgz#eec5c726eacef51b7f6b73c20db6e1b13b069c98"
+  integrity sha1-7sXHJurO9Rt/a3PCDbbhsTsGnJg=
+
 es6-error@4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/es6-error/-/es6-error-4.1.1.tgz#9e3af407459deed47e9a91f9b885a84eb05c561d"
@@ -1301,6 +1335,11 @@ eventemitter3@3.1.0, eventemitter3@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-3.1.0.tgz#090b4d6cdbd645ed10bf750d4b5407942d7ba163"
   integrity sha512-ivIvhpq/Y0uSjcHDcOIccjmYjGLcP09MFGE7ysAwkAvkXfpZlC985pH2/ui64DKazbTW/4kN3yqozUxlXzI6cA==
+
+eventemitter3@^2.0.2:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-2.0.3.tgz#b5e1079b59fb5e1ba2771c0a993be060a58c99ba"
+  integrity sha1-teEHm1n7XhuidxwKmTvgYKWMmbo=
 
 evp_bytestokey@^1.0.0, evp_bytestokey@^1.0.3:
   version "1.0.3"
@@ -1734,6 +1773,11 @@ isurl@^1.0.0-alpha5:
     has-to-string-tag-x "^1.2.0"
     is-object "^1.0.1"
 
+js-sha3@0.5.5:
+  version "0.5.5"
+  resolved "https://registry.yarnpkg.com/js-sha3/-/js-sha3-0.5.5.tgz#baf0c0e8c54ad5903447df96ade7a4a1bca79a4a"
+  integrity sha1-uvDA6MVK1ZA0R9+Wreekobynmko=
+
 js-sha3@0.5.7, js-sha3@^0.5.7:
   version "0.5.7"
   resolved "https://registry.yarnpkg.com/js-sha3/-/js-sha3-0.5.7.tgz#0d4ffd8002d5333aabaf4a23eed2f6374c9f28e7"
@@ -2049,6 +2093,25 @@ p-js-error@^0.0.3:
   integrity sha512-tPGq0azSO/rQPbYrJIh1jSQF+d4zKu1lyXHMoRKVxjs833aKTdhaC5YUoUiBBW9L1zs6ERXGTARqfawo41wUqw==
   dependencies:
     node-assist "^0.4.0"
+
+p-js-rsk-api@^2.1.16:
+  version "2.1.16"
+  resolved "https://registry.yarnpkg.com/p-js-rsk-api/-/p-js-rsk-api-2.1.16.tgz#530ae425f4a2cbbbe8085a3fe1f97715620deca4"
+  integrity sha512-QFIrT9TybHoAdg/l+rU8wn1ZQIlU2jrlL41iy4h9pN2Y43+o6KtZq3T3bpkptsZ/5It/7ykJ8y6LQCPcnhtJsA==
+  dependencies:
+    "@parity/abi" "2.1.x"
+    "@parity/jsonrpc" "2.1.x"
+    "@parity/wordlist" "1.1.x"
+    bignumber.js "3.0.1"
+    blockies "0.0.2"
+    es6-error "4.0.2"
+    es6-promise "^4.1.1"
+    eventemitter3 "^2.0.2"
+    isomorphic-fetch "^2.2.1"
+    js-sha3 "0.5.5"
+    lodash "^4.17.4"
+    store "^2.0.12"
+    websocket "^1.0.25"
 
 p-js-utils@^0.0.5:
   version "0.0.5"
@@ -2739,6 +2802,11 @@ utf8@2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/utf8/-/utf8-2.1.1.tgz#2e01db02f7d8d0944f77104f1609eb0c304cf768"
   integrity sha1-LgHbAvfY0JRPdxBPFgnrDDBM92g=
+
+utf8@^2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/utf8/-/utf8-2.1.2.tgz#1fa0d9270e9be850d9b05027f63519bf46457d96"
+  integrity sha1-H6DZJw6b6FDZsFAn9jUZv0ZFfZY=
 
 utf8@^3.0.0:
   version "3.0.0"
