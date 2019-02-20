@@ -2,13 +2,6 @@
  * Created by joy on 12/09/2017.
  */
 import BaseCoin from './base_coin'
-import {
-  privateToAddress,
-  publicToAddress,
-  isValidAddress,
-  isValidPublic
-} from 'ethereumjs-util'
-import { HDPrivateKey, HDPublicKey } from 'bitcore-lib'
 
 /**
  * 以太坊系基类
@@ -20,10 +13,12 @@ class BaseEtherLike extends BaseCoin {
   }
 
   getXprivBySeed (seedHex) {
+    const { HDPrivateKey } = require('bitcore-lib')
     return HDPrivateKey.fromSeed(seedHex, `mainnet`).toString()
   }
 
   getXpubBySeed (seedHex) {
+    const { HDPrivateKey } = require('bitcore-lib')
     return HDPrivateKey.fromSeed(seedHex, `mainnet`).hdPublicKey.toString()
   }
 
@@ -33,10 +28,12 @@ class BaseEtherLike extends BaseCoin {
    * @returns {string}
    */
   getAddressFromPubKey (pubKey) {
+    const { publicToAddress } = require('ethereumjs-util')
     return `0x${publicToAddress(pubKey.hexToBuffer(), true).toString('hex')}`
   }
 
   isValidPublicKey (pubKey) {
+    const { isValidPublic } = require('ethereumjs-util')
     return isValidPublic(pubKey.hexToBuffer(), true)
   }
 
@@ -46,10 +43,13 @@ class BaseEtherLike extends BaseCoin {
    * @returns {*|Boolean}
    */
   isAddress (address) {
+    const { isValidAddress } = require('ethereumjs-util')
     return isValidAddress(address)
   }
 
   deriveAllByXprivPath(xpriv, path) {
+    const { HDPrivateKey } = require('bitcore-lib')
+    const { publicToAddress } = require('ethereumjs-util')
     const key = new HDPrivateKey(xpriv)
     let derived = key.deriveChild(path)
     return {
@@ -69,6 +69,7 @@ class BaseEtherLike extends BaseCoin {
    * @returns {string}
    */
   getAddressFromPrivateKey (privateKey) {
+    const { privateToAddress } = require('ethereumjs-util')
     return `0x${privateToAddress(privateKey.hexToBuffer()).toString('hex')}`
   }
 }
