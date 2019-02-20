@@ -46,22 +46,29 @@ class Eth {
   }
 
   async getTransactionCount (address) {
-    return this._client.getTransactionCount(address)
+    return await this._client.getTransactionCount(address)
   }
 
   async getTokenBalance (contractAddress, address) {
-    return this._client.getTokenBalance(contractAddress, address)
+    const balance = await this._client.getTokenBalance(contractAddress, address)
+    return balance.toString()
   }
 
+  /**
+   * 获取eth余额
+   * @param address
+   * @returns {Promise<string>} wei
+   */
   async getBalance (address) {
-    return this._client.getBalance(address)
+    const balance = await this._client.getBalance(address)
+    return balance.toString()
   }
 
   async getTransactionByHash (hash) {
-    return this._client.getTransactionByHash(hash)
+    return await this._client.getTransactionByHash(hash)
   }
 
   async sendRawTransaction (hex) {
-    return this._client.sendRawTransaction(hex)
+    return await this._client.sendRawTransaction(hex)
   }
 }
