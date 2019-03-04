@@ -30,7 +30,7 @@ function elementaryName (name) {
 ABI.eventID = function (name, types) {
   // FIXME: use node.js util.format?
   var sig = name + '(' + types.map(elementaryName).join(',') + ')'
-  return utils.sha3(new Buffer(sig))
+  return utils.keccak(new Buffer(sig))
 }
 
 ABI.methodID = function (name, types) {
@@ -485,7 +485,7 @@ ABI.solidityPack = function (types, values) {
 }
 
 ABI.soliditySHA3 = function (types, values) {
-  return utils.sha3(ABI.solidityPack(types, values))
+  return utils.keccak(ABI.solidityPack(types, values))
 }
 
 ABI.soliditySHA256 = function (types, values) {
