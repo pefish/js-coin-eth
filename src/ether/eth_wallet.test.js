@@ -32,18 +32,34 @@ describe('EthWalletHelper', () => {
 //       assert.throws(() => {}, err)
 //     }
 //   })
-//
-//   it('getMethodIdV1', async () => {
-//     try {
-//       const id = walletHelper.getMethodIdV1('transfer(address,uint256)')
-//       // logger.error(id)
-//       assert.strictEqual(id, '0xa9059cbb')
-//     } catch (err) {
-//       logger.error(err)
-//       assert.throws(() => {}, err)
-//     }
-//   })
-//
+
+  it('getMethodIdV1', async () => {
+    try {
+      const id = walletHelper.getMethodIdV1('transfer(address,uint256)')
+      // logger.error(id)
+      assert.strictEqual(id, '0xa9059cbb')
+    } catch (err) {
+      logger.error(err)
+      assert.throws(() => {}, err)
+    }
+  })
+
+
+
+  // it('getMethodId', async () => {
+  //   try {
+  //     const id = walletHelper.getMethodId('transfer',
+  //       [
+  //         'address',
+  //         'uint256'
+  //       ])
+  //     // logger.error(id)
+  //     assert.strictEqual(id, '0xa9059cbb')
+  //   } catch (err) {
+  //     logger.error(err)
+  //     assert.throws(() => {}, err)
+  //   }
+  // })
 //   it('buildMsgTransaction', async () => {
 //     try {
 //       const result = await walletHelper.buildMsgTransaction(

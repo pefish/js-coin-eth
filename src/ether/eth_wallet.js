@@ -210,7 +210,7 @@ class EthWalletHelper extends BaseEtherLike {
     }
     const ciphertext = new Buffer(json.crypto.ciphertext, 'hex')
 
-    const mac = new Web3().utils.sha3(Buffer.concat([ derivedKey.slice(16, 32), ciphertext ])).replace('0x','')
+    const mac = new Web3(``).utils.sha3(Buffer.concat([ derivedKey.slice(16, 32), ciphertext ])).replace('0x','')
     if (mac !== json.crypto.mac) {
       throw new ErrorHelper('Key derivation failed - possibly wrong password')
     }
@@ -489,7 +489,7 @@ class EthWalletHelper extends BaseEtherLike {
    */
   getMethodIdV1 (strToCalc) {
     const Web3 = require('web3')
-    return new Web3().utils.sha3(strToCalc).substr(0, 10)
+    return new Web3(``).utils.sha3(strToCalc).substr(0, 10)
   }
 
   getMethodId (methodName, methodParamTypes) {
