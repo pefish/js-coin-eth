@@ -51,7 +51,7 @@ class Eth {
 
   async getTokenBalance (contractAddress, address) {
     const balance = await this._client.getTokenBalance(contractAddress, address)
-    return balance.toString()
+    return balance.toString(10)
   }
 
   /**
@@ -61,7 +61,7 @@ class Eth {
    */
   async getBalance (address) {
     const balance = await this._client.getBalance(address)
-    return balance.toString()
+    return balance.toString(10)
   }
 
   async getTransactionByHash (hash) {

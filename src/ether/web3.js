@@ -30,7 +30,7 @@ class Browser extends BaseEtherLike {
   }
 
   async getLatestBlockNumber() {
-    return (await this.eth.getBlockNumber()).toString()
+    return (await this.eth.getBlockNumber()).toString(10)
   }
 
   async getTransactionCount(address) {

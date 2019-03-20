@@ -94,7 +94,7 @@ export default class EtherscanApiHelper {
     const result = await HttpRequestUtil.postFormData(this._baseUrl, null, {
       module: 'proxy',
       action: 'eth_getBlockByNumber',
-      tag: height.toString().decimalToHexString(),
+      tag: height.toString(10).decimalToHexString(),
       boolean,
       apikey: this._apiKey
     })
