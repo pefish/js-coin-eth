@@ -1,5 +1,5 @@
 /** @module */
-
+import 'js-node-assist'
 import BaseEtherLike from '../base/base_ether_like'
 import crypto from 'crypto'
 import ErrorHelper from 'p-js-error'
@@ -296,7 +296,7 @@ class EthWalletHelper extends BaseEtherLike {
       from: sourceAddress,
       to: sourceAddress,
       value: 0x00,
-      data: '0x3c5554462d383e2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d20e7be8ee4b8bde79a84e58886e99a94e7aca6202d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a0a' + msg.stringToUtf8HexString().removeFirst(2)
+      data: '0x3c5554462d383e2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d20e7be8ee4b8bde79a84e58886e99a94e7aca6202d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a0a' + msg.stringToUtf8HexString_().removeFirst_(2)
     }
 
     const tx = new Tx(rawTx)
@@ -500,7 +500,7 @@ class EthWalletHelper extends BaseEtherLike {
   /**
    * 解码data数据
    * @param payloadTx {string} 如 0xa9059cbb000000000000000000000000fb7d9853a1d7d96591530ec0a8f66aff35cb1e2100000000000000000000000000000000000000000000000098a7d9b8314c0000
-   * @param methodParamTypes {array} ['number', 'address']
+   * @param methodParamTypes {array} ['uint256', 'address']
    */
   decodePayload (payloadTx, methodParamTypes) {
     const abiUtil = require('./abi')
@@ -534,6 +534,17 @@ class EthWalletHelper extends BaseEtherLike {
   encodeParamsHex (methodParamTypes, params) {
     const abiUtil = require('./abi')
     return abiUtil.rawEncode(methodParamTypes, params).toHexString(false)
+  }
+
+  decodeParamsHex (methodParamTypes, paramsHex) {
+    const abiUtil = require('./abi')
+    const dataBuf = new Buffer(paramsHex.replace(/^0x/, ``), `hex`)
+    return abiUtil.rawDecode(methodParamTypes, dataBuf)
+  }
+
+  encodeToTopicHex (str) {
+    const EtherUtil = require('ethereumjs-util')
+    return EtherUtil.keccak256(str).toHexString()
   }
 
   /**
