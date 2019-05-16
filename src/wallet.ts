@@ -93,7 +93,7 @@ class EthWalletHelper extends BaseEtherLike {
    * @param msg
    * @returns {Promise<Encrypted>}
    */
-  async encryptWithPublicKey (publicKey, msg) {
+  encryptWithPublicKey (publicKey, msg) {
     const EthCrypto = require('eth-crypto')
     return EthCrypto.encryptWithPublicKey(
       publicKey,
@@ -101,7 +101,7 @@ class EthWalletHelper extends BaseEtherLike {
     )
   }
 
-  async decryptWithPrivateKey (privateKey, encryptedData) {
+  decryptWithPrivateKey (privateKey, encryptedData) {
     const EthCrypto = require('eth-crypto')
     return EthCrypto.decryptWithPrivateKey(
       privateKey,
@@ -230,7 +230,7 @@ class EthWalletHelper extends BaseEtherLike {
    * @param gasLimit {string} 单位wei, 十进制
    * @returns {string}
    */
-  async buildTransaction (privateKey: string, toAddress: string, amount: string, nonce: number, gasPrice: string = null, gasLimit: string = '21000'): Promise<any> {
+  buildTransaction (privateKey: string, toAddress: string, amount: string, nonce: number, gasPrice: string = null, gasLimit: string = '21000'): object {
     // logger.error(arguments)
     const Tx = require('ethereumjs-tx')
     if (privateKey.startsWith('0x')) {
@@ -266,7 +266,7 @@ class EthWalletHelper extends BaseEtherLike {
     }
   }
 
-  async buildMsgTransaction (privateKey: string, msg: string, nonce: number, gasPrice: string = null, gasLimit: string = null) {
+  buildMsgTransaction (privateKey: string, msg: string, nonce: number, gasPrice: string = null, gasLimit: string = null) {
     // logger.error(arguments)
     const Tx = require('ethereumjs-tx')
     if (privateKey.startsWith('0x')) {
@@ -320,18 +320,13 @@ class EthWalletHelper extends BaseEtherLike {
    * @param gasLimit
    * @returns {{txHex: string, txId: string, dataFee: any|*, allFee: any|*, nonce: number|*, gasPrice: number|*, gasLimit: number|*, to: *, value: number|*, data: *, from: *}}
    */
-  async buildContractTransaction (privateKey, contractAddress, methodName, methodParamTypes, params, nonce = null, gasPrice = null, gasLimit = null) {
+  buildContractTransaction (privateKey, contractAddress, methodName, methodParamTypes, params, nonce: number, gasPrice = null, gasLimit = null) {
     const Tx = require('ethereumjs-tx')
     const fromAddress = this.getAddressFromPrivateKey(privateKey)
     if (privateKey.startsWith('0x')) {
       privateKey = privateKey.substring(2, privateKey.length)
     }
     const privateKeyBuffer = new Buffer(privateKey, 'hex')
-    if (nonce === null) {
-      const EtherscanApiHelper = require('./etherscan_api').default
-      const etherScanApiHelper = new EtherscanApiHelper()
-      nonce = await etherScanApiHelper.getTransactionCount(this.getAddressFromPrivateKey(privateKey))
-    }
     if (!gasPrice) {
       gasPrice = '20000000000'
     }
@@ -340,9 +335,9 @@ class EthWalletHelper extends BaseEtherLike {
     }
     const rawTx = {
       from: fromAddress,
-      nonce: nonce.decimalToHexString(),
-      gasPrice: gasPrice.decimalToHexString(),
-      gasLimit: gasLimit.decimalToHexString(),
+      nonce: nonce.toString().decimalToHexString_(),
+      gasPrice: gasPrice.decimalToHexString_(),
+      gasLimit: gasLimit.decimalToHexString_(),
       to: contractAddress,
       value: 0x00,
       data: this.encodePayload(this.getMethodId(methodName, methodParamTypes), methodParamTypes, params)
@@ -365,17 +360,12 @@ class EthWalletHelper extends BaseEtherLike {
     }
   }
 
-  async buildContractTxV2 (privateKey, fromAddress, contractAddress, methodName, methodParamTypes, params, value = '0', nonce = null, gasPrice = null, gasLimit = null) {
+  buildContractTxV2 (privateKey, fromAddress, contractAddress, methodName, methodParamTypes, params, value, nonce: number, gasPrice = null, gasLimit = null) {
     const Tx = require('ethereumjs-tx')
     if (privateKey.startsWith('0x')) {
       privateKey = privateKey.substring(2, privateKey.length)
     }
     const privateKeyBuffer = new Buffer(privateKey, 'hex')
-    if (nonce === null) {
-      const EtherscanApiHelper = require('./etherscan_api').default
-      const etherScanApiHelper = new EtherscanApiHelper()
-      nonce = await etherScanApiHelper.getTransactionCount(this.getAddressFromPrivateKey(privateKey))
-    }
     if (!gasPrice) {
       gasPrice = '20000000000'
     }
@@ -384,9 +374,9 @@ class EthWalletHelper extends BaseEtherLike {
     }
     const rawTx = {
       from: fromAddress,
-      nonce: nonce.decimalToHexString(),
-      gasPrice: gasPrice.decimalToHexString(),
-      gasLimit: gasLimit.decimalToHexString(),
+      nonce: nonce.toString().decimalToHexString_(),
+      gasPrice: gasPrice.decimalToHexString_(),
+      gasLimit: gasLimit.decimalToHexString_(),
       to: contractAddress,
       value: value.decimalToHexString_(),
       data: this.encodePayload(this.getMethodId(methodName, methodParamTypes), methodParamTypes, params)
@@ -420,7 +410,7 @@ class EthWalletHelper extends BaseEtherLike {
    * @param constructorArgs {object} {methodParamTypes, params}
    * @returns {{txHex: string, txId: string, dataFee: any|*, allFee: any|*, nonce: number|*, gasPrice: number|*, gasLimit: number|*, to: *, value: number|*, data: *, from: *, compileVersion: *, abi: *}}
    */
-  async buildDeployContractTx (compiledContract, contractName, privateKey, nonce = null, gasPrice = null, gasLimit = null, constructorArgs = null) {
+  buildDeployContractTx (compiledContract, contractName, privateKey, nonce: number, gasPrice = null, gasLimit = null, constructorArgs = null) {
     // logger.error('1', arguments)
     const Tx = require('ethereumjs-tx')
     const fromAddress = this.getAddressFromPrivateKey(privateKey)
@@ -428,11 +418,6 @@ class EthWalletHelper extends BaseEtherLike {
       privateKey = privateKey.substring(2, privateKey.length)
     }
     const privateKeyBuffer = new Buffer(privateKey, 'hex')
-    if (nonce === null) {
-      const EtherscanApiHelper = require('./etherscan_api').default
-      const etherScanApiHelper = new EtherscanApiHelper()
-      nonce = await etherScanApiHelper.getTransactionCount(this.getAddressFromPrivateKey(privateKey))
-    }
     if (!gasPrice) {
       gasPrice = '20000000000'
     }
@@ -447,9 +432,9 @@ class EthWalletHelper extends BaseEtherLike {
 
     const rawTx = {
       from: fromAddress,
-      nonce: nonce.decimalToHexString(),
-      gasPrice: gasPrice.decimalToHexString(),
-      gasLimit: gasLimit.decimalToHexString(),
+      nonce: nonce.toString().decimalToHexString_(),
+      gasPrice: gasPrice.decimalToHexString_(),
+      gasLimit: gasLimit.decimalToHexString_(),
       value: 0x00,
       data
     }
@@ -544,10 +529,36 @@ class EthWalletHelper extends BaseEtherLike {
    * @param params
    * @returns {Promise<void>}
    */
-  async callContract (parityApiClient, abiStr, contractAddress, funName, opts = {}, params = []) {
+  callContract (parityApiClient, abiStr, contractAddress, funName, opts = {}, params = []) {
     const abi = JSON.parse(abiStr)
     const contract = parityApiClient.newContract(abi, contractAddress)
     return contract.instance[funName].call(opts, params)
+  }
+
+  async getTokenBalance (parityApiClient, contractAddress, address): Promise<string> {
+    const abi = [
+      {
+        "constant":true,
+        "inputs":[
+          {
+            "name":"_owner",
+            "type":"address"
+          }
+        ],
+        "name":"balanceOf",
+        "outputs":[
+          {
+            "name":"balance",
+            "type":"uint256"
+          }
+        ],
+        "payable":false,
+        "stateMutability":"view",
+        "type":"function"
+      }
+    ]
+    const contract = parityApiClient.newContract(abi, contractAddress)
+    return (await contract.instance[`balanceOf`].call({}, [address])).toString(10)
   }
 }
 

@@ -2540,23 +2540,14 @@ isurl@^1.0.0-alpha5:
     has-to-string-tag-x "^1.2.0"
     is-object "^1.0.1"
 
-js-httprequest@^0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/js-httprequest/-/js-httprequest-0.0.3.tgz#03ef99b868a8a2bb731711b26c101ad4605e9f6c"
-  integrity sha512-c6isO+fGp/H8HwgMrA9EXO3luWtKdrh/8Xf6a37H55DQuru4QYdD1NLaYVfCY5z25UX/DhWV78492A1M9JcrHQ==
+js-httprequest@^0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/js-httprequest/-/js-httprequest-0.0.4.tgz#3b9956b44064b6c9a87a97373931778a738d1b45"
+  integrity sha512-w09kTAMW8XqIzeJoRImzNd7UsWZ0mnNgE2zR0x2S87rtTK8/exunN69d1/LFlPE4VHve8pGebWG31bi0Ai6zEA==
   dependencies:
-    js-node-assist "^0.5.6"
+    js-node-assist "^0.5.8"
     p-js-error "^0.0.4"
     restler "^3.4.0"
-
-js-node-assist@^0.5.6:
-  version "0.5.6"
-  resolved "https://registry.yarnpkg.com/js-node-assist/-/js-node-assist-0.5.6.tgz#2c240ed56bacb2395047d271a5c7aeccfea9107f"
-  integrity sha512-NLMyvOfUv8rnPu2JKCIEM6VptbuOk8l1meKIV0ew5j9zzBHM1iXg6mVV6cPb8pYXuSnOxUCitSRjA6/1LZ7U3Q==
-  dependencies:
-    bignumber.js "^8.1.1"
-    p-js-assert "^0.0.1"
-    p-js-error "^0.0.4"
 
 js-node-assist@^0.5.8:
   version "0.5.8"

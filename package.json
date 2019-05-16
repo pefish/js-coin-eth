@@ -1,6 +1,6 @@
 {
   "name": "js-coin-eth",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "description": "eth common of js",
   "keywords": [
     "common",
@@ -15,6 +15,7 @@
   "engines": {
     "node": "*"
   },
+  "types": "./types/*.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/pefish/js-coin-eth"
@@ -30,7 +31,7 @@
     "eth-crypto": "^1.3.3",
     "ethereumjs-tx": "^1.3.7",
     "ethereumjs-util": "^6.1.0",
-    "js-httprequest": "^0.0.3",
+    "js-httprequest": "^0.0.4",
     "js-node-assist": "^0.5.8",
     "keythereum": "^1.0.4",
     "p-js-error": "^0.0.4",

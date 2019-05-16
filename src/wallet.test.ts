@@ -1,6 +1,7 @@
 import 'js-node-assist'
 import assert from "assert"
 import EthWalletHelper from './wallet'
+import ParityRpcUtil from "./parity_rpc";
 
 declare global {
   namespace NodeJS {
@@ -16,6 +17,18 @@ describe('EthWalletHelper', () => {
 
   before(async () => {
     walletHelper = new EthWalletHelper()
+  })
+
+  it('getTokenBalance', async () => {
+    try {
+      const helper = ParityRpcUtil.getParityApiHelper(`https://mainnet.infura.io/v3/aaa3fc062661462784b334a1a5c51940`)
+      const result = await walletHelper.getTokenBalance(helper, `0xf8c8c211e976cf65ec8f01b7c70021a3b8bf5575`, `0xbd8ebf00c0edf5bc68aba0b7f9244a4385fad0a2`)
+      // global.logger.error('result', result)
+      assert.strictEqual(result.gte_(0), true)
+    } catch (err) {
+      global.logger.error(err)
+      assert.throws(() => {}, err)
+    }
   })
 
   it('encodeToTopicHex', async () => {
@@ -110,7 +123,7 @@ describe('EthWalletHelper', () => {
 
   it('buildMsgTransaction', async () => {
     try {
-      const result = await walletHelper.buildMsgTransaction(
+      const result = walletHelper.buildMsgTransaction(
         '0xAEE4F8301B87574A197A057C237C0462CB507B5161EB45CD9FC1315C7681EE31',
         `\t\t\t阿里P7员工得白血病身故，生前租了自如甲醛房\r\n
 \t爱人姓王，一家一直住在北京。今年，王同学拿到了阿里巴巴offer，职位是“交互设计专家”，级别P7。对于37岁的王同学来说，前景看好，试问，如今还有多少比BAT更好的互联网工作呢？于是，他只身一人，离京赴杭州阿里巴巴总部入职。按照阿里惯例，得了一个花名：安时，工号165243。

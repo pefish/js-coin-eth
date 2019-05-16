@@ -48,8 +48,8 @@ declare class EthWalletHelper extends BaseEtherLike {
      * @param msg
      * @returns {Promise<Encrypted>}
      */
-    encryptWithPublicKey(publicKey: any, msg: any): Promise<any>;
-    decryptWithPrivateKey(privateKey: any, encryptedData: any): Promise<any>;
+    encryptWithPublicKey(publicKey: any, msg: any): any;
+    decryptWithPrivateKey(privateKey: any, encryptedData: any): any;
     /**
      * 获取合约的abi
      * @param compiledContract
@@ -104,8 +104,8 @@ declare class EthWalletHelper extends BaseEtherLike {
      * @param gasLimit {string} 单位wei, 十进制
      * @returns {string}
      */
-    buildTransaction(privateKey: string, toAddress: string, amount: string, nonce: number, gasPrice?: string, gasLimit?: string): Promise<any>;
-    buildMsgTransaction(privateKey: string, msg: string, nonce: number, gasPrice?: string, gasLimit?: string): Promise<{
+    buildTransaction(privateKey: string, toAddress: string, amount: string, nonce: number, gasPrice?: string, gasLimit?: string): object;
+    buildMsgTransaction(privateKey: string, msg: string, nonce: number, gasPrice?: string, gasLimit?: string): {
         txHex: string;
         txId: string;
         dataFee: any;
@@ -117,7 +117,7 @@ declare class EthWalletHelper extends BaseEtherLike {
         value: any;
         data: any;
         from: any;
-    }>;
+    };
     /**
      * 构建调用智能合约交易(调用constant为false的函数修改区块链数据)
      * @param privateKey
@@ -130,7 +130,7 @@ declare class EthWalletHelper extends BaseEtherLike {
      * @param gasLimit
      * @returns {{txHex: string, txId: string, dataFee: any|*, allFee: any|*, nonce: number|*, gasPrice: number|*, gasLimit: number|*, to: *, value: number|*, data: *, from: *}}
      */
-    buildContractTransaction(privateKey: any, contractAddress: any, methodName: any, methodParamTypes: any, params: any, nonce?: any, gasPrice?: any, gasLimit?: any): Promise<{
+    buildContractTransaction(privateKey: any, contractAddress: any, methodName: any, methodParamTypes: any, params: any, nonce: number, gasPrice?: any, gasLimit?: any): {
         txHex: string;
         txId: string;
         dataFee: any;
@@ -142,8 +142,8 @@ declare class EthWalletHelper extends BaseEtherLike {
         value: any;
         data: any;
         from: any;
-    }>;
-    buildContractTxV2(privateKey: any, fromAddress: any, contractAddress: any, methodName: any, methodParamTypes: any, params: any, value?: string, nonce?: any, gasPrice?: any, gasLimit?: any): Promise<{
+    };
+    buildContractTxV2(privateKey: any, fromAddress: any, contractAddress: any, methodName: any, methodParamTypes: any, params: any, value: any, nonce: number, gasPrice?: any, gasLimit?: any): {
         txHex: string;
         txId: string;
         dataFee: any;
@@ -155,7 +155,7 @@ declare class EthWalletHelper extends BaseEtherLike {
         value: any;
         data: any;
         from: any;
-    }>;
+    };
     /**
      * 构建部署智能合约的交易
      * @param compiledContract
@@ -167,7 +167,7 @@ declare class EthWalletHelper extends BaseEtherLike {
      * @param constructorArgs {object} {methodParamTypes, params}
      * @returns {{txHex: string, txId: string, dataFee: any|*, allFee: any|*, nonce: number|*, gasPrice: number|*, gasLimit: number|*, to: *, value: number|*, data: *, from: *, compileVersion: *, abi: *}}
      */
-    buildDeployContractTx(compiledContract: any, contractName: any, privateKey: any, nonce?: any, gasPrice?: any, gasLimit?: any, constructorArgs?: any): Promise<{
+    buildDeployContractTx(compiledContract: any, contractName: any, privateKey: any, nonce: number, gasPrice?: any, gasLimit?: any, constructorArgs?: any): {
         txHex: string;
         txId: string;
         dataFee: any;
@@ -181,7 +181,7 @@ declare class EthWalletHelper extends BaseEtherLike {
         from: any;
         compileVersion: any;
         abi: any;
-    }>;
+    };
     /**
      * 获取智能合约方法id
      * @param strToCalc {string} 如 transfer(address,uint256)
@@ -225,6 +225,7 @@ declare class EthWalletHelper extends BaseEtherLike {
      * @param params
      * @returns {Promise<void>}
      */
-    callContract(parityApiClient: any, abiStr: any, contractAddress: any, funName: any, opts?: {}, params?: any[]): Promise<any>;
+    callContract(parityApiClient: any, abiStr: any, contractAddress: any, funName: any, opts?: {}, params?: any[]): any;
+    getTokenBalance(parityApiClient: any, contractAddress: any, address: any): Promise<string>;
 }
 export default EthWalletHelper;
