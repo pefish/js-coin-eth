@@ -3,6 +3,14 @@ import assert from "assert"
 import EtherscanApiHelper from './etherscan_api'
 
 
+declare global {
+  namespace NodeJS {
+    interface Global {
+      logger: any;
+    }
+  }
+}
+
 describe('EtherscanApiHelper', () => {
 
   let helper
@@ -16,7 +24,7 @@ describe('EtherscanApiHelper', () => {
       const result = await helper.blockNumber()
       // assert.strictEqual(result, fixtures['geneSeed']['result']['seed'])
     } catch (err) {
-      logger.error(err)
+      global.logger.error(err)
       assert.throws(() => {}, err)
     }
   })
@@ -27,7 +35,7 @@ describe('EtherscanApiHelper', () => {
       // logger.error(result)
       assert.strictEqual(result > 0, true)
     } catch (err) {
-      logger.error(err)
+      global.logger.error(err)
       assert.throws(() => {}, err)
     }
   })
@@ -39,7 +47,7 @@ describe('EtherscanApiHelper', () => {
       assert.strictEqual(typeof result, 'string')
       assert.strictEqual(result > 0, true)
     } catch (err) {
-      logger.error(err)
+      global.logger.error(err)
       assert.throws(() => {}, err)
     }
   })

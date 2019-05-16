@@ -1,8 +1,13 @@
-import HttpRequestUtil from 'p-js-utils/lib/http_request'
+import HttpRequestUtil from 'js-httprequest'
 import ErrorHelper from 'p-js-error'
 
 export default class EtherscanApiHelper {
-  constructor (network = `testnet`) {
+
+    _invalid: boolean
+    _baseUrl: string
+    _apiKey: string
+
+  constructor (network: string = `testnet`) {
     if (network !== `testnet` && network !== `mainnet`) {
       this._invalid = true
     }
@@ -15,7 +20,7 @@ export default class EtherscanApiHelper {
     this._apiKey = `WDF9SBXFCPJKSBD9QEA59B2FDJIFMYTDGJ`
   }
 
-  async getTokenBalance(contractAddress, address) {
+  async getTokenBalance(contractAddress: string, address: string): Promise<string> {
     if (this._invalid === true) {
       return null
     }
@@ -33,7 +38,7 @@ export default class EtherscanApiHelper {
     return result['result']
   }
 
-  async getTransactionCount(address) {
+  async getTransactionCount(address: string): Promise<string> {
     if (this._invalid === true) {
       return null
     }
@@ -47,10 +52,10 @@ export default class EtherscanApiHelper {
     if (!result['result']) {
       throw new ErrorHelper(result['error'] ? result['error']['message'] : 'not found')
     }
-    return result['result'].hexToDecimalString()
+    return result['result'].hexToDecimalString_()
   }
 
-  async sendRawTransaction(txHex) {
+  async sendRawTransaction(txHex: string): Promise<any> {
     if (this._invalid === true) {
       return null
     }
@@ -66,7 +71,7 @@ export default class EtherscanApiHelper {
     return true
   }
 
-  async blockNumber() {
+  async blockNumber(): Promise<string> {
     if (this._invalid === true) {
       return null
     }
@@ -78,7 +83,7 @@ export default class EtherscanApiHelper {
     if (!result['result']) {
       throw new ErrorHelper(result['error'] ? result['error']['message'] : 'not found')
     }
-    return result['result'].hexToDecimalString()
+    return result['result'].hexToDecimalString_()
   }
 
   /**
@@ -87,14 +92,14 @@ export default class EtherscanApiHelper {
    * @param boolean {boolean} 是否显示txs
    * @returns {Promise<number|*|*>}
    */
-  async getBlockByNumber(height, boolean = true) {
+  async getBlockByNumber(height: number | string, boolean = true): Promise<any> {
     if (this._invalid === true) {
       return null
     }
     const result = await HttpRequestUtil.postFormData(this._baseUrl, null, {
       module: 'proxy',
       action: 'eth_getBlockByNumber',
-      tag: height.toString(10).decimalToHexString(),
+      tag: height.toString().decimalToHexString_(),
       boolean,
       apikey: this._apiKey
     })
@@ -104,7 +109,7 @@ export default class EtherscanApiHelper {
     return result['result']
   }
 
-  async getTransactionByHash(txHash) {
+  async getTransactionByHash(txHash: string): Promise<any> {
     if (this._invalid === true) {
       return null
     }
@@ -120,7 +125,7 @@ export default class EtherscanApiHelper {
     return result['result']
   }
 
-  async getTransactionReceipt(txHash) {
+  async getTransactionReceipt(txHash: string): Promise<any> {
     if (this._invalid === true) {
       return null
     }
@@ -136,7 +141,7 @@ export default class EtherscanApiHelper {
     return result['result']
   }
 
-  async getTransactionByAddress(address, page, offset) {
+  async getTransactionByAddress(address: string, page: number, offset: number): Promise<any> {
     if (this._invalid === true) {
       return null
     }
@@ -154,7 +159,7 @@ export default class EtherscanApiHelper {
     return result['result']
   }
 
-  async gasPrice() {
+  async gasPrice(): Promise<string> {
     if (this._invalid === true) {
       return null
     }
@@ -166,7 +171,7 @@ export default class EtherscanApiHelper {
     if (!result['result']) {
       throw new ErrorHelper(result['error'] ? result['error']['message'] : 'not found')
     }
-    return result['result'].hexToDecimalString()
+    return result['result'].hexToDecimalString_()
   }
 
   /**
@@ -174,7 +179,7 @@ export default class EtherscanApiHelper {
    * @param address
    * @returns {Promise<string>}
    */
-  async getBalance (address) {
+  async getBalance (address: string): Promise<string> {
     if (this._invalid === true) {
       return null
     }

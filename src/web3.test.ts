@@ -2,6 +2,14 @@ import 'node-assist'
 import assert from "assert"
 import Web3Helper from './web3'
 
+declare global {
+  namespace NodeJS {
+    interface Global {
+      logger: any;
+    }
+  }
+}
+
 describe('Web3Helper', () => {
 
   let walletHelper
@@ -16,11 +24,11 @@ describe('Web3Helper', () => {
   it('getLatestBlockNumber', async () => {
     try {
       const result = await walletHelper.browsers['read'].getLatestBlockNumber()
-      logger.error(result)
+      global.logger.error(result)
       const result1 = await walletHelper.browsers['write'].getLatestBlockNumber()
-      logger.error(result1)
+      global.logger.error(result1)
     } catch (err) {
-      logger.error(err)
+      global.logger.error(err)
       assert.throws(() => {}, err)
     }
   })

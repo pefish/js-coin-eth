@@ -1,8 +1,9 @@
 /** @module */
 import 'js-node-assist'
-import BaseEtherLike from '../base/base_ether_like'
+import BaseEtherLike from './base/base_ether_like'
 import crypto from 'crypto'
 import ErrorHelper from 'p-js-error'
+import abiUtil from './abi'
 
 /**
  * 以太坊钱包帮助类
@@ -36,7 +37,7 @@ class EthWalletHelper extends BaseEtherLike {
   compileContract (contractStr, isOptimize = 1) {
     const solc = require('solc')
     const compiled = solc.compile(contractStr, isOptimize)
-    if (!Object.keys(compiled['contracts']).length > 0) {
+    if (Object.keys(compiled['contracts']).length === 0) {
       throw new ErrorHelper(compiled['errors'])
     }
     // logger.warn('compile warn: ', compiled['errors'])
@@ -146,16 +147,16 @@ class EthWalletHelper extends BaseEtherLike {
     const tx = new Tx(txHex)
     return {
       txId: '0x' + tx.hash().toString('hex'),
-      nonce: tx.nonce.toDecimalString(),
-      gasPrice: tx.gasPrice.toDecimalString(),
-      gasLimit: tx.gasLimit.toDecimalString(),
-      to: tx.to.toHexString(),
-      value: tx.value.toDecimalString(),
-      data: tx.data.toHexString(),
-      v: tx.v.toHexString(),
-      r: tx.r.toHexString(),
-      s: tx.s.toHexString(),
-      from: tx.from.toHexString(),
+      nonce: tx.nonce.toDecimalString_(),
+      gasPrice: tx.gasPrice.toDecimalString_(),
+      gasLimit: tx.gasLimit.toDecimalString_(),
+      to: tx.to.toHexString_(),
+      value: tx.value.toDecimalString_(),
+      data: tx.data.toHexString_(),
+      v: tx.v.toHexString_(),
+      r: tx.r.toHexString_(),
+      s: tx.s.toHexString_(),
+      from: tx.from.toHexString_(),
       _chainId: tx._chainId,
       _homestead: tx._homestead
     }
@@ -164,7 +165,7 @@ class EthWalletHelper extends BaseEtherLike {
   encryptToKeystore (pass, privateKey) {
     const keythereum = require('keythereum')
     const dk = keythereum.create({ keyBytes: 32, ivBytes: 16 })
-    return keythereum.dump(pass, privateKey.hexToBuffer(), dk['salt'], dk['iv'], {
+    return keythereum.dump(pass, privateKey.hexToBuffer_(), dk['salt'], dk['iv'], {
       kdf: 'pbkdf2',
       cipher: 'aes-128-ctr',
       kdfparams: {
@@ -177,7 +178,7 @@ class EthWalletHelper extends BaseEtherLike {
 
   decryptKeystoreV2 (keystoreStr, pass) {
     const keythereum = require('keythereum')
-    return keythereum.recover(pass, JSON.parse(keystoreStr)).toHexString()
+    return keythereum.recover(pass, JSON.parse(keystoreStr)).toHexString_()
   }
 
   /**
@@ -224,32 +225,27 @@ class EthWalletHelper extends BaseEtherLike {
    * @param privateKey
    * @param toAddress
    * @param amount {string} 单位wei, 十进制
-   * @param nonce {string} 十进制。即发送地址已经发送过多少笔交易
+   * @param nonce {number} 十进制。即发送地址已经发送过多少笔交易
    * @param gasPrice {string} 单位wei, 十进制
    * @param gasLimit {string} 单位wei, 十进制
    * @returns {string}
    */
-  async buildTransaction (privateKey, toAddress, amount, nonce = null, gasPrice = null, gasLimit = '21000') {
+  async buildTransaction (privateKey: string, toAddress: string, amount: string, nonce: number, gasPrice: string = null, gasLimit: string = '21000'): Promise<any> {
     // logger.error(arguments)
     const Tx = require('ethereumjs-tx')
     if (privateKey.startsWith('0x')) {
       privateKey = privateKey.substring(2, privateKey.length)
     }
     const privateKeyBuffer = new Buffer(privateKey, 'hex')
-    if (nonce === null) {
-      const EtherscanApiHelper = require('./etherscan_api').default
-      const etherScanApiHelper = new EtherscanApiHelper()
-      nonce = await etherScanApiHelper.getTransactionCount(this.getAddressFromPrivateKey(privateKey))
-    }
     if (!gasPrice) {
       gasPrice = '20000000000'
     }
     const rawTx = {
-      nonce: nonce.decimalToHexString(),
-      gasPrice: gasPrice.decimalToHexString(),
-      gasLimit: gasLimit.decimalToHexString(),
+      nonce: nonce.toString().decimalToHexString_(),
+      gasPrice: gasPrice.decimalToHexString_(),
+      gasLimit: gasLimit.decimalToHexString_(),
       to: toAddress,
-      value: amount.decimalToHexString(),
+      value: amount.decimalToHexString_(),
     }
 
     const tx = new Tx(rawTx)
@@ -258,19 +254,19 @@ class EthWalletHelper extends BaseEtherLike {
     return {
       txHex: '0x' + serializedTx.toString('hex'),
       txId: '0x' + tx.hash().toString('hex'),
-      dataFee: tx.getDataFee().toString(10).multi(gasPrice),
-      allFee: tx.getBaseFee().toString(10).multi(gasPrice),
-      nonce: tx['nonce'].toDecimalString(),
-      gasPrice: tx['gasPrice'].toDecimalString(),
-      gasLimit: tx['gasLimit'].toDecimalString(),
-      to: tx['to'].toHexString(),
-      value: tx['value'].toDecimalString(),
-      data: tx['data'].toHexString(),
-      from: tx['from'].toHexString()
+      dataFee: tx.getDataFee().toString(10).multi_(gasPrice),
+      allFee: tx.getBaseFee().toString(10).multi_(gasPrice),
+      nonce: tx['nonce'].toDecimalString_(),
+      gasPrice: tx['gasPrice'].toDecimalString_(),
+      gasLimit: tx['gasLimit'].toDecimalString_(),
+      to: tx['to'].toHexString_(),
+      value: tx['value'].toDecimalString_(),
+      data: tx['data'].toHexString_(),
+      from: tx['from'].toHexString_()
     }
   }
 
-  async buildMsgTransaction (privateKey, msg, nonce = null, gasPrice = null, gasLimit = null) {
+  async buildMsgTransaction (privateKey: string, msg: string, nonce: number, gasPrice: string = null, gasLimit: string = null) {
     // logger.error(arguments)
     const Tx = require('ethereumjs-tx')
     if (privateKey.startsWith('0x')) {
@@ -278,11 +274,6 @@ class EthWalletHelper extends BaseEtherLike {
     }
     const privateKeyBuffer = new Buffer(privateKey, 'hex')
     const sourceAddress = this.getAddressFromPrivateKey(privateKey)
-    if (nonce === null) {
-      const EtherscanApiHelper = require('./etherscan_api').default
-      const etherScanApiHelper = new EtherscanApiHelper()
-      nonce = await etherScanApiHelper.getTransactionCount(sourceAddress)
-    }
     if (!gasPrice) {
       gasPrice = '20000000000'
     }
@@ -290,9 +281,9 @@ class EthWalletHelper extends BaseEtherLike {
       gasLimit = '900000'
     }
     const rawTx = {
-      nonce: nonce.decimalToHexString(),
-      gasPrice: gasPrice.decimalToHexString(),
-      gasLimit: gasLimit.decimalToHexString(),
+      nonce: nonce.toString().decimalToHexString_(),
+      gasPrice: gasPrice.decimalToHexString_(),
+      gasLimit: gasLimit.decimalToHexString_(),
       from: sourceAddress,
       to: sourceAddress,
       value: 0x00,
@@ -305,15 +296,15 @@ class EthWalletHelper extends BaseEtherLike {
     return {
       txHex: '0x' + serializedTx.toString('hex'),
       txId: '0x' + tx.hash().toString('hex'),
-      dataFee: tx.getDataFee().toString(10).multi(gasPrice),
-      allFee: tx.getBaseFee().toString(10).multi(gasPrice),
-      nonce: tx['nonce'].toDecimalString(),
-      gasPrice: tx['gasPrice'].toDecimalString(),
-      gasLimit: tx['gasLimit'].toDecimalString(),
-      to: tx['to'].toHexString(),
-      value: tx['value'].toDecimalString(),
-      data: tx['data'].toHexString(),
-      from: tx['from'].toHexString()
+      dataFee: tx.getDataFee().toString(10).multi_(gasPrice),
+      allFee: tx.getBaseFee().toString(10).multi_(gasPrice),
+      nonce: tx['nonce'].toDecimalString_(),
+      gasPrice: tx['gasPrice'].toDecimalString_(),
+      gasLimit: tx['gasLimit'].toDecimalString_(),
+      to: tx['to'].toHexString_(),
+      value: tx['value'].toDecimalString_(),
+      data: tx['data'].toHexString_(),
+      from: tx['from'].toHexString_()
     }
   }
 
@@ -362,15 +353,15 @@ class EthWalletHelper extends BaseEtherLike {
     return {
       txHex: '0x' + serializedTx.toString('hex'),
       txId: '0x' + tx.hash().toString('hex'),
-      dataFee: tx.getDataFee().toString(10).multi(gasPrice),
-      allFee: tx.getBaseFee().toString(10).multi(gasPrice),
-      nonce: tx['nonce'].toDecimalString(),
-      gasPrice: tx['gasPrice'].toDecimalString(),
-      gasLimit: tx['gasLimit'].toDecimalString(),
-      to: tx['to'].toHexString(),
-      value: tx['value'].toDecimalString(),
-      data: tx['data'].toHexString(),
-      from: tx['from'].toHexString()
+      dataFee: tx.getDataFee().toString(10).multi_(gasPrice),
+      allFee: tx.getBaseFee().toString(10).multi_(gasPrice),
+      nonce: tx['nonce'].toDecimalString_(),
+      gasPrice: tx['gasPrice'].toDecimalString_(),
+      gasLimit: tx['gasLimit'].toDecimalString_(),
+      to: tx['to'].toHexString_(),
+      value: tx['value'].toDecimalString_(),
+      data: tx['data'].toHexString_(),
+      from: tx['from'].toHexString_()
     }
   }
 
@@ -397,7 +388,7 @@ class EthWalletHelper extends BaseEtherLike {
       gasPrice: gasPrice.decimalToHexString(),
       gasLimit: gasLimit.decimalToHexString(),
       to: contractAddress,
-      value: value.decimalToHexString(),
+      value: value.decimalToHexString_(),
       data: this.encodePayload(this.getMethodId(methodName, methodParamTypes), methodParamTypes, params)
     }
     const tx = new Tx(rawTx)
@@ -406,15 +397,15 @@ class EthWalletHelper extends BaseEtherLike {
     return {
       txHex: '0x' + serializedTx.toString('hex'),
       txId: '0x' + tx.hash().toString('hex'),
-      dataFee: tx.getDataFee().toString(10).multi(gasPrice),
-      allFee: tx.getBaseFee().toString(10).multi(gasPrice),
-      nonce: tx['nonce'].toDecimalString(),
-      gasPrice: tx['gasPrice'].toDecimalString(),
-      gasLimit: tx['gasLimit'].toDecimalString(),
-      to: tx['to'].toHexString(),
-      value: tx['value'].toDecimalString(),
-      data: tx['data'].toHexString(),
-      from: tx['from'].toHexString()
+      dataFee: tx.getDataFee().toString(10).multi_(gasPrice),
+      allFee: tx.getBaseFee().toString(10).multi_(gasPrice),
+      nonce: tx['nonce'].toDecimalString_(),
+      gasPrice: tx['gasPrice'].toDecimalString_(),
+      gasLimit: tx['gasLimit'].toDecimalString_(),
+      to: tx['to'].toHexString_(),
+      value: tx['value'].toDecimalString_(),
+      data: tx['data'].toHexString_(),
+      from: tx['from'].toHexString_()
     }
   }
 
@@ -468,15 +459,15 @@ class EthWalletHelper extends BaseEtherLike {
     return {
       txHex: '0x' + serializedTx.toString('hex'),
       txId: '0x' + tx.hash().toString('hex'),
-      dataFee: tx.getDataFee().toString(10).multi(gasPrice),
-      allFee: tx.getBaseFee().toString(10).multi(gasPrice),
-      nonce: tx['nonce'].toDecimalString(),
-      gasPrice: tx['gasPrice'].toDecimalString(),
-      gasLimit: tx['gasLimit'].toDecimalString(),
-      to: tx['to'].toHexString(),
-      value: tx['value'].toDecimalString(),
-      data: tx['data'].toHexString(),
-      from: tx['from'].toHexString(),
+      dataFee: tx.getDataFee().toString(10).multi_(gasPrice),
+      allFee: tx.getBaseFee().toString(10).multi_(gasPrice),
+      nonce: tx['nonce'].toDecimalString_(),
+      gasPrice: tx['gasPrice'].toDecimalString_(),
+      gasLimit: tx['gasLimit'].toDecimalString_(),
+      to: tx['to'].toHexString_(),
+      value: tx['value'].toDecimalString_(),
+      data: tx['data'].toHexString_(),
+      from: tx['from'].toHexString_(),
       compileVersion: this.getCompilerVersionOfContract(compiledContract, contractName),
       abi: this.getAbiOfContract(compiledContract, contractName, false)
     }
@@ -493,7 +484,6 @@ class EthWalletHelper extends BaseEtherLike {
   }
 
   getMethodId (methodName, methodParamTypes) {
-    const abiUtil = require('./abi')
     return '0x' + abiUtil.methodID(methodName, methodParamTypes).toString(`hex`)
   }
 
@@ -503,7 +493,6 @@ class EthWalletHelper extends BaseEtherLike {
    * @param methodParamTypes {array} ['uint256', 'address']
    */
   decodePayload (payloadTx, methodParamTypes) {
-    const abiUtil = require('./abi')
     const dataBuf = new Buffer(payloadTx.replace(/^0x/, ``), `hex`)
     const methodId = dataBuf.slice(0, 4).toString(`hex`)
     const inputsBuf = dataBuf.slice(4)
@@ -532,19 +521,17 @@ class EthWalletHelper extends BaseEtherLike {
    * @returns {*}
    */
   encodeParamsHex (methodParamTypes, params) {
-    const abiUtil = require('./abi')
-    return abiUtil.rawEncode(methodParamTypes, params).toHexString(false)
+    return abiUtil.rawEncode(methodParamTypes, params).toHexString_(false)
   }
 
   decodeParamsHex (methodParamTypes, paramsHex) {
-    const abiUtil = require('./abi')
     const dataBuf = new Buffer(paramsHex.replace(/^0x/, ``), `hex`)
     return abiUtil.rawDecode(methodParamTypes, dataBuf)
   }
 
   encodeToTopicHex (str) {
     const EtherUtil = require('ethereumjs-util')
-    return EtherUtil.keccak256(str).toHexString()
+    return EtherUtil.keccak256(str).toHexString_()
   }
 
   /**

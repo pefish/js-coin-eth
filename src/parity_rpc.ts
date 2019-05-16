@@ -11,7 +11,7 @@ export default class ParityRpc {
    * @param url
    * @param type {number} 1 节点提供的rpc  2 etherscan提供的api接口
    */
-  static getParityApiHelper (url = 'http://0.0.0.0:8545', type = 1) {
+  static getParityApiHelper (url: string | object = 'http://0.0.0.0:8545', type = 1): any {
     let apiKey
     if (typeof url !== 'string') {
       apiKey = url['apiKey']
@@ -25,14 +25,18 @@ export default class ParityRpc {
       let provider = new Api.Provider.Http(url)
       return new Api(provider)
     } else if (type === 2) {
-      return new EtherscanApi(url, apiKey)
+      return new EtherscanApi(`mainnet`)
     }
   }
 }
 
 class EtherscanApi {
-  constructor (url, apikey) {
-    this._client = new EtherscanApiHelper(url, apikey)
+
+  _client: EtherscanApiHelper
+  eth: Eth
+
+  constructor (network: string) {
+    this._client = new EtherscanApiHelper(network)
     this.eth = new Eth(this._client)
   }
 
@@ -41,17 +45,19 @@ class EtherscanApi {
 }
 
 class Eth {
+
+  _client: EtherscanApiHelper
+
   constructor (client) {
     this._client = client
   }
 
-  async getTransactionCount (address) {
+  async getTransactionCount (address: string): Promise<any> {
     return await this._client.getTransactionCount(address)
   }
 
-  async getTokenBalance (contractAddress, address) {
-    const balance = await this._client.getTokenBalance(contractAddress, address)
-    return balance.toString(10)
+  async getTokenBalance (contractAddress: string, address: string): Promise<string> {
+    return await this._client.getTokenBalance(contractAddress, address)
   }
 
   /**
@@ -59,16 +65,15 @@ class Eth {
    * @param address
    * @returns {Promise<string>} wei
    */
-  async getBalance (address) {
-    const balance = await this._client.getBalance(address)
-    return balance.toString(10)
+  async getBalance (address: string): Promise<string> {
+    return await this._client.getBalance(address)
   }
 
-  async getTransactionByHash (hash) {
+  async getTransactionByHash (hash: string): Promise<any> {
     return await this._client.getTransactionByHash(hash)
   }
 
-  async sendRawTransaction (hex) {
+  async sendRawTransaction (hex: string): Promise<void> {
     return await this._client.sendRawTransaction(hex)
   }
 }

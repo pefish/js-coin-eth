@@ -1,4 +1,4 @@
-import EthWalletHelper from '../ether/eth_wallet'
+import EthWalletHelper from '../eth_wallet'
 
 export default class RskWalletHelper extends EthWalletHelper {
   constructor () {

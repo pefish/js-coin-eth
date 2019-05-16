@@ -1,9 +1,13 @@
 import ErrorHelper from 'p-js-error'
 import Web3 from 'web3'
-import BaseEtherLike from "../base/base_ether_like";
+import BaseEtherLike from "./base/base_ether_like";
 
-class Browser extends BaseEtherLike {
-  constructor(web3) {
+export class Browser extends BaseEtherLike {
+
+  contracts: object
+  eth: any
+
+  public constructor(web3) {
     super()
     this.contracts = {}
     this.eth = web3.eth
@@ -52,6 +56,9 @@ class Browser extends BaseEtherLike {
 }
 
 export default class Web3Helper extends Browser {
+
+  browsers: object
+
   constructor(providers = {}) {
     if (!providers['default']) {
       super(new Web3(providers[Object.keys(providers)[0]]))
@@ -66,7 +73,7 @@ export default class Web3Helper extends Browser {
         if (value['type'] === 'ws') {
           this.browsers[name] = new Browser(new Web3(new Web3.providers.WebsocketProvider(value['url'])))
         } else if (value['type'] === 'http') {
-          this.browsers[name] = new Browser(new Web3(value))
+          this.browsers[name] = new Browser(new Web3(new Web3.providers.HttpProvider(value['url'])))
         } else {
           throw new ErrorHelper(`type 有误`)
         }
@@ -95,8 +102,8 @@ export default class Web3Helper extends Browser {
 
   static encodePayload(methodName, methodParamTypes, params) {
     const abiUtil = require('./abi')
-    const paramsHex = abiUtil.rawEncode(methodParamTypes, params).toHexString(false)
-    return EtherVisitor.getMethodId(methodName, methodParamTypes) + paramsHex
+    const paramsHex = abiUtil.rawEncode(methodParamTypes, params).toHexString_(false)
+    return Web3Helper.getMethodId(methodName, methodParamTypes) + paramsHex
   }
 }
 

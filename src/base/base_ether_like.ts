@@ -12,12 +12,12 @@ class BaseEtherLike extends BaseCoin {
     super()
   }
 
-  getXprivBySeed (seedHex) {
+  getXprivBySeed (seedHex: string): string {
     const { HDPrivateKey } = require('bitcore-lib')
     return HDPrivateKey.fromSeed(seedHex, `mainnet`).toString()
   }
 
-  getXpubBySeed (seedHex) {
+  getXpubBySeed (seedHex: string): string {
     const { HDPrivateKey } = require('bitcore-lib')
     return HDPrivateKey.fromSeed(seedHex, `mainnet`).hdPublicKey.toString()
   }
@@ -27,14 +27,14 @@ class BaseEtherLike extends BaseCoin {
    * @param pubKey
    * @returns {string}
    */
-  getAddressFromPubKey (pubKey) {
+  getAddressFromPubKey (pubKey: string): string {
     const { publicToAddress } = require('ethereumjs-util')
-    return `0x${publicToAddress(pubKey.hexToBuffer(), true).toString('hex')}`
+    return `0x${publicToAddress(pubKey.hexToBuffer_(), true).toString('hex')}`
   }
 
-  isValidPublicKey (pubKey) {
+  isValidPublicKey (pubKey: string): boolean {
     const { isValidPublic } = require('ethereumjs-util')
-    return isValidPublic(pubKey.hexToBuffer(), true)
+    return isValidPublic(pubKey.hexToBuffer_(), true)
   }
 
   /**
@@ -42,12 +42,12 @@ class BaseEtherLike extends BaseCoin {
    * @param address
    * @returns {*|Boolean}
    */
-  isAddress (address) {
+  isAddress (address: string): boolean {
     const { isValidAddress } = require('ethereumjs-util')
     return isValidAddress(address)
   }
 
-  deriveAllByXprivPath(xpriv, path) {
+  deriveAllByXprivPath(xpriv: string, path: string): object {
     const { HDPrivateKey } = require('bitcore-lib')
     const { publicToAddress } = require('ethereumjs-util')
     const key = new HDPrivateKey(xpriv)
@@ -58,8 +58,8 @@ class BaseEtherLike extends BaseCoin {
       xpriv: derived.toString(),
       xpub: derived.hdPublicKey.toString(),
       address: `0x${publicToAddress(derived.publicKey.toBuffer(), true).toString('hex')}`,
-      privateKey: derived.privateKey.toBuffer().toHexString(),
-      publicKey: derived.publicKey.toBuffer().toHexString()
+      privateKey: derived.privateKey.toBuffer().toHexString_(),
+      publicKey: derived.publicKey.toBuffer().toHexString_()
     }
   }
 
@@ -68,9 +68,9 @@ class BaseEtherLike extends BaseCoin {
    * @param privateKey
    * @returns {string}
    */
-  getAddressFromPrivateKey (privateKey) {
+  getAddressFromPrivateKey (privateKey: string): string {
     const { privateToAddress } = require('ethereumjs-util')
-    return `0x${privateToAddress(privateKey.hexToBuffer()).toString('hex')}`
+    return `0x${privateToAddress(privateKey.hexToBuffer_()).toString('hex')}`
   }
 }
 

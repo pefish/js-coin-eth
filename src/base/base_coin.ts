@@ -12,7 +12,7 @@ class BaseCoin {
    * @param pass
    * @returns {string} 128位hex字符串
    */
-  getSeedBufferByMnemonic (mnemonic, pass = '') {
+  getSeedBufferByMnemonic (mnemonic: string, pass: string = ''): Buffer {
     const bip39Lib = require('bip39')
     return bip39Lib.mnemonicToSeed(mnemonic, pass) // 种子buffer, password是salt, 默认是'mnemonic'
   }
@@ -23,7 +23,7 @@ class BaseCoin {
    * @param pass
    * @returns {string}
    */
-  getSeedHexByMnemonic (mnemonic, pass = '') {
+  getSeedHexByMnemonic (mnemonic: string, pass: string = ''): string {
     return this.getSeedBufferByMnemonic(mnemonic, pass).toString('hex')
   }
 
@@ -31,7 +31,7 @@ class BaseCoin {
    * 根据字典生成随机助记码
    * @returns {*}
    */
-  getRandomMnemonic () {
+  getRandomMnemonic (): string {
     const bip39Lib = require('bip39')
     return bip39Lib.generateMnemonic()
   }

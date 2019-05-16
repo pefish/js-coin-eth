@@ -1,7 +1,217 @@
-const utils = require('ethereumjs-util')
-const BN = require('bn.js')
+import 'js-node-assist'
+import * as utils from 'ethereumjs-util'
+import BN from 'bn.js'
+import ethjsUtil from 'ethjs-util'
 
-var ABI = function () {
+export default class ABI {
+  static eventID (name, types) {
+    var sig = name + '(' + types.map(elementaryName).join(',') + ')'
+    return utils.keccak(new Buffer(sig))
+  }
+
+  static methodID (name, types) {
+    return this.eventID(name, types).slice(0, 4)
+  }
+
+  static rawEncode (types, values): Buffer {
+    var output = []
+    var data = []
+
+    var headLength = 32 * types.length
+
+    for (let i = 0; i < types.length; i++) {
+      var type = elementaryName(types[i])
+      var value = values[i]
+      var cur = encodeSingle(type, value)
+
+      // Use the head/tail method for storing dynamic data
+      if (isDynamic(type)) {
+        output.push(encodeSingle('uint256', headLength))
+        data.push(cur)
+        headLength += cur.length
+      } else {
+        output.push(cur)
+      }
+    }
+
+    return Buffer.concat(output.concat(data))
+  }
+
+  static rawDecode (types, data) {
+    var ret = []
+    data = new Buffer(data)
+    var offset = 0
+    for (let type1 of types) {
+      var type = elementaryName(type1)
+      var parsed = parseType(type)
+      var decoded = decodeSingle(parsed, data, offset)
+      offset += parsed.memoryUsage
+      ret.push(decoded)
+    }
+    return ret
+  }
+
+  static simpleEncode (method) {
+    var args = Array.prototype.slice.call(arguments).slice(1)
+    var sig = parseSignature(method)
+
+    // FIXME: validate/convert arguments
+    if (args.length !== sig.args.length) {
+      throw new Error('Argument count mismatch')
+    }
+
+    return Buffer.concat([ this.methodID(sig.method, sig.args), this.rawEncode(sig.args, args) ])
+  }
+
+  static simpleDecode (method, data) {
+    var sig = parseSignature(method)
+
+    // FIXME: validate/convert arguments
+    if (!sig[`retargs`]) {
+      throw new Error('No return values in method')
+    }
+
+    return this.rawDecode(sig[`retargs`], data)
+  }
+
+  static stringify (types, values) {
+    var ret = []
+
+    for (let i = 0; i < types.length; i++) {
+      let type = types[i]
+      var value = values[i]
+
+      // if it is an array type, concat the items
+      if (/^[^\[]+\[.*\]$/.test(type)) {
+        value = value.map(function (item) {
+          return stringify(type, item)
+        }).join(', ')
+      } else {
+        value = stringify(type, value)
+      }
+
+      ret.push(value)
+    }
+
+    return ret
+  }
+
+  static solidityPack (types, values) {
+    if (types.length !== values.length) {
+      throw new Error('Number of types are not matching the values')
+    }
+
+    var size, num
+    var ret = []
+
+    for (var i = 0; i < types.length; i++) {
+      var type = elementaryName(types[i])
+      var value = values[i]
+
+      if (type === 'bytes') {
+        ret.push(value)
+      } else if (type === 'string') {
+        ret.push(new Buffer(value, 'utf8'))
+      } else if (type === 'bool') {
+        ret.push(new Buffer(value ? '01' : '00', 'hex'))
+      } else if (type === 'address') {
+        ret.push(utils.setLengthLeft(value, 20))
+      } else if (type.startsWith('bytes')) {
+        size = parseTypeN(type)
+        if (size < 1 || size > 32) {
+          throw new Error('Invalid bytes<N> width: ' + size)
+        }
+
+        ret.push(utils.setLengthRight(value, size))
+      } else if (type.startsWith('uint')) {
+        size = parseTypeN(type)
+        if ((size % 8) || (size < 8) || (size > 256)) {
+          throw new Error('Invalid uint<N> width: ' + size)
+        }
+
+        num = parseNumber(value)
+        if (num.bitLength() > size) {
+          throw new Error('Supplied uint exceeds width: ' + size + ' vs ' + num.bitLength())
+        }
+
+        ret.push(num.toArrayLike(Buffer, 'be', size / 8))
+      } else if (type.startsWith('int')) {
+        size = parseTypeN(type)
+        if ((size % 8) || (size < 8) || (size > 256)) {
+          throw new Error('Invalid int<N> width: ' + size)
+        }
+
+        num = parseNumber(value)
+        if (num.bitLength() > size) {
+          throw new Error('Supplied int exceeds width: ' + size + ' vs ' + num.bitLength())
+        }
+
+        ret.push(num.toTwos(size).toArrayLike(Buffer, 'be', size / 8))
+      } else {
+        // FIXME: support all other types
+        throw new Error('Unsupported or invalid type: ' + type)
+      }
+    }
+
+    return Buffer.concat(ret)
+  }
+
+  static soliditySHA3 (types, values) {
+    return utils.keccak(this.solidityPack(types, values))
+  }
+
+  static soliditySHA256 (types, values) {
+    return utils.sha256(this.solidityPack(types, values))
+  }
+
+  static solidityRIPEMD160 (types, values) {
+    return utils.ripemd160(this.solidityPack(types, values), true)
+  }
+
+  static fromSerpent (sig) {
+    var ret = []
+    for (var i = 0; i < sig.length; i++) {
+      var type = sig[i]
+      if (type === 's') {
+        ret.push('bytes')
+      } else if (type === 'b') {
+        var tmp = 'bytes'
+        var j = i + 1
+        while ((j < sig.length) && isNumeric(sig[j])) {
+          tmp += sig[j]
+          j++
+        }
+        i = j - 1
+        ret.push(tmp)
+      } else if (type === 'i') {
+        ret.push('int256')
+      } else if (type === 'a') {
+        ret.push('int256[]')
+      } else {
+        throw new Error('Unsupported or invalid type: ' + type)
+      }
+    }
+    return ret
+  }
+
+  static toSerpent (types) {
+    var ret = []
+    for (var i = 0; i < types.length; i++) {
+      var type = types[i]
+      if (type === 'bytes') {
+        ret.push('s')
+      } else if (type.startsWith('bytes')) {
+        ret.push('b' + parseTypeN(type))
+      } else if (type === 'int256') {
+        ret.push('i')
+      } else if (type === 'int256[]') {
+        ret.push('a')
+      } else {
+        throw new Error('Unsupported or invalid type: ' + type)
+      }
+    }
+    return ret.join('')
+  }
 }
 
 // Convert from short to canonical names
@@ -27,16 +237,6 @@ function elementaryName (name) {
   return name
 }
 
-ABI.eventID = function (name, types) {
-  // FIXME: use node.js util.format?
-  var sig = name + '(' + types.map(elementaryName).join(',') + ')'
-  return utils.keccak(new Buffer(sig))
-}
-
-ABI.methodID = function (name, types) {
-  return ABI.eventID(name, types).slice(0, 4)
-}
-
 // Parse N from type<N>
 function parseTypeN (type) {
   return parseInt(/^\D+(\d+)$/.exec(type)[1], 10)
@@ -60,8 +260,8 @@ function parseTypeArray (type) {
 function parseNumber (arg) {
   var type = typeof arg
   if (type === 'string') {
-    if (utils.isHexPrefixed(arg)) {
-      return new BN(utils.stripHexPrefix(arg), 16)
+    if (ethjsUtil.isHexPrefixed(arg)) {
+      return new BN(ethjsUtil.stripHexPrefix(arg), 16)
     } else {
       return new BN(arg, 10)
     }
@@ -330,69 +530,6 @@ function isArray (type) {
   return type.lastIndexOf(']') === type.length - 1
 }
 
-// Encode a method/event with arguments
-// @types an array of string type names
-// @args  an array of the appropriate values
-ABI.rawEncode = function (types, values) {
-  var output = []
-  var data = []
-
-  var headLength = 32 * types.length
-
-  for (let i = 0; i < types.length; i++) {
-    var type = elementaryName(types[i])
-    var value = values[i]
-    var cur = encodeSingle(type, value)
-
-    // Use the head/tail method for storing dynamic data
-    if (isDynamic(type)) {
-      output.push(encodeSingle('uint256', headLength))
-      data.push(cur)
-      headLength += cur.length
-    } else {
-      output.push(cur)
-    }
-  }
-
-  return Buffer.concat(output.concat(data))
-}
-
-ABI.rawDecode = function (types, data) {
-  var ret = []
-  data = new Buffer(data)
-  var offset = 0
-  for (let type1 of types) {
-    var type = elementaryName(type1)
-    var parsed = parseType(type, data, offset)
-    var decoded = decodeSingle(parsed, data, offset)
-    offset += parsed.memoryUsage
-    ret.push(decoded)
-  }
-  return ret
-}
-
-ABI.simpleEncode = function (method) {
-  var args = Array.prototype.slice.call(arguments).slice(1)
-  var sig = parseSignature(method)
-
-  // FIXME: validate/convert arguments
-  if (args.length !== sig.args.length) {
-    throw new Error('Argument count mismatch')
-  }
-
-  return Buffer.concat([ ABI.methodID(sig.method, sig.args), ABI.rawEncode(sig.args, args) ])
-}
-
-ABI.simpleDecode = function (method, data) {
-  var sig = parseSignature(method)
-
-  // FIXME: validate/convert arguments
-  if (!sig.retargs) {
-    throw new Error('No return values in method')
-  }
-
-  return ABI.rawDecode(sig.retargs, data)
-}
 
 function stringify (type, value) {
   if (type.startsWith('address') || type.startsWith('bytes')) {
@@ -400,100 +537,6 @@ function stringify (type, value) {
   } else {
     return value.toString()
   }
-}
-
-ABI.stringify = function (types, values) {
-  var ret = []
-
-  for (let i = 0; i < types.length; i++) {
-    let type = types[i]
-    var value = values[i]
-
-    // if it is an array type, concat the items
-    if (/^[^\[]+\[.*\]$/.test(type)) {
-      value = value.map(function (item) {
-        return stringify(type, item)
-      }).join(', ')
-    } else {
-      value = stringify(type, value)
-    }
-
-    ret.push(value)
-  }
-
-  return ret
-}
-
-ABI.solidityPack = function (types, values) {
-  if (types.length !== values.length) {
-    throw new Error('Number of types are not matching the values')
-  }
-
-  var size, num
-  var ret = []
-
-  for (var i = 0; i < types.length; i++) {
-    var type = elementaryName(types[i])
-    var value = values[i]
-
-    if (type === 'bytes') {
-      ret.push(value)
-    } else if (type === 'string') {
-      ret.push(new Buffer(value, 'utf8'))
-    } else if (type === 'bool') {
-      ret.push(new Buffer(value ? '01' : '00', 'hex'))
-    } else if (type === 'address') {
-      ret.push(utils.setLengthLeft(value, 20))
-    } else if (type.startsWith('bytes')) {
-      size = parseTypeN(type)
-      if (size < 1 || size > 32) {
-        throw new Error('Invalid bytes<N> width: ' + size)
-      }
-
-      ret.push(utils.setLengthRight(value, size))
-    } else if (type.startsWith('uint')) {
-      size = parseTypeN(type)
-      if ((size % 8) || (size < 8) || (size > 256)) {
-        throw new Error('Invalid uint<N> width: ' + size)
-      }
-
-      num = parseNumber(value)
-      if (num.bitLength() > size) {
-        throw new Error('Supplied uint exceeds width: ' + size + ' vs ' + num.bitLength())
-      }
-
-      ret.push(num.toArrayLike(Buffer, 'be', size / 8))
-    } else if (type.startsWith('int')) {
-      size = parseTypeN(type)
-      if ((size % 8) || (size < 8) || (size > 256)) {
-        throw new Error('Invalid int<N> width: ' + size)
-      }
-
-      num = parseNumber(value)
-      if (num.bitLength() > size) {
-        throw new Error('Supplied int exceeds width: ' + size + ' vs ' + num.bitLength())
-      }
-
-      ret.push(num.toTwos(size).toArrayLike(Buffer, 'be', size / 8))
-    } else {
-      // FIXME: support all other types
-      throw new Error('Unsupported or invalid type: ' + type)
-    }
-  }
-
-  return Buffer.concat(ret)
-}
-
-ABI.soliditySHA3 = function (types, values) {
-  return utils.keccak(ABI.solidityPack(types, values))
-}
-
-ABI.soliditySHA256 = function (types, values) {
-  return utils.sha256(ABI.solidityPack(types, values))
-}
-
-ABI.solidityRIPEMD160 = function (types, values) {
-  return utils.ripemd160(ABI.solidityPack(types, values), true)
 }
 
 // Serpent's users are familiar with this encoding
@@ -507,51 +550,3 @@ function isNumeric (c) {
   // FIXME: is this correct? Seems to work
   return (c >= '0') && (c <= '9')
 }
-
-// For a "documentation" refer to https://github.com/ethereum/serpent/blob/develop/preprocess.cpp
-ABI.fromSerpent = function (sig) {
-  var ret = []
-  for (var i = 0; i < sig.length; i++) {
-    var type = sig[i]
-    if (type === 's') {
-      ret.push('bytes')
-    } else if (type === 'b') {
-      var tmp = 'bytes'
-      var j = i + 1
-      while ((j < sig.length) && isNumeric(sig[j])) {
-        tmp += sig[j] - '0'
-        j++
-      }
-      i = j - 1
-      ret.push(tmp)
-    } else if (type === 'i') {
-      ret.push('int256')
-    } else if (type === 'a') {
-      ret.push('int256[]')
-    } else {
-      throw new Error('Unsupported or invalid type: ' + type)
-    }
-  }
-  return ret
-}
-
-ABI.toSerpent = function (types) {
-  var ret = []
-  for (var i = 0; i < types.length; i++) {
-    var type = types[i]
-    if (type === 'bytes') {
-      ret.push('s')
-    } else if (type.startsWith('bytes')) {
-      ret.push('b' + parseTypeN(type))
-    } else if (type === 'int256') {
-      ret.push('i')
-    } else if (type === 'int256[]') {
-      ret.push('a')
-    } else {
-      throw new Error('Unsupported or invalid type: ' + type)
-    }
-  }
-  return ret.join('')
-}
-
-module.exports = ABI

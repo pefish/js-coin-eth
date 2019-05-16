@@ -2,6 +2,14 @@ import 'node-assist'
 import assert from "assert"
 import ParityRpcUtil from './parity_rpc'
 
+declare global {
+  namespace NodeJS {
+    interface Global {
+      logger: any;
+    }
+  }
+}
+
 describe('ParityRpcUtil', () => {
 
   let helper
@@ -18,9 +26,9 @@ describe('ParityRpcUtil', () => {
   it('blockNumber', async () => {
     try {
       const result = await helper.eth.blockNumber()
-      logger.error(result)
+      global.logger.error(result)
     } catch (err) {
-      logger.error(err)
+      global.logger.error(err)
       assert.throws(() => {}, err)
     }
   })
@@ -28,9 +36,9 @@ describe('ParityRpcUtil', () => {
   it('getBlockByNumber', async () => {
     try {
       const result = await helper.eth.getBlockByNumber('latest')
-      logger.error(result)
+      global.logger.error(result)
     } catch (err) {
-      logger.error(err)
+      global.logger.error(err)
       assert.throws(() => {}, err)
     }
   })

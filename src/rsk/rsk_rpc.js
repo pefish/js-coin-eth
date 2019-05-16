@@ -1,10 +1,6 @@
 import Api from 'p-js-rsk-api'
-import BaseRpc from '../base/base_rpc'
 
-export default class RskRpc extends BaseRpc {
-  constructor (url) {
-    super(url)
-  }
+export default class RskRpc {
 
   getClient () {
     if (!this._client) {
