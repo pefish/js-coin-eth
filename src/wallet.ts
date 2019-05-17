@@ -140,14 +140,13 @@ class EthWalletHelper extends BaseEtherLike {
   /**
    * 解码txHex
    * @param txHex
-   * @returns {{nonce: String|*, gasPrice: String|*, gasLimit: String|*, to: *, value: String|*, data: *, v: *, r: string|*, s: string|*, from: *, _chainId: *, _homestead: boolean}}
    */
-  decodeTxHex (txHex) {
+  decodeTxHex (txHex: string): object {
     const Tx = require('ethereumjs-tx')
     const tx = new Tx(txHex)
     return {
       txId: '0x' + tx.hash().toString('hex'),
-      nonce: tx.nonce.toDecimalString_(),
+      nonce: tx.nonce.toDecimalString_().toNumber_(),
       gasPrice: tx.gasPrice.toDecimalString_(),
       gasLimit: tx.gasLimit.toDecimalString_(),
       to: tx.to.toHexString_(),
@@ -256,7 +255,7 @@ class EthWalletHelper extends BaseEtherLike {
       txId: '0x' + tx.hash().toString('hex'),
       dataFee: tx.getDataFee().toString(10).multi_(gasPrice),
       allFee: tx.getBaseFee().toString(10).multi_(gasPrice),
-      nonce: tx['nonce'].toDecimalString_(),
+      nonce: tx['nonce'].toDecimalString_().toNumber_(),
       gasPrice: tx['gasPrice'].toDecimalString_(),
       gasLimit: tx['gasLimit'].toDecimalString_(),
       to: tx['to'].toHexString_(),
@@ -298,7 +297,7 @@ class EthWalletHelper extends BaseEtherLike {
       txId: '0x' + tx.hash().toString('hex'),
       dataFee: tx.getDataFee().toString(10).multi_(gasPrice),
       allFee: tx.getBaseFee().toString(10).multi_(gasPrice),
-      nonce: tx['nonce'].toDecimalString_(),
+      nonce: tx['nonce'].toDecimalString_().toNumber_(),
       gasPrice: tx['gasPrice'].toDecimalString_(),
       gasLimit: tx['gasLimit'].toDecimalString_(),
       to: tx['to'].toHexString_(),
@@ -315,12 +314,12 @@ class EthWalletHelper extends BaseEtherLike {
    * @param methodName {string} 要调用的方法名
    * @param methodParamTypes {array} ['address', 'number']
    * @param params {array} 如 ['0x00367f9370A71Cf482A64394dFB2367aa3a34339', '100']
-   * @param nonce {string} 十进制字符串
+   * @param nonce {number} 十进制
    * @param gasPrice
    * @param gasLimit
    * @returns {{txHex: string, txId: string, dataFee: any|*, allFee: any|*, nonce: number|*, gasPrice: number|*, gasLimit: number|*, to: *, value: number|*, data: *, from: *}}
    */
-  buildContractTransaction (privateKey, contractAddress, methodName, methodParamTypes, params, nonce: number, gasPrice = null, gasLimit = null) {
+  buildContractTransaction (privateKey: string, contractAddress: string, methodName: string, methodParamTypes: Array<string>, params: Array<string>, nonce: number, gasPrice: string = null, gasLimit: string = null) {
     const Tx = require('ethereumjs-tx')
     const fromAddress = this.getAddressFromPrivateKey(privateKey)
     if (privateKey.startsWith('0x')) {
@@ -350,7 +349,7 @@ class EthWalletHelper extends BaseEtherLike {
       txId: '0x' + tx.hash().toString('hex'),
       dataFee: tx.getDataFee().toString(10).multi_(gasPrice),
       allFee: tx.getBaseFee().toString(10).multi_(gasPrice),
-      nonce: tx['nonce'].toDecimalString_(),
+      nonce: tx['nonce'].toDecimalString_().toNumber_(),
       gasPrice: tx['gasPrice'].toDecimalString_(),
       gasLimit: tx['gasLimit'].toDecimalString_(),
       to: tx['to'].toHexString_(),
@@ -360,7 +359,7 @@ class EthWalletHelper extends BaseEtherLike {
     }
   }
 
-  buildContractTxV2 (privateKey, fromAddress, contractAddress, methodName, methodParamTypes, params, value, nonce: number, gasPrice = null, gasLimit = null) {
+  buildContractTxV2 (privateKey: string, fromAddress: string, contractAddress: string, methodName: string, methodParamTypes: Array<string>, params: Array<string>, value: string, nonce: number, gasPrice: string = null, gasLimit: string = null) {
     const Tx = require('ethereumjs-tx')
     if (privateKey.startsWith('0x')) {
       privateKey = privateKey.substring(2, privateKey.length)
@@ -389,7 +388,7 @@ class EthWalletHelper extends BaseEtherLike {
       txId: '0x' + tx.hash().toString('hex'),
       dataFee: tx.getDataFee().toString(10).multi_(gasPrice),
       allFee: tx.getBaseFee().toString(10).multi_(gasPrice),
-      nonce: tx['nonce'].toDecimalString_(),
+      nonce: tx['nonce'].toDecimalString_().toNumber_(),
       gasPrice: tx['gasPrice'].toDecimalString_(),
       gasLimit: tx['gasLimit'].toDecimalString_(),
       to: tx['to'].toHexString_(),
@@ -404,7 +403,7 @@ class EthWalletHelper extends BaseEtherLike {
    * @param compiledContract
    * @param contractName {string} 要发布哪个Contract
    * @param privateKey
-   * @param nonce {string} 十进制字符串
+   * @param nonce {number} 十进制
    * @param gasPrice
    * @param gasLimit
    * @param constructorArgs {object} {methodParamTypes, params}
@@ -446,7 +445,7 @@ class EthWalletHelper extends BaseEtherLike {
       txId: '0x' + tx.hash().toString('hex'),
       dataFee: tx.getDataFee().toString(10).multi_(gasPrice),
       allFee: tx.getBaseFee().toString(10).multi_(gasPrice),
-      nonce: tx['nonce'].toDecimalString_(),
+      nonce: tx['nonce'].toDecimalString_().toNumber_(),
       gasPrice: tx['gasPrice'].toDecimalString_(),
       gasLimit: tx['gasLimit'].toDecimalString_(),
       to: tx['to'].toHexString_(),
