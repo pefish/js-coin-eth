@@ -1,4 +1,4 @@
-import 'js-node-assist';
+import '@pefish/js-node-assist';
 export default class ABI {
     static eventID(name: any, types: any): Buffer;
     static methodID(name: any, types: any): Buffer;

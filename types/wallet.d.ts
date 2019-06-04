@@ -1,5 +1,5 @@
 /** @module */
-import 'js-node-assist';
+import '@pefish/js-node-assist';
 import BaseEtherLike from './base/base_ether_like';
 /**
  * 以太坊钱包帮助类
@@ -68,23 +68,8 @@ declare class EthWalletHelper extends BaseEtherLike {
     /**
      * 解码txHex
      * @param txHex
-     * @returns {{nonce: String|*, gasPrice: String|*, gasLimit: String|*, to: *, value: String|*, data: *, v: *, r: string|*, s: string|*, from: *, _chainId: *, _homestead: boolean}}
      */
-    decodeTxHex(txHex: any): {
-        txId: string;
-        nonce: any;
-        gasPrice: any;
-        gasLimit: any;
-        to: any;
-        value: any;
-        data: any;
-        v: any;
-        r: any;
-        s: any;
-        from: any;
-        _chainId: any;
-        _homestead: any;
-    };
+    decodeTxHex(txHex: string): object;
     encryptToKeystore(pass: any, privateKey: any): any;
     decryptKeystoreV2(keystoreStr: any, pass: any): any;
     /**
@@ -125,12 +110,12 @@ declare class EthWalletHelper extends BaseEtherLike {
      * @param methodName {string} 要调用的方法名
      * @param methodParamTypes {array} ['address', 'number']
      * @param params {array} 如 ['0x00367f9370A71Cf482A64394dFB2367aa3a34339', '100']
-     * @param nonce {string} 十进制字符串
+     * @param nonce {number} 十进制
      * @param gasPrice
      * @param gasLimit
      * @returns {{txHex: string, txId: string, dataFee: any|*, allFee: any|*, nonce: number|*, gasPrice: number|*, gasLimit: number|*, to: *, value: number|*, data: *, from: *}}
      */
-    buildContractTransaction(privateKey: any, contractAddress: any, methodName: any, methodParamTypes: any, params: any, nonce: number, gasPrice?: any, gasLimit?: any): {
+    buildContractTransaction(privateKey: string, contractAddress: string, methodName: string, methodParamTypes: Array<string>, params: Array<string>, nonce: number, gasPrice?: string, gasLimit?: string): {
         txHex: string;
         txId: string;
         dataFee: any;
@@ -143,7 +128,7 @@ declare class EthWalletHelper extends BaseEtherLike {
         data: any;
         from: any;
     };
-    buildContractTxV2(privateKey: any, fromAddress: any, contractAddress: any, methodName: any, methodParamTypes: any, params: any, value: any, nonce: number, gasPrice?: any, gasLimit?: any): {
+    buildContractTxV2(privateKey: string, fromAddress: string, contractAddress: string, methodName: string, methodParamTypes: Array<string>, params: Array<string>, value: string, nonce: number, gasPrice?: string, gasLimit?: string): {
         txHex: string;
         txId: string;
         dataFee: any;
@@ -161,7 +146,7 @@ declare class EthWalletHelper extends BaseEtherLike {
      * @param compiledContract
      * @param contractName {string} 要发布哪个Contract
      * @param privateKey
-     * @param nonce {string} 十进制字符串
+     * @param nonce {number} 十进制
      * @param gasPrice
      * @param gasLimit
      * @param constructorArgs {object} {methodParamTypes, params}

@@ -1,8 +1,8 @@
 /** @module */
-import 'js-node-assist'
+import '@pefish/js-node-assist'
 import BaseEtherLike from './base/base_ether_like'
 import crypto from 'crypto'
-import ErrorHelper from 'p-js-error'
+import ErrorHelper from '@pefish/js-error'
 import abiUtil from './abi'
 
 /**

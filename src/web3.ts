@@ -1,4 +1,4 @@
-import ErrorHelper from 'p-js-error'
+import ErrorHelper from '@pefish/js-error'
 import Web3 from 'web3'
 import BaseEtherLike from "./base/base_ether_like";
 

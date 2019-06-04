@@ -54,6 +54,29 @@
   resolved "https://registry.yarnpkg.com/@parity/wordlist/-/wordlist-1.1.0.tgz#9e9ed3ab7837f5633b5844e60a355e9e63e427ae"
   integrity sha1-np7Tq3g39WM7WETmCjVenmPkJ64=
 
+"@pefish/js-error@^0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@pefish/js-error/-/js-error-0.0.5.tgz#be50104cb7e6cb115a31ccdc55dafcf09a65a4ec"
+  integrity sha512-Eypll4OykI0EWj61wx8/cVMVldGjiPJVic/KzK76z1RZiNN9Q2TF7DJif+qg7MBlGbJHAQZ77wIBv5x9fndxpw==
+
+"@pefish/js-node-assist@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@pefish/js-node-assist/-/js-node-assist-0.6.0.tgz#3c9b377c91c1fb91ef5bf1e6023b6cfd2eb4785f"
+  integrity sha512-IczCkklwLQaUz0H+m7r4D/ITe3BV50yZ2IkLC6cXfzHw/yybqmSpMyI44FaywVxMufyhRmFnWSfryd84+ratkw==
+  dependencies:
+    bignumber.js "^8.1.1"
+    p-js-assert "^0.0.1"
+    p-js-error "^0.0.4"
+
+"@pefish/js-util-httprequest@^0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@pefish/js-util-httprequest/-/js-util-httprequest-0.0.5.tgz#1b4a4552a55dba26d792537f605470a3e741fb67"
+  integrity sha512-S+HFbkIR4KR0yCy5VR468R1BoAeCsb0dO5gfhcwLuCcdBw4GJ9UB24+O1Mt/xCyN8B7Rlh0B0mvX64xaGKhkpw==
+  dependencies:
+    js-node-assist "^0.5.8"
+    p-js-error "^0.0.4"
+    restler "^3.4.0"
+
 "@types/bn.js@4.11.4", "@types/bn.js@^4.11.4":
   version "4.11.4"
   resolved "https://registry.yarnpkg.com/@types/bn.js/-/bn.js-4.11.4.tgz#a7bed5bdef9f16b25c92ba27745ab261374787d7"

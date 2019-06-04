@@ -1,4 +1,4 @@
-import 'js-node-assist'
+import '@pefish/js-node-assist'
 import assert from "assert"
 import EthWalletHelper from './wallet'
 import ParityRpcUtil from "./parity_rpc";
