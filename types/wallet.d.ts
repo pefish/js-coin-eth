@@ -15,13 +15,6 @@ declare class EthWalletHelper extends BaseEtherLike {
      */
     getBytecodeOfContract(compiledContract: any, contractName: any): string;
     /**
-     * 编译合约
-     * @param contractStr
-     * @param isOptimize
-     * @returns {*}
-     */
-    compileContract(contractStr: any, isOptimize?: number): any;
-    /**
      * 使用私钥签名消息
      * @param privateKey {string} 带0x
      * @param msg

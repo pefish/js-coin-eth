@@ -29,22 +29,6 @@ class EthWalletHelper extends BaseEtherLike {
   }
 
   /**
-   * 编译合约
-   * @param contractStr
-   * @param isOptimize
-   * @returns {*}
-   */
-  compileContract (contractStr, isOptimize = 1) {
-    const solc = require('solc')
-    const compiled = solc.compile(contractStr, isOptimize)
-    if (Object.keys(compiled['contracts']).length === 0) {
-      throw new ErrorHelper(compiled['errors'])
-    }
-    // logger.warn('compile warn: ', compiled['errors'])
-    return compiled
-  }
-
-  /**
    * 使用私钥签名消息
    * @param privateKey {string} 带0x
    * @param msg
