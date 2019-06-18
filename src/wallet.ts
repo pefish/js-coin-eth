@@ -4,6 +4,7 @@ import BaseEtherLike from './base/base_ether_like'
 import crypto from 'crypto'
 import ErrorHelper from '@pefish/js-error'
 import abiUtil from './abi'
+import solc from 'solc'
 
 /**
  * 以太坊钱包帮助类
@@ -35,7 +36,6 @@ class EthWalletHelper extends BaseEtherLike {
    * @returns {*}
    */
   compileContract (contractStr, isOptimize = 1) {
-    const solc = require('solc')
     const compiled = solc.compile(contractStr, isOptimize)
     if (Object.keys(compiled['contracts']).length === 0) {
       throw new ErrorHelper(compiled['errors'])
