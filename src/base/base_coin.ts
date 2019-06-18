@@ -2,6 +2,8 @@
  * Created by joy on 12/09/2017.
  */
 
+import bip39Lib from 'bip39'
+
 /**
  * 虚拟货币基类
  */
@@ -13,8 +15,7 @@ class BaseCoin {
    * @returns {string} 128位hex字符串
    */
   getSeedBufferByMnemonic (mnemonic: string, pass: string = ''): Buffer {
-    const bip39Lib = require('bip39')
-    return bip39Lib.mnemonicToSeed(mnemonic, pass) // 种子buffer, password是salt, 默认是'mnemonic'
+    return bip39Lib.mnemonicToSeedSync(mnemonic, pass) // 种子buffer, password是salt, 默认是'mnemonic'
   }
 
   /**
@@ -32,7 +33,6 @@ class BaseCoin {
    * @returns {*}
    */
   getRandomMnemonic (): string {
-    const bip39Lib = require('bip39')
     return bip39Lib.generateMnemonic()
   }
 }
