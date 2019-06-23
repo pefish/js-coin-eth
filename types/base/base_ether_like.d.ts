@@ -3,9 +3,9 @@
  */
 import BaseCoin from './base_coin';
 /**
- * 以太坊系基类
- * @extends BaseCoin
- */
+* 以太坊系基类
+* @extends BaseCoin
+*/
 declare class BaseEtherLike extends BaseCoin {
     constructor();
     getXprivBySeed(seedHex: string): string;

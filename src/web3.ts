@@ -1,6 +1,7 @@
 import ErrorHelper from '@pefish/js-error'
 import Web3 from 'web3'
 import BaseEtherLike from "./base/base_ether_like";
+import abiUtil from './abi'
 
 export class Browser extends BaseEtherLike {
 
@@ -96,12 +97,10 @@ export default class Web3Helper extends Browser {
   }
 
   static getMethodId(methodName, methodParamTypes) {
-    const abiUtil = require('./abi')
     return '0x' + abiUtil.methodID(methodName, methodParamTypes).toString(`hex`)
   }
 
   static encodePayload(methodName, methodParamTypes, params) {
-    const abiUtil = require('./abi')
     const paramsHex = abiUtil.rawEncode(methodParamTypes, params).toHexString_(false)
     return Web3Helper.getMethodId(methodName, methodParamTypes) + paramsHex
   }

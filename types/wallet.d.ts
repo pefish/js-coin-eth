@@ -27,29 +27,29 @@ declare class EthWalletHelper extends BaseEtherLike {
      * @param msg
      * @returns {string}
      */
-    signMessage(privateKey: any, msg: any): any;
+    signMessage(privateKey: any, msg: any): string;
     /**
      * 从签名中得到签名者地址。ECDSA算法中，只能是公约加密私钥解密、私钥签名公钥验证。私钥加密公钥不能解密,只能根据签名结果以及明文得到加密者公钥
      * @param signature {string} 私钥对msg签名后的值，从中可以得到r、s、v
      * @param msg {string} 源消息
      * @returns {any}
      */
-    recoverSignerAddress(signature: any, msg: any): any;
+    recoverSignerAddress(signature: any, msg: any): string;
     /**
      * 从签名中得到签名者公钥
      * @param signature
      * @param msg
      * @returns {any}
      */
-    recoverSignerPublicKey(signature: any, msg: any): any;
+    recoverSignerPublicKey(signature: any, msg: any): string;
     /**
      * 使用公钥加密字符串，只有私钥能解开
      * @param publicKey {string} 不带0x
      * @param msg
      * @returns {Promise<Encrypted>}
      */
-    encryptWithPublicKey(publicKey: any, msg: any): any;
-    decryptWithPrivateKey(privateKey: any, encryptedData: any): any;
+    encryptWithPublicKey(publicKey: any, msg: any): Promise<import("eth-crypto").Encrypted>;
+    decryptWithPrivateKey(privateKey: any, encryptedData: any): Promise<string>;
     /**
      * 获取合约的abi
      * @param compiledContract
@@ -71,14 +71,7 @@ declare class EthWalletHelper extends BaseEtherLike {
      */
     decodeTxHex(txHex: string): object;
     encryptToKeystore(pass: any, privateKey: any): any;
-    decryptKeystoreV2(keystoreStr: any, pass: any): any;
-    /**
-     * 解密keystore文件
-     * @param v3Keystore {string}
-     * @param password
-     * @returns {string}
-     */
-    decryptKeystore(v3Keystore: any, password: any): string;
+    decryptKeystore(keystoreStr: any, pass: any): any;
     /**
      * 构造交易
      * @param privateKey
@@ -172,7 +165,7 @@ declare class EthWalletHelper extends BaseEtherLike {
      * @param strToCalc {string} 如 transfer(address,uint256)
      * @returns {string}
      */
-    getMethodIdV1(strToCalc: any): any;
+    getMethodIdV1(strToCalc: any): string;
     getMethodId(methodName: any, methodParamTypes: any): string;
     /**
      * 解码data数据
@@ -199,7 +192,7 @@ declare class EthWalletHelper extends BaseEtherLike {
      */
     encodeParamsHex(methodParamTypes: any, params: any): string;
     decodeParamsHex(methodParamTypes: any, paramsHex: any): any[];
-    encodeToTopicHex(str: any): any;
+    encodeToTopicHex(str: any): string;
     /**
      * 调用智能合约的方法(constant为true的函数)
      * @param parityApiClient {object} parity api客户端实例

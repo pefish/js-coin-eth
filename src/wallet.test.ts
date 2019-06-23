@@ -230,17 +230,5 @@ describe('EthWalletHelper', () => {
       assert.throws(() => {}, err)
     }
   })
-
-  it('decryptKeystoreV2', async () => {
-    try {
-      const result = walletHelper.decryptKeystoreV2('{"address":"d5bd43c956e9afa3034958b42410c5acfdfaa720","crypto":{"cipher":"aes-128-ctr","ciphertext":"ac7f7e4a2f245d7dcef83e67a7b59d357695c51601e29a0e487a172e07081084","cipherparams":{"iv":"f70f5e51d606b9caebe15bd014c3bcdd"},"mac":"87dc9cb389e546a2e444d5f164ae15e16dcf2c3d67b3cd1ce07e0a7f70a07db7","kdf":"pbkdf2","kdfparams":{"c":262144,"dklen":32,"prf":"hmac-sha256","salt":"063419904460b0ecfa708c3050167d1060617769cb8fecc2bc3e8be71ddf1ae6"}},"id":"aac22315-85e3-42b9-9c0c-c3e278e7ffb7","version":3}', 'test')
-      // logger.error('result', result)
-      assert.strictEqual(result, '0x56d7fcd68b219238ce1789f3da653bc9842468b5b63dd8f97a6183e3ced2c67e')
-    } catch (err) {
-      global.logger.error(err)
-      assert.throws(() => {}, err)
-    }
-  })
-
 })
 

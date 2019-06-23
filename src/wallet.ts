@@ -1,10 +1,14 @@
 /** @module */
 import '@pefish/js-node-assist'
 import BaseEtherLike from './base/base_ether_like'
-import crypto from 'crypto'
 import ErrorHelper from '@pefish/js-error'
 import abiUtil from './abi'
 import solc from 'solc'
+import EthCrypto from 'eth-crypto'
+import Tx from 'ethereumjs-tx'
+import keythereum from 'keythereum'
+import Web3 from 'web3'
+import * as EtherUtil from 'ethereumjs-util'
 
 /**
  * 以太坊钱包帮助类
@@ -51,7 +55,6 @@ class EthWalletHelper extends BaseEtherLike {
    * @returns {string}
    */
   signMessage (privateKey, msg) {
-    const EthCrypto = require('eth-crypto')
     const messageHash = EthCrypto.hash.keccak256(msg)
     return EthCrypto.sign(
       privateKey,
@@ -66,7 +69,6 @@ class EthWalletHelper extends BaseEtherLike {
    * @returns {any}
    */
   recoverSignerAddress (signature, msg) {
-    const EthCrypto = require('eth-crypto')
     return EthCrypto.recover(
       signature,
       EthCrypto.hash.keccak256(msg) // signed message hash
@@ -80,7 +82,6 @@ class EthWalletHelper extends BaseEtherLike {
    * @returns {any}
    */
   recoverSignerPublicKey (signature, msg) {
-    const EthCrypto = require('eth-crypto')
     return EthCrypto.recoverPublicKey(
       signature,
       EthCrypto.hash.keccak256(msg) // signed message hash
@@ -94,7 +95,6 @@ class EthWalletHelper extends BaseEtherLike {
    * @returns {Promise<Encrypted>}
    */
   encryptWithPublicKey (publicKey, msg) {
-    const EthCrypto = require('eth-crypto')
     return EthCrypto.encryptWithPublicKey(
       publicKey,
       msg
@@ -102,7 +102,6 @@ class EthWalletHelper extends BaseEtherLike {
   }
 
   decryptWithPrivateKey (privateKey, encryptedData) {
-    const EthCrypto = require('eth-crypto')
     return EthCrypto.decryptWithPrivateKey(
       privateKey,
       encryptedData
@@ -142,7 +141,6 @@ class EthWalletHelper extends BaseEtherLike {
    * @param txHex
    */
   decodeTxHex (txHex: string): object {
-    const Tx = require('ethereumjs-tx')
     const tx = new Tx(txHex)
     return {
       txId: '0x' + tx.hash().toString('hex'),
@@ -162,7 +160,6 @@ class EthWalletHelper extends BaseEtherLike {
   }
 
   encryptToKeystore (pass, privateKey) {
-    const keythereum = require('keythereum')
     const dk = keythereum.create({ keyBytes: 32, ivBytes: 16 })
     return keythereum.dump(pass, privateKey.hexToBuffer_(), dk['salt'], dk['iv'], {
       kdf: 'pbkdf2',
@@ -175,48 +172,8 @@ class EthWalletHelper extends BaseEtherLike {
     })
   }
 
-  decryptKeystoreV2 (keystoreStr, pass) {
-    const keythereum = require('keythereum')
+  decryptKeystore (keystoreStr, pass) {
     return keythereum.recover(pass, JSON.parse(keystoreStr)).toHexString_()
-  }
-
-  /**
-   * 解密keystore文件
-   * @param v3Keystore {string}
-   * @param password
-   * @returns {string}
-   */
-  decryptKeystore (v3Keystore, password) {
-    const scryptsy = require('scrypt.js')
-    const Web3 = require('web3')
-    const json = JSON.parse(v3Keystore)
-
-    if (json.version !== 3) {
-      throw new ErrorHelper('Not a valid V3 wallet')
-    }
-
-    let derivedKey, kdfparams
-    if (json.crypto.kdf === 'scrypt') {
-      kdfparams = json.crypto.kdfparams
-      derivedKey = scryptsy(new Buffer(password), new Buffer(kdfparams.salt, 'hex'), kdfparams.n, kdfparams.r, kdfparams.p, kdfparams.dklen)
-    } else if (json.crypto.kdf === 'pbkdf2') {
-      kdfparams = json.crypto.kdfparams
-      if (kdfparams.prf !== 'hmac-sha256') {
-        throw new ErrorHelper('Unsupported parameters to PBKDF2')
-      }
-      derivedKey = crypto.pbkdf2Sync(new Buffer(password), new Buffer(kdfparams.salt, 'hex'), kdfparams.c, kdfparams.dklen, 'sha256')
-    } else {
-      throw new ErrorHelper('Unsupported key derivation scheme')
-    }
-    const ciphertext = new Buffer(json.crypto.ciphertext, 'hex')
-
-    const mac = new Web3(``).utils.sha3(Buffer.concat([ derivedKey.slice(16, 32), ciphertext ])).replace('0x','')
-    if (mac !== json.crypto.mac) {
-      throw new ErrorHelper('Key derivation failed - possibly wrong password')
-    }
-
-    const decipher = crypto.createDecipheriv(json.crypto.cipher, derivedKey.slice(0, 16), new Buffer(json.crypto.cipherparams.iv, 'hex'))
-    return '0x'+ Buffer.concat([ decipher.update(ciphertext), decipher.final() ]).toString('hex')
   }
 
   /**
@@ -231,7 +188,6 @@ class EthWalletHelper extends BaseEtherLike {
    */
   buildTransaction (privateKey: string, toAddress: string, amount: string, nonce: number, gasPrice: string = null, gasLimit: string = '21000'): object {
     // logger.error(arguments)
-    const Tx = require('ethereumjs-tx')
     if (privateKey.startsWith('0x')) {
       privateKey = privateKey.substring(2, privateKey.length)
     }
@@ -267,7 +223,6 @@ class EthWalletHelper extends BaseEtherLike {
 
   buildMsgTransaction (privateKey: string, msg: string, nonce: number, gasPrice: string = null, gasLimit: string = null) {
     // logger.error(arguments)
-    const Tx = require('ethereumjs-tx')
     if (privateKey.startsWith('0x')) {
       privateKey = privateKey.substring(2, privateKey.length)
     }
@@ -320,7 +275,6 @@ class EthWalletHelper extends BaseEtherLike {
    * @returns {{txHex: string, txId: string, dataFee: any|*, allFee: any|*, nonce: number|*, gasPrice: number|*, gasLimit: number|*, to: *, value: number|*, data: *, from: *}}
    */
   buildContractTransaction (privateKey: string, contractAddress: string, methodName: string, methodParamTypes: Array<string>, params: Array<string>, nonce: number, gasPrice: string = null, gasLimit: string = null) {
-    const Tx = require('ethereumjs-tx')
     const fromAddress = this.getAddressFromPrivateKey(privateKey)
     if (privateKey.startsWith('0x')) {
       privateKey = privateKey.substring(2, privateKey.length)
@@ -360,7 +314,6 @@ class EthWalletHelper extends BaseEtherLike {
   }
 
   buildContractTxV2 (privateKey: string, fromAddress: string, contractAddress: string, methodName: string, methodParamTypes: Array<string>, params: Array<string>, value: string, nonce: number, gasPrice: string = null, gasLimit: string = null) {
-    const Tx = require('ethereumjs-tx')
     if (privateKey.startsWith('0x')) {
       privateKey = privateKey.substring(2, privateKey.length)
     }
@@ -411,7 +364,6 @@ class EthWalletHelper extends BaseEtherLike {
    */
   buildDeployContractTx (compiledContract, contractName, privateKey, nonce: number, gasPrice = null, gasLimit = null, constructorArgs = null) {
     // logger.error('1', arguments)
-    const Tx = require('ethereumjs-tx')
     const fromAddress = this.getAddressFromPrivateKey(privateKey)
     if (privateKey.startsWith('0x')) {
       privateKey = privateKey.substring(2, privateKey.length)
@@ -463,7 +415,6 @@ class EthWalletHelper extends BaseEtherLike {
    * @returns {string}
    */
   getMethodIdV1 (strToCalc) {
-    const Web3 = require('web3')
     return new Web3(``).utils.sha3(strToCalc).substr(0, 10)
   }
 
@@ -514,7 +465,6 @@ class EthWalletHelper extends BaseEtherLike {
   }
 
   encodeToTopicHex (str) {
-    const EtherUtil = require('ethereumjs-util')
     return EtherUtil.keccak256(str).toHexString_()
   }
 
