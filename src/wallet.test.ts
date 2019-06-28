@@ -13,16 +13,16 @@ declare global {
 
 describe('EthWalletHelper', () => {
 
-  let walletHelper
+  let walletHelper, rpcHelper
 
   before(async () => {
     walletHelper = new EthWalletHelper()
+    rpcHelper = ParityRpcUtil.getParityApiHelper(`https://mainnet.infura.io/v3/aaa3fc062661462784b334a1a5c51940`)
   })
 
   it('getTokenBalance', async () => {
     try {
-      const helper = ParityRpcUtil.getParityApiHelper(`https://mainnet.infura.io/v3/aaa3fc062661462784b334a1a5c51940`)
-      const result = await walletHelper.getTokenBalance(helper, `0xf8c8c211e976cf65ec8f01b7c70021a3b8bf5575`, `0xbd8ebf00c0edf5bc68aba0b7f9244a4385fad0a2`)
+      const result = await walletHelper.getTokenBalance(rpcHelper, `0xf8c8c211e976cf65ec8f01b7c70021a3b8bf5575`, `0xbd8ebf00c0edf5bc68aba0b7f9244a4385fad0a2`)
       // global.logger.error('result', result)
       assert.strictEqual(result.gte_(0), true)
     } catch (err) {
@@ -225,6 +225,17 @@ describe('EthWalletHelper', () => {
       const result = walletHelper.encryptToKeystore('test', '0x56d7fcd68b219238ce1789f3da653bc9842468b5b63dd8f97a6183e3ced2c67e')
       // logger.error('result', JSON.stringify(result))
       assert.strictEqual(result['address'].toUpperCase(), 'd5bd43c956e9afa3034958b42410c5acfdfaa720'.toUpperCase())
+    } catch (err) {
+      global.logger.error(err)
+      assert.throws(() => {}, err)
+    }
+  })
+
+  it('getDecimals', async () => {
+    try {
+      const result = await walletHelper.getDecimals(rpcHelper, '0xF631f8186f4fBCb6723Bf5e513db35c45e581aD7')
+      // global.logger.error('result', result)
+      assert.strictEqual(result, 18)
     } catch (err) {
       global.logger.error(err)
       assert.throws(() => {}, err)

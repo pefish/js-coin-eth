@@ -16,7 +16,7 @@ import * as EtherUtil from 'ethereumjs-util'
  */
 class EthWalletHelper extends BaseEtherLike {
 
-  constructor () {
+  constructor() {
     super()
   }
 
@@ -26,7 +26,7 @@ class EthWalletHelper extends BaseEtherLike {
    * @param contractName {string} 要获取哪个合约的字节码
    * @returns {*}
    */
-  getBytecodeOfContract (compiledContract, contractName) {
+  getBytecodeOfContract(compiledContract, contractName) {
     if (!compiledContract['contracts'][`:${contractName}`]) {
       return null
     }
@@ -39,7 +39,7 @@ class EthWalletHelper extends BaseEtherLike {
    * @param isOptimize
    * @returns {*}
    */
-  compileContract (contractStr, isOptimize = 1) {
+  compileContract(contractStr, isOptimize = 1) {
     const compiled = solc.compile(contractStr, isOptimize)
     if (Object.keys(compiled['contracts']).length === 0) {
       throw new ErrorHelper(compiled['errors'])
@@ -54,7 +54,7 @@ class EthWalletHelper extends BaseEtherLike {
    * @param msg
    * @returns {string}
    */
-  signMessage (privateKey, msg) {
+  signMessage(privateKey, msg) {
     const messageHash = EthCrypto.hash.keccak256(msg)
     return EthCrypto.sign(
       privateKey,
@@ -68,7 +68,7 @@ class EthWalletHelper extends BaseEtherLike {
    * @param msg {string} 源消息
    * @returns {any}
    */
-  recoverSignerAddress (signature, msg) {
+  recoverSignerAddress(signature, msg) {
     return EthCrypto.recover(
       signature,
       EthCrypto.hash.keccak256(msg) // signed message hash
@@ -81,7 +81,7 @@ class EthWalletHelper extends BaseEtherLike {
    * @param msg
    * @returns {any}
    */
-  recoverSignerPublicKey (signature, msg) {
+  recoverSignerPublicKey(signature, msg) {
     return EthCrypto.recoverPublicKey(
       signature,
       EthCrypto.hash.keccak256(msg) // signed message hash
@@ -94,14 +94,14 @@ class EthWalletHelper extends BaseEtherLike {
    * @param msg
    * @returns {Promise<Encrypted>}
    */
-  encryptWithPublicKey (publicKey, msg) {
+  encryptWithPublicKey(publicKey, msg) {
     return EthCrypto.encryptWithPublicKey(
       publicKey,
       msg
     )
   }
 
-  decryptWithPrivateKey (privateKey, encryptedData) {
+  decryptWithPrivateKey(privateKey, encryptedData) {
     return EthCrypto.decryptWithPrivateKey(
       privateKey,
       encryptedData
@@ -115,7 +115,7 @@ class EthWalletHelper extends BaseEtherLike {
    * @param jsonParse {boolean} 是否需要parse
    * @returns {*}
    */
-  getAbiOfContract (compiledContract, contractName, jsonParse = true) {
+  getAbiOfContract(compiledContract, contractName, jsonParse = true) {
     if (!compiledContract['contracts'][`:${contractName}`]) {
       return null
     }
@@ -128,7 +128,7 @@ class EthWalletHelper extends BaseEtherLike {
    * @param contractName
    * @returns {*}
    */
-  getCompilerVersionOfContract (compiledContract, contractName) {
+  getCompilerVersionOfContract(compiledContract, contractName) {
     const meta = compiledContract['contracts'][`:${contractName}`]
     if (!meta) {
       return null
@@ -140,7 +140,7 @@ class EthWalletHelper extends BaseEtherLike {
    * 解码txHex
    * @param txHex
    */
-  decodeTxHex (txHex: string): object {
+  decodeTxHex(txHex: string): object {
     const tx = new Tx(txHex)
     return {
       txId: '0x' + tx.hash().toString('hex'),
@@ -159,8 +159,8 @@ class EthWalletHelper extends BaseEtherLike {
     }
   }
 
-  encryptToKeystore (pass, privateKey) {
-    const dk = keythereum.create({ keyBytes: 32, ivBytes: 16 })
+  encryptToKeystore(pass, privateKey) {
+    const dk = keythereum.create({keyBytes: 32, ivBytes: 16})
     return keythereum.dump(pass, privateKey.hexToBuffer_(), dk['salt'], dk['iv'], {
       kdf: 'pbkdf2',
       cipher: 'aes-128-ctr',
@@ -172,7 +172,7 @@ class EthWalletHelper extends BaseEtherLike {
     })
   }
 
-  decryptKeystore (keystoreStr, pass) {
+  decryptKeystore(keystoreStr, pass) {
     return keythereum.recover(pass, JSON.parse(keystoreStr)).toHexString_()
   }
 
@@ -187,7 +187,7 @@ class EthWalletHelper extends BaseEtherLike {
    * @param chainId {number}
    * @returns {string}
    */
-  buildTransaction (privateKey: string, toAddress: string, amount: string, nonce: number, gasPrice: string = null, gasLimit: string = '21000', chainId: number = null): object {
+  buildTransaction(privateKey: string, toAddress: string, amount: string, nonce: number, gasPrice: string = null, gasLimit: string = '21000', chainId: number = null): object {
     // logger.error(arguments)
     if (privateKey.startsWith('0x')) {
       privateKey = privateKey.substring(2, privateKey.length)
@@ -225,7 +225,7 @@ class EthWalletHelper extends BaseEtherLike {
     }
   }
 
-  buildMsgTransaction (privateKey: string, msg: string, nonce: number, gasPrice: string = null, gasLimit: string = null, chainId: number = null) {
+  buildMsgTransaction(privateKey: string, msg: string, nonce: number, gasPrice: string = null, gasLimit: string = null, chainId: number = null) {
     // logger.error(arguments)
     if (privateKey.startsWith('0x')) {
       privateKey = privateKey.substring(2, privateKey.length)
@@ -282,7 +282,7 @@ class EthWalletHelper extends BaseEtherLike {
    * @param chainId {number}
    * @returns {{txHex: string, txId: string, dataFee: any|*, allFee: any|*, nonce: number|*, gasPrice: number|*, gasLimit: number|*, to: *, value: number|*, data: *, from: *}}
    */
-  buildContractTransaction (privateKey: string, contractAddress: string, methodName: string, methodParamTypes: Array<string>, params: Array<string>, nonce: number, gasPrice: string = null, gasLimit: string = null, chainId: number = null) {
+  buildContractTransaction(privateKey: string, contractAddress: string, methodName: string, methodParamTypes: Array<string>, params: Array<string>, nonce: number, gasPrice: string = null, gasLimit: string = null, chainId: number = null) {
     const fromAddress = this.getAddressFromPrivateKey(privateKey)
     if (privateKey.startsWith('0x')) {
       privateKey = privateKey.substring(2, privateKey.length)
@@ -324,17 +324,11 @@ class EthWalletHelper extends BaseEtherLike {
     }
   }
 
-  buildContractTxV2 (privateKey: string, fromAddress: string, contractAddress: string, methodName: string, methodParamTypes: Array<string>, params: Array<string>, value: string, nonce: number, gasPrice: string = null, gasLimit: string = null, chainId: number = null) {
+  buildContractTx(privateKey: string, fromAddress: string, contractAddress: string, methodName: string, methodParamTypes: Array<string>, params: Array<string>, value: string, nonce: number, gasPrice: string = '20000000000', gasLimit: string = '900000', chainId: number = null) {
     if (privateKey.startsWith('0x')) {
       privateKey = privateKey.substring(2, privateKey.length)
     }
     const privateKeyBuffer = new Buffer(privateKey, 'hex')
-    if (!gasPrice) {
-      gasPrice = '20000000000'
-    }
-    if (!gasLimit) {
-      gasLimit = '900000'
-    }
     const rawTx = {
       from: fromAddress,
       nonce: nonce.toString().decimalToHexString_(),
@@ -377,7 +371,7 @@ class EthWalletHelper extends BaseEtherLike {
    * @param chainId {number}
    * @returns {{txHex: string, txId: string, dataFee: any|*, allFee: any|*, nonce: number|*, gasPrice: number|*, gasLimit: number|*, to: *, value: number|*, data: *, from: *, compileVersion: *, abi: *}}
    */
-  buildDeployContractTx (compiledContract, contractName, privateKey, nonce: number, gasPrice = null, gasLimit = null, constructorArgs = null, chainId: number = null) {
+  buildDeployContractTx(compiledContract, contractName, privateKey, nonce: number, gasPrice = null, gasLimit = null, constructorArgs = null, chainId: number = null) {
     // logger.error('1', arguments)
     const fromAddress = this.getAddressFromPrivateKey(privateKey)
     if (privateKey.startsWith('0x')) {
@@ -429,14 +423,14 @@ class EthWalletHelper extends BaseEtherLike {
 
   /**
    * 获取智能合约方法id
-   * @param strToCalc {string} 如 transfer(address,uint256)
+   * @param method {string} 如 transfer(address,uint256)
    * @returns {string}
    */
-  getMethodIdV1 (strToCalc) {
-    return new Web3(``).utils.sha3(strToCalc).substr(0, 10)
+  getMethodIdV1(method) {
+    return new Web3(``).utils.sha3(method).substr(0, 10)
   }
 
-  getMethodId (methodName, methodParamTypes) {
+  getMethodId(methodName, methodParamTypes) {
     return '0x' + abiUtil.methodID(methodName, methodParamTypes).toString(`hex`)
   }
 
@@ -445,7 +439,7 @@ class EthWalletHelper extends BaseEtherLike {
    * @param payloadTx {string} 如 0xa9059cbb000000000000000000000000fb7d9853a1d7d96591530ec0a8f66aff35cb1e2100000000000000000000000000000000000000000000000098a7d9b8314c0000
    * @param methodParamTypes {array} ['uint256', 'address']
    */
-  decodePayload (payloadTx, methodParamTypes) {
+  decodePayload(payloadTx, methodParamTypes) {
     const dataBuf = new Buffer(payloadTx.replace(/^0x/, ``), `hex`)
     const methodId = dataBuf.slice(0, 4).toString(`hex`)
     const inputsBuf = dataBuf.slice(4)
@@ -463,7 +457,7 @@ class EthWalletHelper extends BaseEtherLike {
    * @param params {array}
    * @returns {*}
    */
-  encodePayload (methodIdHex, methodParamTypes, params) {
+  encodePayload(methodIdHex, methodParamTypes, params) {
     return methodIdHex + this.encodeParamsHex(methodParamTypes, params)
   }
 
@@ -473,16 +467,16 @@ class EthWalletHelper extends BaseEtherLike {
    * @param params
    * @returns {*}
    */
-  encodeParamsHex (methodParamTypes, params) {
+  encodeParamsHex(methodParamTypes, params) {
     return abiUtil.rawEncode(methodParamTypes, params).toHexString_(false)
   }
 
-  decodeParamsHex (methodParamTypes, paramsHex) {
+  decodeParamsHex(methodParamTypes, paramsHex) {
     const dataBuf = new Buffer(paramsHex.replace(/^0x/, ``), `hex`)
     return abiUtil.rawDecode(methodParamTypes, dataBuf)
   }
 
-  encodeToTopicHex (str) {
+  encodeToTopicHex(str) {
     return EtherUtil.keccak256(str).toHexString_()
   }
 
@@ -496,36 +490,52 @@ class EthWalletHelper extends BaseEtherLike {
    * @param params
    * @returns {Promise<void>}
    */
-  callContract (parityApiClient, abiStr, contractAddress, funName, opts = {}, params = []) {
+  callContract(parityApiClient, abiStr, contractAddress, funName, opts = {}, params = []) {
     const abi = JSON.parse(abiStr)
     const contract = parityApiClient.newContract(abi, contractAddress)
     return contract.instance[funName].call(opts, params)
   }
 
-  async getTokenBalance (parityApiClient, contractAddress, address): Promise<string> {
+  async getTokenBalance(parityApiClient, contractAddress, address): Promise<string> {
     const abi = [
       {
-        "constant":true,
-        "inputs":[
+        "constant": true,
+        "inputs": [
           {
-            "name":"_owner",
-            "type":"address"
+            "name": "_owner",
+            "type": "address"
           }
         ],
-        "name":"balanceOf",
-        "outputs":[
+        "name": "balanceOf",
+        "outputs": [
           {
-            "name":"balance",
-            "type":"uint256"
+            "name": "balance",
+            "type": "uint256"
           }
         ],
-        "payable":false,
-        "stateMutability":"view",
-        "type":"function"
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
       }
     ]
     const contract = parityApiClient.newContract(abi, contractAddress)
     return (await contract.instance[`balanceOf`].call({}, [address])).toString(10)
+  }
+
+  async getDecimals(parityApiClient, contractAddress): Promise<number> {
+    const abi = [
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "decimals",
+        "outputs": [{"name": "", "type": "uint8"}],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      }
+    ]
+    const contract = parityApiClient.newContract(abi, contractAddress)
+    return (await contract.instance[`decimals`].call({}, [])).toString(10).toNumber_()
   }
 }
 

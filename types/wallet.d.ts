@@ -123,7 +123,7 @@ declare class EthWalletHelper extends BaseEtherLike {
         data: any;
         from: any;
     };
-    buildContractTxV2(privateKey: string, fromAddress: string, contractAddress: string, methodName: string, methodParamTypes: Array<string>, params: Array<string>, value: string, nonce: number, gasPrice?: string, gasLimit?: string, chainId?: number): {
+    buildContractTx(privateKey: string, fromAddress: string, contractAddress: string, methodName: string, methodParamTypes: Array<string>, params: Array<string>, value: string, nonce: number, gasPrice?: string, gasLimit?: string, chainId?: number): {
         txHex: string;
         txId: string;
         dataFee: any;
@@ -165,10 +165,10 @@ declare class EthWalletHelper extends BaseEtherLike {
     };
     /**
      * 获取智能合约方法id
-     * @param strToCalc {string} 如 transfer(address,uint256)
+     * @param method {string} 如 transfer(address,uint256)
      * @returns {string}
      */
-    getMethodIdV1(strToCalc: any): string;
+    getMethodIdV1(method: any): string;
     getMethodId(methodName: any, methodParamTypes: any): string;
     /**
      * 解码data数据
@@ -208,5 +208,6 @@ declare class EthWalletHelper extends BaseEtherLike {
      */
     callContract(parityApiClient: any, abiStr: any, contractAddress: any, funName: any, opts?: {}, params?: any[]): any;
     getTokenBalance(parityApiClient: any, contractAddress: any, address: any): Promise<string>;
+    getDecimals(parityApiClient: any, contractAddress: any): Promise<number>;
 }
 export default EthWalletHelper;
