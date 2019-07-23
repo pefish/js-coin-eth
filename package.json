@@ -1,6 +1,6 @@
 {
   "name": "@pefish/js-coin-eth",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "description": "eth common of js",
   "keywords": [
     "common",
@@ -22,7 +22,7 @@
   },
   "scripts": {
     "build": "rm -rf lib && rm -rf types && tsc",
-    "test": "mocha --timeout 6000 --require ts-node/register",
+    "test": "mocha --timeout 15000 --require ts-node/register",
     "prepublish": "yarn build"
   },
   "dependencies": {
@@ -42,10 +42,10 @@
     "web3": "^1.0.0-beta.46"
   },
   "devDependencies": {
+    "@pefish/js-util-starter": "^0.0.4",
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.6",
     "@types/node": "^11.13.7",
-    "p-js-rsk-api": "^2.1.16",
     "ts-node": "^8.1.0",
     "typescript": "^3.4.5"
   }

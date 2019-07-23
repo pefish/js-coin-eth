@@ -9,15 +9,21 @@ import Tx from 'ethereumjs-tx'
 import keythereum from 'keythereum'
 import Web3 from 'web3'
 import * as EtherUtil from 'ethereumjs-util'
+import Remote from './remote'
 
 /**
  * 以太坊钱包帮助类
  * @extends BaseEtherLike
  */
 class EthWalletHelper extends BaseEtherLike {
+  remoteClient: Remote
 
   constructor() {
     super()
+  }
+
+  initRemoteClient (url: string): void {
+    this.remoteClient = new Remote(url)
   }
 
   /**
@@ -478,64 +484,6 @@ class EthWalletHelper extends BaseEtherLike {
 
   encodeToTopicHex(str) {
     return EtherUtil.keccak256(str).toHexString_()
-  }
-
-  /**
-   * 调用智能合约的方法(constant为true的函数)
-   * @param parityApiClient {object} parity api客户端实例
-   * @param abiStr {string} 合约的abi
-   * @param contractAddress {string} 合约地址
-   * @param funName {string} 要调用的函数名
-   * @param opts
-   * @param params
-   * @returns {Promise<void>}
-   */
-  callContract(parityApiClient, abiStr, contractAddress, funName, opts = {}, params = []) {
-    const abi = JSON.parse(abiStr)
-    const contract = parityApiClient.newContract(abi, contractAddress)
-    return contract.instance[funName].call(opts, params)
-  }
-
-  async getTokenBalance(parityApiClient, contractAddress, address): Promise<string> {
-    const abi = [
-      {
-        "constant": true,
-        "inputs": [
-          {
-            "name": "_owner",
-            "type": "address"
-          }
-        ],
-        "name": "balanceOf",
-        "outputs": [
-          {
-            "name": "balance",
-            "type": "uint256"
-          }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-      }
-    ]
-    const contract = parityApiClient.newContract(abi, contractAddress)
-    return (await contract.instance[`balanceOf`].call({}, [address])).toString(10)
-  }
-
-  async getDecimals(parityApiClient, contractAddress): Promise<number> {
-    const abi = [
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "decimals",
-        "outputs": [{"name": "", "type": "uint8"}],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-      }
-    ]
-    const contract = parityApiClient.newContract(abi, contractAddress)
-    return (await contract.instance[`decimals`].call({}, [])).toString(10).toNumber_()
   }
 }
 

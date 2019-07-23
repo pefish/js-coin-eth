@@ -1,12 +1,15 @@
 /** @module */
 import '@pefish/js-node-assist';
 import BaseEtherLike from './base/base_ether_like';
+import Remote from './remote';
 /**
  * 以太坊钱包帮助类
  * @extends BaseEtherLike
  */
 declare class EthWalletHelper extends BaseEtherLike {
+    remoteClient: Remote;
     constructor();
+    initRemoteClient(url: string): void;
     /**
      * 获取合约的字节码
      * @param compiledContract
@@ -196,18 +199,5 @@ declare class EthWalletHelper extends BaseEtherLike {
     encodeParamsHex(methodParamTypes: any, params: any): string;
     decodeParamsHex(methodParamTypes: any, paramsHex: any): any[];
     encodeToTopicHex(str: any): string;
-    /**
-     * 调用智能合约的方法(constant为true的函数)
-     * @param parityApiClient {object} parity api客户端实例
-     * @param abiStr {string} 合约的abi
-     * @param contractAddress {string} 合约地址
-     * @param funName {string} 要调用的函数名
-     * @param opts
-     * @param params
-     * @returns {Promise<void>}
-     */
-    callContract(parityApiClient: any, abiStr: any, contractAddress: any, funName: any, opts?: {}, params?: any[]): any;
-    getTokenBalance(parityApiClient: any, contractAddress: any, address: any): Promise<string>;
-    getDecimals(parityApiClient: any, contractAddress: any): Promise<number>;
 }
 export default EthWalletHelper;
