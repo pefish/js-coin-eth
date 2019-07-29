@@ -1,6 +1,6 @@
 {
   "name": "@pefish/js-coin-eth",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "eth common of js",
   "keywords": [
     "common",
@@ -12,10 +12,11 @@
   "bugs": "https://github.com/pefish/js-coin-eth/issues",
   "license": "MIT",
   "author": "pefish",
+  "types": "./types/index.d.ts",
+  "main": "./lib/index.js",
   "engines": {
     "node": "*"
   },
-  "types": "./types/*.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/pefish/js-coin-eth"
@@ -27,9 +28,9 @@
   },
   "dependencies": {
     "@parity/api": "^4.0.3",
-    "@pefish/js-error": "^0.0.5",
-    "@pefish/js-node-assist": "^0.6.0",
-    "@pefish/js-util-httprequest": "^0.0.5",
+    "@pefish/js-error": "^0.1.1",
+    "@pefish/js-node-assist": "^0.6.6",
+    "@pefish/js-util-httprequest": "^0.0.9",
     "bip39": "^3.0.2",
     "bitcore-lib": "^8.3.4",
     "bn.js": "^4.11.8",
@@ -42,7 +43,6 @@
     "web3": "^1.0.0-beta.46"
   },
   "devDependencies": {
-    "@pefish/js-util-starter": "^0.0.4",
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.6",
     "@types/node": "^11.13.7",

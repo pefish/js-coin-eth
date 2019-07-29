@@ -1,7 +1,6 @@
 import '@pefish/js-node-assist'
 import assert from "assert"
 import EthWalletHelper from './wallet'
-import ParityRpcUtil from "./parity_rpc";
 
 declare global {
   namespace NodeJS {
@@ -17,7 +16,6 @@ describe('EthWalletHelper', () => {
 
   before(async () => {
     walletHelper = new EthWalletHelper()
-    rpcHelper = ParityRpcUtil.getParityApiHelper(`https://mainnet.infura.io/v3/aaa3fc062661462784b334a1a5c51940`)
   })
 
   it('getTokenBalance', async () => {
