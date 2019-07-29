@@ -149,7 +149,7 @@ declare class EthWalletHelper extends BaseEtherLike {
      * @param constructorArgs {object} {methodParamTypes, params}
      * @returns {{txHex: string, txId: string, dataFee: any|*, allFee: any|*, nonce: number|*, gasPrice: number|*, gasLimit: number|*, to: *, value: number|*, data: *, from: *, compileVersion: *, abi: *}}
      */
-    buildDeployContractTx(compiledContract: any, contractName: any, privateKey: any, nonce: number, gasPrice?: any, gasLimit?: any, constructorArgs?: any): {
+    buildDeployContractTx(compiledContract: any, contractName: any, privateKey: any, nonce: number, gasPrice?: string, gasLimit?: string, constructorArgs?: any): {
         txHex: string;
         txId: string;
         dataFee: any;
