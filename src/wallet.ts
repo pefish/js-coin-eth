@@ -193,15 +193,12 @@ class EthWalletHelper extends BaseEtherLike {
    * @param gasLimit {string} 单位wei, 十进制
    * @returns {string}
    */
-  buildTransaction(privateKey: string, toAddress: string, amount: string, nonce: number, gasPrice: string = null, gasLimit: string = '21000'): object {
+  buildTransaction(privateKey: string, toAddress: string, amount: string, nonce: number, gasPrice: string = '20000000000', gasLimit: string = '21000'): object {
     // logger.error(arguments)
     if (privateKey.startsWith('0x')) {
       privateKey = privateKey.substring(2, privateKey.length)
     }
     const privateKeyBuffer = new Buffer(privateKey, 'hex')
-    if (!gasPrice) {
-      gasPrice = '20000000000'
-    }
     const rawTx = {
       nonce: nonce.toString().decimalToHexString_(),
       gasPrice: gasPrice.decimalToHexString_(),
@@ -229,19 +226,13 @@ class EthWalletHelper extends BaseEtherLike {
     }
   }
 
-  buildMsgTransaction(privateKey: string, msg: string, nonce: number, gasPrice: string = null, gasLimit: string = null) {
+  buildMsgTransaction(privateKey: string, msg: string, nonce: number, gasPrice: string = '20000000000', gasLimit: string = '900000') {
     // logger.error(arguments)
     if (privateKey.startsWith('0x')) {
       privateKey = privateKey.substring(2, privateKey.length)
     }
     const privateKeyBuffer = new Buffer(privateKey, 'hex')
     const sourceAddress = this.getAddressFromPrivateKey(privateKey)
-    if (!gasPrice) {
-      gasPrice = '20000000000'
-    }
-    if (!gasLimit) {
-      gasLimit = '900000'
-    }
     const rawTx = {
       nonce: nonce.toString().decimalToHexString_(),
       gasPrice: gasPrice.decimalToHexString_(),
@@ -283,18 +274,12 @@ class EthWalletHelper extends BaseEtherLike {
    * @param gasLimit
    * @returns {{txHex: string, txId: string, dataFee: any|*, allFee: any|*, nonce: number|*, gasPrice: number|*, gasLimit: number|*, to: *, value: number|*, data: *, from: *}}
    */
-  buildContractTransaction(privateKey: string, contractAddress: string, methodName: string, methodParamTypes: Array<string>, params: Array<string>, nonce: number, gasPrice: string = null, gasLimit: string = null) {
+  buildContractTransaction(privateKey: string, contractAddress: string, methodName: string, methodParamTypes: Array<string>, params: Array<string>, nonce: number, gasPrice: string = '20000000000', gasLimit: string = '300000') {
     const fromAddress = this.getAddressFromPrivateKey(privateKey)
     if (privateKey.startsWith('0x')) {
       privateKey = privateKey.substring(2, privateKey.length)
     }
     const privateKeyBuffer = new Buffer(privateKey, 'hex')
-    if (!gasPrice) {
-      gasPrice = '20000000000'
-    }
-    if (!gasLimit) {
-      gasLimit = '900000'
-    }
     const rawTx = {
       from: fromAddress,
       nonce: nonce.toString().decimalToHexString_(),
@@ -367,20 +352,13 @@ class EthWalletHelper extends BaseEtherLike {
    * @param constructorArgs {object} {methodParamTypes, params}
    * @returns {{txHex: string, txId: string, dataFee: any|*, allFee: any|*, nonce: number|*, gasPrice: number|*, gasLimit: number|*, to: *, value: number|*, data: *, from: *, compileVersion: *, abi: *}}
    */
-  buildDeployContractTx(compiledContract, contractName, privateKey, nonce: number, gasPrice = null, gasLimit = null, constructorArgs = null) {
+  buildDeployContractTx(compiledContract, contractName, privateKey, nonce: number, gasPrice: string = '20000000000', gasLimit: string = '3000000', constructorArgs = null) {
     // logger.error('1', arguments)
     const fromAddress = this.getAddressFromPrivateKey(privateKey)
     if (privateKey.startsWith('0x')) {
       privateKey = privateKey.substring(2, privateKey.length)
     }
     const privateKeyBuffer = new Buffer(privateKey, 'hex')
-    if (!gasPrice) {
-      gasPrice = '20000000000'
-    }
-    if (!gasLimit) {
-      gasLimit = '3000000'
-    }
-
     let data = this.getBytecodeOfContract(compiledContract, contractName)
     if (constructorArgs !== null) {
       data += this.encodeParamsHex(constructorArgs['methodParamTypes'], constructorArgs['params'])
