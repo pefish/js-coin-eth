@@ -18,17 +18,6 @@ describe('EthWalletHelper', () => {
     walletHelper = new EthWalletHelper()
   })
 
-  it('getTokenBalance', async () => {
-    try {
-      const result = await walletHelper.getTokenBalance(rpcHelper, `0xf8c8c211e976cf65ec8f01b7c70021a3b8bf5575`, `0xbd8ebf00c0edf5bc68aba0b7f9244a4385fad0a2`)
-      // global.logger.error('result', result)
-      assert.strictEqual(result.gte_(0), true)
-    } catch (err) {
-      global.logger.error(err)
-      assert.throws(() => {}, err)
-    }
-  })
-
   it('encodeToTopicHex', async () => {
     try {
       const result = walletHelper.encodeToTopicHex(`0xd0c0f97199415ab5e27c248613e39807b0f85455`)
@@ -141,7 +130,7 @@ describe('EthWalletHelper', () => {
         '1000000'
       )
       // logger.error('result', result)
-      assert.strictEqual(result['txId'], '0x75d4fd42f2eb455aed1bccf0ef86b425d82e7a51fbd99a6b03250c6e3f8cd7da')
+      assert.strictEqual(result['txId'], '0x82fa95bcc9b12d53eef8f065a6124940e6290f208957dab0e76d4a21790d61f6')
     } catch (err) {
       global.logger.error(err)
       assert.throws(() => {}, err)

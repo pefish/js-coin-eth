@@ -8,6 +8,7 @@ import Remote from './remote';
  */
 declare class EthWalletHelper extends BaseEtherLike {
     remoteClient: Remote;
+    chainId: number;
     constructor();
     initRemoteClient(url: string): void;
     /**
@@ -83,11 +84,10 @@ declare class EthWalletHelper extends BaseEtherLike {
      * @param nonce {number} 十进制。即发送地址已经发送过多少笔交易
      * @param gasPrice {string} 单位wei, 十进制
      * @param gasLimit {string} 单位wei, 十进制
-     * @param chainId {number}
      * @returns {string}
      */
-    buildTransaction(privateKey: string, toAddress: string, amount: string, nonce: number, gasPrice?: string, gasLimit?: string, chainId?: number): object;
-    buildMsgTransaction(privateKey: string, msg: string, nonce: number, gasPrice?: string, gasLimit?: string, chainId?: number): {
+    buildTransaction(privateKey: string, toAddress: string, amount: string, nonce: number, gasPrice?: string, gasLimit?: string): object;
+    buildMsgTransaction(privateKey: string, msg: string, nonce: number, gasPrice?: string, gasLimit?: string): {
         txHex: string;
         txId: string;
         dataFee: any;
@@ -110,10 +110,9 @@ declare class EthWalletHelper extends BaseEtherLike {
      * @param nonce {number} 十进制
      * @param gasPrice
      * @param gasLimit
-     * @param chainId {number}
      * @returns {{txHex: string, txId: string, dataFee: any|*, allFee: any|*, nonce: number|*, gasPrice: number|*, gasLimit: number|*, to: *, value: number|*, data: *, from: *}}
      */
-    buildContractTransaction(privateKey: string, contractAddress: string, methodName: string, methodParamTypes: Array<string>, params: Array<string>, nonce: number, gasPrice?: string, gasLimit?: string, chainId?: number): {
+    buildContractTransaction(privateKey: string, contractAddress: string, methodName: string, methodParamTypes: Array<string>, params: Array<string>, nonce: number, gasPrice?: string, gasLimit?: string): {
         txHex: string;
         txId: string;
         dataFee: any;
@@ -126,7 +125,7 @@ declare class EthWalletHelper extends BaseEtherLike {
         data: any;
         from: any;
     };
-    buildContractTx(privateKey: string, fromAddress: string, contractAddress: string, methodName: string, methodParamTypes: Array<string>, params: Array<string>, value: string, nonce: number, gasPrice?: string, gasLimit?: string, chainId?: number): {
+    buildContractTx(privateKey: string, fromAddress: string, contractAddress: string, methodName: string, methodParamTypes: Array<string>, params: Array<string>, value: string, nonce: number, gasPrice?: string, gasLimit?: string): {
         txHex: string;
         txId: string;
         dataFee: any;
@@ -148,10 +147,9 @@ declare class EthWalletHelper extends BaseEtherLike {
      * @param gasPrice
      * @param gasLimit
      * @param constructorArgs {object} {methodParamTypes, params}
-     * @param chainId {number}
      * @returns {{txHex: string, txId: string, dataFee: any|*, allFee: any|*, nonce: number|*, gasPrice: number|*, gasLimit: number|*, to: *, value: number|*, data: *, from: *, compileVersion: *, abi: *}}
      */
-    buildDeployContractTx(compiledContract: any, contractName: any, privateKey: any, nonce: number, gasPrice?: any, gasLimit?: any, constructorArgs?: any, chainId?: number): {
+    buildDeployContractTx(compiledContract: any, contractName: any, privateKey: any, nonce: number, gasPrice?: any, gasLimit?: any, constructorArgs?: any): {
         txHex: string;
         txId: string;
         dataFee: any;
