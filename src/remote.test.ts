@@ -18,6 +18,17 @@ describe('Remote', () => {
     helper = new Remote(`https://mainnet.infura.io/v3/aaa3fc062661462784b334a1a5c51940`)
   })
 
+  it('getTransactionCount', async () => {
+    try {
+      const result = await helper.client.eth.getTransactionCount('0xF631f8186f4fBCb6723Bf5e513db35c45e581aD7')
+      // global.logger.error('result', result)
+      assert.strictEqual(result >= 0, true)
+    } catch (err) {
+      global.logger.error(err)
+      assert.throws(() => {}, err)
+    }
+  })
+
   it('getDecimals', async () => {
     try {
       const result = await helper.getDecimals('0xF631f8186f4fBCb6723Bf5e513db35c45e581aD7')
