@@ -23,7 +23,15 @@ declare class BaseEtherLike extends BaseCoin {
      * @returns {*|Boolean}
      */
     isAddress(address: string): boolean;
-    deriveAllByXprivPath(xpriv: string, path: string): object;
+    deriveAllByXprivPath(xpriv: string, path: string): {
+        parentXpriv: string;
+        path: string;
+        xpriv: string;
+        xpub: string;
+        address: string;
+        privateKey: string;
+        publicKey: string;
+    };
     /**
      * 根据私钥得到地址
      * @param privateKey

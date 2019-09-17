@@ -2,11 +2,28 @@
 import '@pefish/js-node-assist';
 import BaseEtherLike from './base/base_ether_like';
 import Remote from './remote';
+export interface TransactionResult {
+    txHex: string;
+    txId: string;
+    dataFee: string;
+    allFee: string;
+    nonce: number;
+    gasPrice: string;
+    gasLimit: string;
+    to: string;
+    value: string;
+    data: string;
+    from: string;
+    compileVersion?: string;
+    abi?: {
+        [x: string]: any;
+    };
+}
 /**
  * 以太坊钱包帮助类
  * @extends BaseEtherLike
  */
-declare class EthWalletHelper extends BaseEtherLike {
+export default class EthWallet extends BaseEtherLike {
     remoteClient: Remote;
     chainId: number;
     constructor();
@@ -17,43 +34,39 @@ declare class EthWalletHelper extends BaseEtherLike {
      * @param contractName {string} 要获取哪个合约的字节码
      * @returns {*}
      */
-    getBytecodeOfContract(compiledContract: any, contractName: any): string;
+    getBytecodeOfContract(compiledContract: any, contractName: string): string;
     /**
      * 编译合约
      * @param contractStr
      * @param isOptimize
      * @returns {*}
      */
-    compileContract(contractStr: any, isOptimize?: number): any;
+    compileContract(contractStr: string, isOptimize?: number): boolean;
     /**
      * 使用私钥签名消息
      * @param privateKey {string} 带0x
      * @param msg
      * @returns {string}
      */
-    signMessage(privateKey: any, msg: any): string;
+    signMessage(privateKey: string, msg: string): string;
     /**
      * 从签名中得到签名者地址。ECDSA算法中，只能是公约加密私钥解密、私钥签名公钥验证。私钥加密公钥不能解密,只能根据签名结果以及明文得到加密者公钥
      * @param signature {string} 私钥对msg签名后的值，从中可以得到r、s、v
      * @param msg {string} 源消息
-     * @returns {any}
      */
-    recoverSignerAddress(signature: any, msg: any): string;
+    recoverSignerAddress(signature: string, msg: string): string;
     /**
      * 从签名中得到签名者公钥
      * @param signature
      * @param msg
      * @returns {any}
      */
-    recoverSignerPublicKey(signature: any, msg: any): string;
+    recoverSignerPublicKey(signature: string, msg: string): string;
     /**
      * 使用公钥加密字符串，只有私钥能解开
-     * @param publicKey {string} 不带0x
-     * @param msg
-     * @returns {Promise<Encrypted>}
      */
-    encryptWithPublicKey(publicKey: any, msg: any): Promise<import("eth-crypto").Encrypted>;
-    decryptWithPrivateKey(privateKey: any, encryptedData: any): Promise<string>;
+    encryptWithPublicKey(publicKey: string, msg: string): Promise<string>;
+    decryptWithPrivateKey(privateKey: string, encryptedString: string): Promise<string>;
     /**
      * 获取合约的abi
      * @param compiledContract
@@ -61,21 +74,37 @@ declare class EthWalletHelper extends BaseEtherLike {
      * @param jsonParse {boolean} 是否需要parse
      * @returns {*}
      */
-    getAbiOfContract(compiledContract: any, contractName: any, jsonParse?: boolean): any;
+    getAbiOfContract(compiledContract: any, contractName: string, jsonParse?: boolean): {
+        [x: string]: any;
+    };
     /**
      * 获取编译器版本
      * @param compiledContract
      * @param contractName
      * @returns {*}
      */
-    getCompilerVersionOfContract(compiledContract: any, contractName: any): any;
+    getCompilerVersionOfContract(compiledContract: any, contractName: string): string;
     /**
      * 解码txHex
      * @param txHex
      */
-    decodeTxHex(txHex: string): object;
-    encryptToKeystore(pass: any, privateKey: any): any;
-    decryptKeystore(keystoreStr: any, pass: any): any;
+    decodeTxHex(txHex: string): {
+        txId: string;
+        nonce: number;
+        gasPrice: string;
+        gasLimit: string;
+        to: string;
+        value: string;
+        data: string;
+        v: string;
+        r: string;
+        s: string;
+        from: string;
+        _chainId: string;
+        _homestead: string;
+    };
+    encryptToKeystore(pass: string, privateKey: string): string;
+    decryptKeystore(keystoreStr: string, pass: string): string;
     /**
      * 构造交易
      * @param privateKey
@@ -86,20 +115,8 @@ declare class EthWalletHelper extends BaseEtherLike {
      * @param gasLimit {string} 单位wei, 十进制
      * @returns {string}
      */
-    buildTransaction(privateKey: string, toAddress: string, amount: string, nonce: number, gasPrice?: string, gasLimit?: string): object;
-    buildMsgTransaction(privateKey: string, msg: string, nonce: number, gasPrice?: string, gasLimit?: string): {
-        txHex: string;
-        txId: string;
-        dataFee: any;
-        allFee: any;
-        nonce: any;
-        gasPrice: any;
-        gasLimit: any;
-        to: any;
-        value: any;
-        data: any;
-        from: any;
-    };
+    buildTransaction(privateKey: string, toAddress: string, amount: string, nonce: number, gasPrice?: string, gasLimit?: string): TransactionResult;
+    buildMsgTransaction(privateKey: string, msg: string, nonce: number, gasPrice?: string, gasLimit?: string): TransactionResult;
     /**
      * 构建调用智能合约交易(调用constant为false的函数修改区块链数据)
      * @param privateKey
@@ -110,34 +127,9 @@ declare class EthWalletHelper extends BaseEtherLike {
      * @param nonce {number} 十进制
      * @param gasPrice
      * @param gasLimit
-     * @returns {{txHex: string, txId: string, dataFee: any|*, allFee: any|*, nonce: number|*, gasPrice: number|*, gasLimit: number|*, to: *, value: number|*, data: *, from: *}}
      */
-    buildContractTransaction(privateKey: string, contractAddress: string, methodName: string, methodParamTypes: Array<string>, params: Array<string>, nonce: number, gasPrice?: string, gasLimit?: string): {
-        txHex: string;
-        txId: string;
-        dataFee: any;
-        allFee: any;
-        nonce: any;
-        gasPrice: any;
-        gasLimit: any;
-        to: any;
-        value: any;
-        data: any;
-        from: any;
-    };
-    buildContractTx(privateKey: string, fromAddress: string, contractAddress: string, methodName: string, methodParamTypes: Array<string>, params: Array<string>, value: string, nonce: number, gasPrice?: string, gasLimit?: string): {
-        txHex: string;
-        txId: string;
-        dataFee: any;
-        allFee: any;
-        nonce: any;
-        gasPrice: any;
-        gasLimit: any;
-        to: any;
-        value: any;
-        data: any;
-        from: any;
-    };
+    buildContractTransaction(privateKey: string, contractAddress: string, methodName: string, methodParamTypes: string[], params: string[], nonce: number, gasPrice?: string, gasLimit?: string): TransactionResult;
+    buildContractTx(privateKey: string, fromAddress: string, contractAddress: string, methodName: string, methodParamTypes: string[], params: string[], value: string, nonce: number, gasPrice?: string, gasLimit?: string): TransactionResult;
     /**
      * 构建部署智能合约的交易
      * @param compiledContract
@@ -147,36 +139,21 @@ declare class EthWalletHelper extends BaseEtherLike {
      * @param gasPrice
      * @param gasLimit
      * @param constructorArgs {object} {methodParamTypes, params}
-     * @returns {{txHex: string, txId: string, dataFee: any|*, allFee: any|*, nonce: number|*, gasPrice: number|*, gasLimit: number|*, to: *, value: number|*, data: *, from: *, compileVersion: *, abi: *}}
      */
-    buildDeployContractTx(compiledContract: any, contractName: any, privateKey: any, nonce: number, gasPrice?: string, gasLimit?: string, constructorArgs?: any): {
-        txHex: string;
-        txId: string;
-        dataFee: any;
-        allFee: any;
-        nonce: any;
-        gasPrice: any;
-        gasLimit: any;
-        to: any;
-        value: any;
-        data: any;
-        from: any;
-        compileVersion: any;
-        abi: any;
-    };
+    buildDeployContractTx(compiledContract: any, contractName: string, privateKey: string, nonce: number, gasPrice?: string, gasLimit?: string, constructorArgs?: any): TransactionResult;
     /**
      * 获取智能合约方法id
      * @param method {string} 如 transfer(address,uint256)
      * @returns {string}
      */
-    getMethodIdV1(method: any): string;
-    getMethodId(methodName: any, methodParamTypes: any): string;
+    getMethodIdV1(method: string): string;
+    getMethodId(methodName: string, methodParamTypes: string[]): string;
     /**
      * 解码data数据
      * @param payloadTx {string} 如 0xa9059cbb000000000000000000000000fb7d9853a1d7d96591530ec0a8f66aff35cb1e2100000000000000000000000000000000000000000000000098a7d9b8314c0000
      * @param methodParamTypes {array} ['uint256', 'address']
      */
-    decodePayload(payloadTx: any, methodParamTypes: any): {
+    decodePayload(payloadTx: string, methodParamTypes: string[]): {
         methodIdHex: string;
         params: any[];
     };
@@ -187,15 +164,14 @@ declare class EthWalletHelper extends BaseEtherLike {
      * @param params {array}
      * @returns {*}
      */
-    encodePayload(methodIdHex: any, methodParamTypes: any, params: any): string;
+    encodePayload(methodIdHex: string, methodParamTypes: string[], params: string[]): string;
     /**
      * 编码参数成hex，不带0x
      * @param methodParamTypes
      * @param params
      * @returns {*}
      */
-    encodeParamsHex(methodParamTypes: any, params: any): string;
-    decodeParamsHex(methodParamTypes: any, paramsHex: any): any[];
-    encodeToTopicHex(str: any): string;
+    encodeParamsHex(methodParamTypes: string[], params: string[]): string;
+    decodeParamsHex(methodParamTypes: string[], paramsHex: string): any[];
+    encodeToTopicHex(str: string): string;
 }
-export default EthWalletHelper;

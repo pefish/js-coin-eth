@@ -45,7 +45,15 @@ class BaseEtherLike extends BaseCoin {
     return isValidAddress(address)
   }
 
-  deriveAllByXprivPath(xpriv: string, path: string): object {
+  deriveAllByXprivPath(xpriv: string, path: string): {
+    parentXpriv: string,
+    path: string,
+    xpriv: string,
+    xpub: string,
+    address: string,
+    privateKey: string,
+    publicKey: string,
+  } {
     const node = HdKey.fromExtendedKey(xpriv)
     const derivedNode = node.derivePath(path)
     const wallet = derivedNode.getWallet()
