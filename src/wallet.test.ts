@@ -129,7 +129,7 @@ describe('EthWalletHelper', () => {
         '3000000000',
         '1000000'
       )
-      // logger.error('result', result)
+      // global.logger.error('result', result)
       assert.strictEqual(result['txId'], '0x82fa95bcc9b12d53eef8f065a6124940e6290f208957dab0e76d4a21790d61f6')
     } catch (err) {
       global.logger.error(err)
