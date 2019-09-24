@@ -40,10 +40,10 @@
   resolved "https://registry.yarnpkg.com/@pefish/js-error/-/js-error-0.1.1.tgz#d3e6f4a1362206aaf73afd628465364c3a581ed2"
   integrity sha512-JNLY0twr0fVEnGgrMetZsBZrStDGmHDX0dY9amDChTzVqrGEd6dvpzkR9BxINGhWgeAX6naTzI2FZn3ZwGlrsw==
 
-"@pefish/js-node-assist@^0.6.6":
-  version "0.6.6"
-  resolved "https://registry.yarnpkg.com/@pefish/js-node-assist/-/js-node-assist-0.6.6.tgz#62673762c0dcc8ce3faf20c8bb777008fb69a084"
-  integrity sha512-IvdZCVDZXi2oc25XlKEHC7bCMaTNyDmYN+wPpcRQOEpa1A4JEsscIVWbw33zNMeKWuOfVWdFdJopgxwchRHx3A==
+"@pefish/js-node-assist@^0.6.9":
+  version "0.6.9"
+  resolved "https://registry.yarnpkg.com/@pefish/js-node-assist/-/js-node-assist-0.6.9.tgz#60d50c0f82469441d4cd22b51f2645585170f414"
+  integrity sha512-acqJwvoBDVem8hqxJ7ctdPoRuuyPLXEFjPeIzQy12x+zs4ktlYqQx0p+cH61pILRM4Z0RDDeK6MZYRSUDp6lAA==
   dependencies:
     "@pefish/js-error" "^0.1.1"
     bignumber.js "^8.1.1"
@@ -53,13 +53,12 @@
   resolved "https://registry.yarnpkg.com/@pefish/js-util-desensitize/-/js-util-desensitize-0.0.3.tgz#83336a64d4be0e1c952e9799f3c0404bca8cee97"
   integrity sha512-dYRZArm/4JWSnVEU2InLFmECfM6x88ix6qLPOJZQJp450FBsZDNvCaIIvPPQVqkZSeR5V6hDTxLd20INwnbXGw==
 
-"@pefish/js-util-httprequest@^0.0.9":
-  version "0.0.9"
-  resolved "https://registry.yarnpkg.com/@pefish/js-util-httprequest/-/js-util-httprequest-0.0.9.tgz#f61dee924c1d5aed7b2ae3e15a844c867779c81c"
-  integrity sha512-ScP42h50wNG4srVDe2TEjm0nbeYr8HC1vN55z/WwQ/3AkhuMCS8eNTcVn6NlcN4YLtA7TF7etob3BiHcqw1KTA==
+"@pefish/js-util-httprequest@^0.0.11":
+  version "0.0.11"
+  resolved "https://registry.yarnpkg.com/@pefish/js-util-httprequest/-/js-util-httprequest-0.0.11.tgz#605e400d37cde60f83b43e18e10d5e5e6944b2da"
+  integrity sha512-5tG7jXj9Ba6XMhoTVku7STrtph66ic8c5AwzY+N5oTCfBsiOH6b+oYV8yZdiFgpUHHCdZPF+u0fYAzkR0iwQNw==
   dependencies:
     "@pefish/js-error" "^0.1.1"
-    "@pefish/js-node-assist" "^0.6.6"
     "@pefish/js-util-desensitize" "^0.0.3"
     restler "^3.4.0"
 
