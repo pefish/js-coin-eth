@@ -1,14 +1,23 @@
 import Api from '@parity/api'
 
 export default class Remote {
-
+  timeout: number
   client: Api
 
-  constructor (url: string) {
+  constructor(url: string) {
     let provider = new Api.Provider.Http(url)
     this.client = new Api(provider)
+    this.timeout = 10000
   }
 
+  async wrapRequest(moduleName: string, method: string, params: any[] = []) {
+    return Promise.race([
+      this.client[moduleName][method](...params),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('timeout')), this.timeout)
+      )
+    ])
+  }
 
   /**
    * 调用智能合约的方法(constant为true的函数)
@@ -56,7 +65,7 @@ export default class Remote {
         "constant": true,
         "inputs": [],
         "name": "decimals",
-        "outputs": [{"name": "", "type": "uint8"}],
+        "outputs": [{ "name": "", "type": "uint8" }],
         "payable": false,
         "stateMutability": "view",
         "type": "function"

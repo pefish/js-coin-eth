@@ -12,10 +12,21 @@ declare global {
 
 describe('Remote', () => {
 
-  let helper
+  let helper: Remote
 
   before(async () => {
     helper = new Remote(`https://mainnet.infura.io/v3/aaa3fc062661462784b334a1a5c51940`)
+  })
+
+  it('eth_gasPrice', async () => {
+    try {
+      const result = await helper.wrapRequest(`eth`, `gasPrice`)
+      // global.logger.error('result', result)
+      assert.strictEqual(result >= 0, true)
+    } catch (err) {
+      global.logger.error(err)
+      assert.throws(() => {}, err)
+    }
   })
 
   it('getTransactionCount', async () => {
