@@ -1,11 +1,30 @@
 import Remote from "../src/remote";
 import Starter from '@pefish/js-util-starter'
 import Timer from '@pefish/js-util-time'
+import TimeUtil from "@pefish/js-util-time";
+
+
+
+class A {
+  a: string
+  constructor () {
+    this.a = `111`
+  }
+
+  async publish(queneName: string, dataStr: string): Promise<void> {
+    const method = async () => {
+      console.log(this.a)
+      await TimeUtil.sleep(12000)
+    }
+    return Promise.race([
+      method(),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('timeout')), 10000)
+      )
+    ])
+  }
+}
 
 Starter.startAsync(async () => {
-  while (true) {
-    console.log(2)
-    new Remote(`https://mainnet.infura.io/v3/aaa3fc062661462784b334a1a5c51940`)
-    await Timer.sleep(2000)
-  }
+  new A().publish(`a`, `22`)
 })
