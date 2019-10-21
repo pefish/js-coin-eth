@@ -43,7 +43,7 @@ describe('Remote', () => {
   it('getDecimals', async () => {
     try {
       const result = await helper.getDecimals('0xF631f8186f4fBCb6723Bf5e513db35c45e581aD7')
-      // global.logger.error('result', result)
+      global.logger.error('result', result)
       assert.strictEqual(result, 18)
     } catch (err) {
       global.logger.error(err)

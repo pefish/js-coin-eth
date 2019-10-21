@@ -10,12 +10,16 @@ export default class Remote {
     this.timeout = 10000
   }
 
+  async timeoutFunc(): Promise<void> {
+    return new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('timeout')), this.timeout)
+    )
+  }
+
   async wrapRequest(moduleName: string, method: string, params: any[] = []) {
     return Promise.race([
       this.client[moduleName][method](...params),
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('timeout')), this.timeout)
-      )
+      this.timeoutFunc()
     ])
   }
 
@@ -28,50 +32,71 @@ export default class Remote {
    * @param params
    */
   async callContract(abiStr: string, contractAddress: string, funName: string, params = [], opts: {} = {}): Promise<any> {
-    const abi = JSON.parse(abiStr)
-    const contract = this.client.newContract(abi, contractAddress)
-    return await contract.instance[funName].call(opts, params)
+    const doFun = async () => {
+      const abi = JSON.parse(abiStr)
+      const contract = this.client.newContract(abi, contractAddress)
+      return await contract.instance[funName].call(opts, params)
+    }
+
+    return Promise.race([
+      doFun(),
+      this.timeoutFunc()
+    ])
   }
 
   async getTokenBalance(contractAddress: string, address: string): Promise<string> {
-    const abi = [
-      {
-        "constant": true,
-        "inputs": [
-          {
-            "name": "_owner",
-            "type": "address"
-          }
-        ],
-        "name": "balanceOf",
-        "outputs": [
-          {
-            "name": "balance",
-            "type": "uint256"
-          }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-      }
-    ]
-    const contract = this.client.newContract(abi, contractAddress)
-    return (await contract.instance[`balanceOf`].call({}, [address])).toString(10)
+    const doFun = async () => {
+      const abi = [
+        {
+          "constant": true,
+          "inputs": [
+            {
+              "name": "_owner",
+              "type": "address"
+            }
+          ],
+          "name": "balanceOf",
+          "outputs": [
+            {
+              "name": "balance",
+              "type": "uint256"
+            }
+          ],
+          "payable": false,
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ]
+      const contract = this.client.newContract(abi, contractAddress)
+      return (await contract.instance[`balanceOf`].call({}, [address])).toString(10)
+    }
+
+    return Promise.race([
+      doFun(),
+      this.timeoutFunc()
+    ])
   }
 
   async getDecimals(contractAddress): Promise<number> {
-    const abi = [
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "decimals",
-        "outputs": [{ "name": "", "type": "uint8" }],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-      }
-    ]
-    const contract = this.client.newContract(abi, contractAddress)
-    return (await contract.instance[`decimals`].call({}, [])).toString(10).toNumber_()
+    const doFun = async () => {
+      const abi = [
+        {
+          "constant": true,
+          "inputs": [],
+          "name": "decimals",
+          "outputs": [{ "name": "", "type": "uint8" }],
+          "payable": false,
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ]
+      const contract = this.client.newContract(abi, contractAddress)
+      return (await contract.instance[`decimals`].call({}, [])).toString(10).toNumber_()
+    }
+
+    return Promise.race([
+      doFun(),
+      this.timeoutFunc()
+    ])
   }
 }

@@ -3,6 +3,7 @@ export default class Remote {
     timeout: number;
     client: Api;
     constructor(url: string);
+    timeoutFunc(): Promise<void>;
     wrapRequest(moduleName: string, method: string, params?: any[]): Promise<any>;
     /**
      * 调用智能合约的方法(constant为true的函数)
