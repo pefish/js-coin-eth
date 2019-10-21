@@ -1,6 +1,7 @@
 import '@pefish/js-node-assist'
 import assert from "assert"
 import EthWalletHelper from './wallet'
+import { Wallet } from 'web3-eth-accounts/types';
 
 declare global {
   namespace NodeJS {
@@ -12,7 +13,7 @@ declare global {
 
 describe('EthWalletHelper', () => {
 
-  let walletHelper, rpcHelper
+  let walletHelper: EthWalletHelper, rpcHelper
 
   before(async () => {
     walletHelper = new EthWalletHelper()
@@ -31,6 +32,13 @@ describe('EthWalletHelper', () => {
 
   it('decodeParamsHex', async () => {
     try {
+
+      const input = `0xa9059cbb0000000000000000000000009350284a6dd3f6b7c43ab89ba19d4f31ce22209600000000000000000000000000000000000000000000003a492a7cf981258000`
+      // 00000000000000000000000000000000000000000000003a492a7cf981258000
+      console.log(input.substring(input.length - 64, input.length))
+      console.log(walletHelper.decodeParamsHex([`uint256`], input.substring(input.length - 64, input.length))[0].toString(10))
+
+
       const result = walletHelper.decodeParamsHex([`address`], `0x000000000000000000000000f7667495cf31925d2607cb69fe2f29eb1a71a81f`)
       // logger.error('result', result)
       assert.strictEqual(result[0], 'f7667495cf31925d2607cb69fe2f29eb1a71a81f')
@@ -125,7 +133,7 @@ describe('EthWalletHelper', () => {
 \t回头看王同学这个案子，原告会胜诉吗？我很不乐观。2016年，北京有一位自如租客，妻子怀孕住进去的，胎儿6个月时得了白血病，不得不引产，而房屋检测显示甲醛污染严重。他起诉了。法院委托两家司法鉴定机构进行鉴定，但都说“超出鉴定技术能力”，拒绝了委托。随后，一审法院说：现有证据未能证明该种情形下与白血病的发病存在关系，赔偿请求于法无据，不予支持。
 \t报道这个案子最详细的，是《北京晨报》，但是，这家报社在这个月，关门了。这当然是一个巧合，但，世间所有的巧合，都有极大的信息量可供解读。我只希望，呦呦鹿鸣的命运，不是北京晨报的命运。
         `,
-        '140',
+        140,
         '3000000000',
         '1000000'
       )
