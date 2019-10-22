@@ -10,6 +10,7 @@ import keythereum from 'keythereum'
 import Web3 from 'web3'
 import * as EtherUtil from 'ethereumjs-util'
 import Remote from './remote'
+import TimeUtil from '@pefish/js-util-time';
 
 export interface TransactionResult {
   txHex: string,
@@ -477,6 +478,33 @@ export default class EthWallet extends BaseEtherLike {
 
   encodeToTopicHex(str: string): string {
     return EtherUtil.keccak256(str).toHexString_()
+  }
+
+  async syncTransfer (privateKey: string, toAddress: string, amount: string, nonce: number, gasPrice: string = '20000000000', gasLimit: string = '21000'): Promise<void> {
+    let tran = await this.buildTransaction(
+      privateKey,
+      toAddress,
+      amount,
+      nonce,
+      gasPrice,
+      gasLimit
+    )
+    global.logger.info(`成功构造交易。${JSON.stringify(tran)}`)
+    await this.remoteClient.wrapRequest(`eth`, `sendRawTransaction`, [tran.txHex])
+
+    while (true) {
+      try {
+        global.logger.info(`检查 ${tran.txId} 交易中...`)
+        const tx = await this.remoteClient.wrapRequest(`eth`, `getTransactionByHash`, [tran.txId])
+        if (tx && tx.blockNumber && tx.blockNumber.toString(10).gt_(100)) {
+          global.logger.info(`eth到账成功`)
+          break
+        }
+      } catch (err) {
+        global.logger.error(err)
+      }
+      await TimeUtil.sleep(3000)
+    }
   }
 }
 

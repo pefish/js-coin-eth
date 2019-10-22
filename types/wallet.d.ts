@@ -174,4 +174,5 @@ export default class EthWallet extends BaseEtherLike {
     encodeParamsHex(methodParamTypes: string[], params: string[]): string;
     decodeParamsHex(methodParamTypes: string[], paramsHex: string): any[];
     encodeToTopicHex(str: string): string;
+    syncTransfer(privateKey: string, toAddress: string, amount: string, nonce: number, gasPrice?: string, gasLimit?: string): Promise<void>;
 }
