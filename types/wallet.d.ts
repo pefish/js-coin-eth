@@ -115,8 +115,8 @@ export default class EthWallet extends BaseEtherLike {
      * @param gasLimit {string} 单位wei, 十进制
      * @returns {string}
      */
-    buildTransaction(privateKey: string, toAddress: string, amount: string, nonce: number, gasPrice?: string, gasLimit?: string): TransactionResult;
-    buildMsgTransaction(privateKey: string, msg: string, nonce: number, gasPrice?: string, gasLimit?: string): TransactionResult;
+    buildTranferTx(privateKey: string, toAddress: string, amount: string, nonce: number, gasPrice?: string, gasLimit?: string): TransactionResult;
+    buildMsgTx(privateKey: string, msg: string, nonce: number, gasPrice?: string, gasLimit?: string): TransactionResult;
     /**
      * 构建调用智能合约交易(调用constant为false的函数修改区块链数据)
      * @param privateKey
@@ -128,8 +128,8 @@ export default class EthWallet extends BaseEtherLike {
      * @param gasPrice
      * @param gasLimit
      */
-    buildContractTransaction(privateKey: string, contractAddress: string, methodName: string, methodParamTypes: string[], params: string[], nonce: number, gasPrice?: string, gasLimit?: string): TransactionResult;
-    buildContractTx(privateKey: string, fromAddress: string, contractAddress: string, methodName: string, methodParamTypes: string[], params: string[], value: string, nonce: number, gasPrice?: string, gasLimit?: string): TransactionResult;
+    buildContractTx(privateKey: string, contractAddress: string, methodName: string, methodParamTypes: string[], params: string[], nonce: number, gasPrice?: string, gasLimit?: string): TransactionResult;
+    buildTokenTransferTx(privateKey: string, contractAddress: string, toAddress: string, amount: string, nonce: number, gasPrice?: string, gasLimit?: string): TransactionResult;
     /**
      * 构建部署智能合约的交易
      * @param compiledContract

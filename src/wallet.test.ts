@@ -118,7 +118,7 @@ describe('EthWalletHelper', () => {
 
   it('buildMsgTransaction', async () => {
     try {
-      const result = walletHelper.buildMsgTransaction(
+      const result = walletHelper.buildMsgTx(
         '0xAEE4F8301B87574A197A057C237C0462CB507B5161EB45CD9FC1315C7681EE31',
         `\t\t\t阿里P7员工得白血病身故，生前租了自如甲醛房\r\n
 \t爱人姓王，一家一直住在北京。今年，王同学拿到了阿里巴巴offer，职位是“交互设计专家”，级别P7。对于37岁的王同学来说，前景看好，试问，如今还有多少比BAT更好的互联网工作呢？于是，他只身一人，离京赴杭州阿里巴巴总部入职。按照阿里惯例，得了一个花名：安时，工号165243。

@@ -25,7 +25,7 @@ export interface TransactionResult {
   data: string,
   from: string,
   compileVersion?: string,
-  abi?: {[x: string]: any}
+  abi?: { [x: string]: any }
 }
 
 /**
@@ -40,7 +40,7 @@ export default class EthWallet extends BaseEtherLike {
     super()
   }
 
-  initRemoteClient (url: string): void {
+  initRemoteClient(url: string): void {
     this.remoteClient = new Remote(url)
   }
 
@@ -135,7 +135,7 @@ export default class EthWallet extends BaseEtherLike {
    * @param jsonParse {boolean} 是否需要parse
    * @returns {*}
    */
-  getAbiOfContract(compiledContract: any, contractName: string, jsonParse: boolean = true): {[x: string]: any} {
+  getAbiOfContract(compiledContract: any, contractName: string, jsonParse: boolean = true): { [x: string]: any } {
     if (!compiledContract['contracts'][`:${contractName}`]) {
       return null
     }
@@ -194,7 +194,7 @@ export default class EthWallet extends BaseEtherLike {
   }
 
   encryptToKeystore(pass: string, privateKey: string): string {
-    const dk = keythereum.create({keyBytes: 32, ivBytes: 16})
+    const dk = keythereum.create({ keyBytes: 32, ivBytes: 16 })
     return keythereum.dump(pass, privateKey.hexToBuffer_(), dk['salt'], dk['iv'], {
       kdf: 'pbkdf2',
       cipher: 'aes-128-ctr',
@@ -220,7 +220,7 @@ export default class EthWallet extends BaseEtherLike {
    * @param gasLimit {string} 单位wei, 十进制
    * @returns {string}
    */
-  buildTransaction(privateKey: string, toAddress: string, amount: string, nonce: number, gasPrice: string = '20000000000', gasLimit: string = '21000'): TransactionResult {
+  buildTranferTx(privateKey: string, toAddress: string, amount: string, nonce: number, gasPrice: string = '20000000000', gasLimit: string = '21000'): TransactionResult {
     // logger.error(arguments)
     if (privateKey.startsWith('0x')) {
       privateKey = privateKey.substring(2, privateKey.length)
@@ -253,7 +253,7 @@ export default class EthWallet extends BaseEtherLike {
     }
   }
 
-  buildMsgTransaction(privateKey: string, msg: string, nonce: number, gasPrice: string = '20000000000', gasLimit: string = '900000'): TransactionResult {
+  buildMsgTx(privateKey: string, msg: string, nonce: number, gasPrice: string = '20000000000', gasLimit: string = '900000'): TransactionResult {
     // logger.error(arguments)
     if (privateKey.startsWith('0x')) {
       privateKey = privateKey.substring(2, privateKey.length)
@@ -300,7 +300,7 @@ export default class EthWallet extends BaseEtherLike {
    * @param gasPrice
    * @param gasLimit
    */
-  buildContractTransaction(privateKey: string, contractAddress: string, methodName: string, methodParamTypes: string[], params: string[], nonce: number, gasPrice: string = '20000000000', gasLimit: string = '300000'): TransactionResult {
+  buildContractTx(privateKey: string, contractAddress: string, methodName: string, methodParamTypes: string[], params: string[], nonce: number, gasPrice: string = '20000000000', gasLimit: string = '300000'): TransactionResult {
     const fromAddress = this.getAddressFromPrivateKey(privateKey)
     if (privateKey.startsWith('0x')) {
       privateKey = privateKey.substring(2, privateKey.length)
@@ -334,37 +334,22 @@ export default class EthWallet extends BaseEtherLike {
     }
   }
 
-  buildContractTx(privateKey: string, fromAddress: string, contractAddress: string, methodName: string, methodParamTypes: string[], params: string[], value: string, nonce: number, gasPrice: string = '20000000000', gasLimit: string = '900000'): TransactionResult {
-    if (privateKey.startsWith('0x')) {
-      privateKey = privateKey.substring(2, privateKey.length)
-    }
-    const privateKeyBuffer = new Buffer(privateKey, 'hex')
-    const rawTx = {
-      from: fromAddress,
-      nonce: nonce.toString().decimalToHexString_(),
-      gasPrice: gasPrice.decimalToHexString_(),
-      gasLimit: gasLimit.decimalToHexString_(),
-      to: contractAddress,
-      value: value.decimalToHexString_(),
-      data: this.encodePayload(this.getMethodId(methodName, methodParamTypes), methodParamTypes, params),
-      chainId: this.chainId,
-    }
-    const tx = new Tx(rawTx)
-    tx.sign(privateKeyBuffer)
-    const serializedTx = tx.serialize()
-    return {
-      txHex: '0x' + serializedTx.toString('hex'),
-      txId: '0x' + tx.hash().toString('hex'),
-      dataFee: tx.getDataFee().toString(10).multi_(gasPrice),
-      allFee: tx.getBaseFee().toString(10).multi_(gasPrice),
-      nonce: tx['nonce'].toDecimalString_().toNumber_(),
-      gasPrice: tx['gasPrice'].toDecimalString_(),
-      gasLimit: tx['gasLimit'].toDecimalString_(),
-      to: tx['to'].toHexString_(),
-      value: tx['value'].toDecimalString_(),
-      data: tx['data'].toHexString_(),
-      from: tx['from'].toHexString_()
-    }
+  buildTokenTransferTx(privateKey: string, contractAddress: string, toAddress: string, amount: string, nonce: number, gasPrice: string = '20000000000', gasLimit: string = '900000'): TransactionResult {
+    return this.buildContractTx(
+      privateKey,
+      contractAddress,
+      'transfer',
+      [
+        'address',
+        'uint256'
+      ], [
+        toAddress,
+        amount,
+      ],
+      nonce,
+      gasPrice,
+      gasLimit
+    )
   }
 
   /**
@@ -470,7 +455,7 @@ export default class EthWallet extends BaseEtherLike {
   encodeParamsHex(methodParamTypes: string[], params: string[]): string {
     return abiUtil.rawEncode(methodParamTypes, params).toHexString_(false)
   }
- 
+
   decodeParamsHex(methodParamTypes: string[], paramsHex: string): any[] {
     const dataBuf = new Buffer(paramsHex.replace(/^0x/, ``), `hex`)
     return abiUtil.rawDecode(methodParamTypes, dataBuf)
@@ -480,8 +465,8 @@ export default class EthWallet extends BaseEtherLike {
     return EtherUtil.keccak256(str).toHexString_()
   }
 
-  async syncTransfer (privateKey: string, toAddress: string, amount: string, nonce: number, gasPrice: string = '20000000000', gasLimit: string = '21000'): Promise<void> {
-    let tran = await this.buildTransaction(
+  async syncTransfer(privateKey: string, toAddress: string, amount: string, nonce: number, gasPrice: string = '20000000000', gasLimit: string = '21000'): Promise<void> {
+    let tran = await this.buildTranferTx(
       privateKey,
       toAddress,
       amount,
