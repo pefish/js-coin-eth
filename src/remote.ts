@@ -77,6 +77,24 @@ export default class Remote {
     ])
   }
 
+  async estimateGasPrice (upGasPrice: string, downGasPrice: string = `2`.shiftedBy_(9)): Promise<string> {
+    if (upGasPrice.lt_(downGasPrice)) {
+      return downGasPrice
+    }
+    let gasPrice: string
+    let proposeGasPrice = (await this.wrapRequest(`eth`, `gasPrice`)).toString(10).multi_(1.2);
+    if (!proposeGasPrice) {
+      gasPrice = downGasPrice.add_(upGasPrice).div_(2)
+    } else if (proposeGasPrice.lt_(downGasPrice)) {
+      gasPrice = downGasPrice
+    } else if (proposeGasPrice.gt_(upGasPrice)) {
+      gasPrice = upGasPrice;
+    } else {
+      gasPrice = proposeGasPrice
+    }
+    return gasPrice.remainDecimal_(0)
+  }
+
   async getDecimals(contractAddress): Promise<number> {
     const doFun = async () => {
       const abi = [
