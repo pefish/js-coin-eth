@@ -15,5 +15,6 @@ export default class Remote {
      */
     callContract(abiStr: string, contractAddress: string, funName: string, params?: any[], opts?: {}): Promise<any>;
     getTokenBalance(contractAddress: string, address: string): Promise<string>;
+    estimateGasPrice(upGasPrice: string, downGasPrice?: string): Promise<string>;
     getDecimals(contractAddress: any): Promise<number>;
 }

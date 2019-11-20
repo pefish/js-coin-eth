@@ -465,6 +465,15 @@ export default class EthWallet extends BaseEtherLike {
     return EtherUtil.keccak256(str).toHexString_()
   }
 
+  /**
+   * 同步性转账
+   * @param privateKey 
+   * @param toAddress 
+   * @param amount 数量（单位最小）
+   * @param nonce 
+   * @param gasPrice 
+   * @param gasLimit 
+   */
   async syncTransfer(privateKey: string, toAddress: string, amount: string, nonce: number, gasPrice: string = '20000000000', gasLimit: string = '21000'): Promise<void> {
     let tran = await this.buildTranferTx(
       privateKey,
