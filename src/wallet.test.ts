@@ -52,9 +52,9 @@ describe('EthWalletHelper', () => {
     }
   })
 
-  it('decryptKeystore', async () => {
+  it('decryptKeystoreV3', async () => {
     try {
-      const result = walletHelper.decryptKeystore(`{"address":"d5bd43c956e9afa3034958b42410c5acfdfaa720","crypto":{"cipher":"aes-128-ctr","ciphertext":"ac7f7e4a2f245d7dcef83e67a7b59d357695c51601e29a0e487a172e07081084","cipherparams":{"iv":"f70f5e51d606b9caebe15bd014c3bcdd"},"mac":"87dc9cb389e546a2e444d5f164ae15e16dcf2c3d67b3cd1ce07e0a7f70a07db7","kdf":"pbkdf2","kdfparams":{"c":262144,"dklen":32,"prf":"hmac-sha256","salt":"063419904460b0ecfa708c3050167d1060617769cb8fecc2bc3e8be71ddf1ae6"}},"id":"aac22315-85e3-42b9-9c0c-c3e278e7ffb7","version":3}`, 'test')
+      const result = walletHelper.decryptKeystoreV3(`{"version":3,"id":"7e59dc02-8d42-409d-b29a-a8a0f862cc81","address":"d5bd43c956e9afa3034958b42410c5acfdfaa720","crypto":{"ciphertext":"c38ad947fd9e354fcb9f0d4138120bf66e7f07bba023ea058b394cd99c315486","cipherparams":{"iv":"cecacd85e9cb89788b5aab2f93361233"},"cipher":"aes-128-ctr","kdf":"pbkdf2","kdfparams":{"dklen":32,"salt":"dc9e4a98886738bd8aae134a1f89aaa5a502c3fbd10e336136d4d5fe47448ad6","c":262144,"prf":"hmac-sha256"},"mac":"f6e87c8510b03e18d872ab3fa505f838ffea37df2ff61cc5db7a80138b0c9bea"}}`, 'test')
       // logger.error('result', result)
       assert.strictEqual(result, '0x56d7fcd68b219238ce1789f3da653bc9842468b5b63dd8f97a6183e3ced2c67e')
     } catch (err) {
@@ -215,11 +215,11 @@ describe('EthWalletHelper', () => {
     }
   })
 
-  it('encryptToKeystore', async () => {
+  it('encryptToKeystoreV3', async () => {
     try {
-      const result = walletHelper.encryptToKeystore('test', '0x56d7fcd68b219238ce1789f3da653bc9842468b5b63dd8f97a6183e3ced2c67e')
-      // logger.error('result', JSON.stringify(result))
-      assert.strictEqual(result['address'].toUpperCase(), 'd5bd43c956e9afa3034958b42410c5acfdfaa720'.toUpperCase())
+      const result = walletHelper.encryptToKeystoreV3('test', '0x56d7fcd68b219238ce1789f3da653bc9842468b5b63dd8f97a6183e3ced2c67e')
+      // console.error('result', result)
+      assert.strictEqual(JSON.parse(result)['address'].toUpperCase(), 'd5bd43c956e9afa3034958b42410c5acfdfaa720'.toUpperCase())
     } catch (err) {
       global.logger.error(err)
       assert.throws(() => {}, err)

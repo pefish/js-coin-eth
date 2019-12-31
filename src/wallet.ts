@@ -6,11 +6,11 @@ import abiUtil from './abi'
 import solc from 'solc'
 import EthCrypto from 'eth-crypto'
 import Tx from 'ethereumjs-tx'
-import keythereum from 'keythereum'
 import Web3 from 'web3'
 import * as EtherUtil from 'ethereumjs-util'
 import Remote from './remote'
 import TimeUtil from '@pefish/js-util-time';
+import EtherWallet from 'ethereumjs-wallet'
 
 export interface TransactionResult {
   txHex: string,
@@ -193,21 +193,16 @@ export default class EthWallet extends BaseEtherLike {
     }
   }
 
-  encryptToKeystore(pass: string, privateKey: string): string {
-    const dk = keythereum.create({ keyBytes: 32, ivBytes: 16 })
-    return keythereum.dump(pass, privateKey.hexToBuffer_(), dk['salt'], dk['iv'], {
-      kdf: 'pbkdf2',
-      cipher: 'aes-128-ctr',
-      kdfparams: {
-        c: 262144,
-        dklen: 32,
-        prf: 'hmac-sha256'
-      }
-    })
+  encryptToKeystoreV3(pass: string, privateKey: string): string {
+    const salt = Buffer.from('dc9e4a98886738bd8aae134a1f89aaa5a502c3fbd10e336136d4d5fe47448ad6', 'hex');
+    const iv = Buffer.from('cecacd85e9cb89788b5aab2f93361233', 'hex');
+    const uuid = Buffer.from('7e59dc028d42d09db29aa8a0f862cc81', 'hex');
+    const fixtureWallet = EtherWallet.fromPrivateKey(privateKey.hexToBuffer_())
+    return fixtureWallet.toV3String(pass, { kdf: 'pbkdf2', uuid: uuid, salt: salt, iv: iv })
   }
 
-  decryptKeystore(keystoreStr: string, pass: string): string {
-    return keythereum.recover(pass, JSON.parse(keystoreStr)).toHexString_()
+  decryptKeystoreV3(keystoreStr: string, pass: string): string {
+    return EtherWallet.fromV3(keystoreStr, pass).getPrivateKeyString()
   }
 
   /**

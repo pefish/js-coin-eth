@@ -103,8 +103,8 @@ export default class EthWallet extends BaseEtherLike {
         _chainId: string;
         _homestead: string;
     };
-    encryptToKeystore(pass: string, privateKey: string): string;
-    decryptKeystore(keystoreStr: string, pass: string): string;
+    encryptToKeystoreV3(pass: string, privateKey: string): string;
+    decryptKeystoreV3(keystoreStr: string, pass: string): string;
     /**
      * 构造交易
      * @param privateKey
@@ -174,5 +174,14 @@ export default class EthWallet extends BaseEtherLike {
     encodeParamsHex(methodParamTypes: string[], params: string[]): string;
     decodeParamsHex(methodParamTypes: string[], paramsHex: string): any[];
     encodeToTopicHex(str: string): string;
+    /**
+     * 同步性转账
+     * @param privateKey
+     * @param toAddress
+     * @param amount 数量（单位最小）
+     * @param nonce
+     * @param gasPrice
+     * @param gasLimit
+     */
     syncTransfer(privateKey: string, toAddress: string, amount: string, nonce: number, gasPrice?: string, gasLimit?: string): Promise<void>;
 }
