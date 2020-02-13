@@ -104,6 +104,8 @@ export default class EthWallet extends BaseEtherLike {
     };
     encryptToKeystoreV3(pass: string, privateKey: string): string;
     private toV3;
+    decryptKeystoreV3(keystoreStr: string, pass: string): string;
+    private fromV3;
     /**
      * 构造交易
      * @param privateKey

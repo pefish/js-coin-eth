@@ -38,20 +38,12 @@
   resolved "https://registry.yarnpkg.com/@pefish/js-error/-/js-error-0.1.2.tgz#89913c01f960318fa5108e79d99c27ad90b4430f"
   integrity sha512-JFM3pW2MhGwOwdaSfUw79DsE52oh27meYzL07B/gkX7+oF0ByVs1/BuEFMBaTk5RMnMijN0lCEuCpfZgcShO3A==
 
-"@pefish/js-node-assist@^0.6.6":
-  version "0.6.11"
-  resolved "https://registry.yarnpkg.com/@pefish/js-node-assist/-/js-node-assist-0.6.11.tgz#b518afc950f145cea7c87262520baf48aa95ea85"
-  integrity sha512-osPSF2A4cBiSH5rPOSymnueRiOrHL4hmGidaUhmGByvbaKopKT/XZdRf2bZDoS74oLyloXCfroD/3fJLmVESWA==
+"@pefish/js-node-assist@^0.6.15":
+  version "0.6.15"
+  resolved "https://registry.yarnpkg.com/@pefish/js-node-assist/-/js-node-assist-0.6.15.tgz#1c79900153d4653fc65efa7a06d5b74a381975a7"
+  integrity sha512-2dSDoL33B6dEztnVpxtBJnEtY8SlmPpQ8+qEVvi1qqdP8ilP2sm2BJQ4DVCsaCmMjFaFuMALcjjhhKgXxloj/w==
   dependencies:
     "@pefish/js-error" "^0.1.2"
-    bignumber.js "^8.1.1"
-
-"@pefish/js-node-assist@^0.6.9":
-  version "0.6.9"
-  resolved "https://registry.yarnpkg.com/@pefish/js-node-assist/-/js-node-assist-0.6.9.tgz#60d50c0f82469441d4cd22b51f2645585170f414"
-  integrity sha512-acqJwvoBDVem8hqxJ7ctdPoRuuyPLXEFjPeIzQy12x+zs4ktlYqQx0p+cH61pILRM4Z0RDDeK6MZYRSUDp6lAA==
-  dependencies:
-    "@pefish/js-error" "^0.1.1"
     bignumber.js "^8.1.1"
 
 "@pefish/js-util-desensitize@^0.0.3":
@@ -75,12 +67,11 @@
   dependencies:
     "@pefish/js-error" "^0.1.1"
 
-"@pefish/js-util-time@^0.0.2":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/@pefish/js-util-time/-/js-util-time-0.0.2.tgz#d1d57bc9f6e2187e6c02d1b311a5b7ff3465d154"
-  integrity sha512-a0dh6ewbKqf1l8QFMRrKux/3a4jV8zvkqUoCC+1H4UDx2if6iQ8IwjOdlLRwLp8m4QS9wjCnEkpZBccf38RDSg==
+"@pefish/js-util-time@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@pefish/js-util-time/-/js-util-time-0.1.0.tgz#f875d82f94530daa6a5ebe5b583ae142d10086ff"
+  integrity sha512-qiJPBxjNdIVMvg1D4H4WQHGzK3QKtq/racVkeIu5Ul9K6pcObfuBiXce+ZsxoLcP0Y5Pbnf6bYJzgcQvgTl/7g==
   dependencies:
-    "@pefish/js-node-assist" "^0.6.6"
     moment "^2.24.0"
 
 "@sindresorhus/is@^0.14.0":
