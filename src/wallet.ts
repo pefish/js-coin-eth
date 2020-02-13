@@ -5,12 +5,14 @@ import ErrorHelper from '@pefish/js-error'
 import abiUtil from './abi'
 import solc from 'solc'
 import EthCrypto from 'eth-crypto'
-import Tx from 'ethereumjs-tx'
+import { Transaction } from 'ethereumjs-tx'
 import Web3 from 'web3'
-import * as EtherUtil from 'ethereumjs-util'
+import { keccak256, privateToAddress } from 'ethereumjs-util'
 import Remote from './remote'
-import TimeUtil from '@pefish/js-util-time';
-import EtherWallet from 'ethereumjs-wallet'
+import TimeUtil from '@pefish/js-util-time'
+import randomBytes from 'randombytes'
+import crypto from 'crypto'
+import uuidv4 from 'uuid/v4'
 
 export interface TransactionResult {
   txHex: string,
@@ -172,10 +174,9 @@ export default class EthWallet extends BaseEtherLike {
     r: string,
     s: string,
     from: string,
-    _chainId: string,
-    _homestead: string,
+    chainId: number,
   } {
-    const tx = new Tx(txHex)
+    const tx = new Transaction(txHex)
     return {
       txId: '0x' + tx.hash().toString('hex'),
       nonce: tx.nonce.toDecimalString_().toNumber_(),
@@ -187,9 +188,8 @@ export default class EthWallet extends BaseEtherLike {
       v: tx.v.toHexString_(),
       r: tx.r.toHexString_(),
       s: tx.s.toHexString_(),
-      from: tx.from.toHexString_(),
-      _chainId: tx._chainId,
-      _homestead: tx._homestead
+      from: tx[`from`].toHexString_(),
+      chainId: tx.getChainId(),
     }
   }
 
@@ -197,12 +197,155 @@ export default class EthWallet extends BaseEtherLike {
     const salt = Buffer.from('dc9e4a98886738bd8aae134a1f89aaa5a502c3fbd10e336136d4d5fe47448ad6', 'hex');
     const iv = Buffer.from('cecacd85e9cb89788b5aab2f93361233', 'hex');
     const uuid = Buffer.from('7e59dc028d42d09db29aa8a0f862cc81', 'hex');
-    const fixtureWallet = EtherWallet.fromPrivateKey(privateKey.hexToBuffer_())
-    return fixtureWallet.toV3String(pass, { kdf: 'pbkdf2', uuid: uuid, salt: salt, iv: iv })
+    return JSON.stringify(this.toV3(privateKey.hexToBuffer_(), pass, { kdf: 'pbkdf2', uuid: uuid, salt: salt, iv: iv }))
+  }
+
+  private toV3(privateKey: Buffer, password: string, opts?: any): any {
+    const v3Params = {
+      cipher: 'aes-128-ctr',
+      kdf: 'scrypt',
+      salt: randomBytes(32),
+      iv: randomBytes(16),
+      uuid: randomBytes(16),
+      dklen: 32,
+      c: 262144,
+      n: 262144,
+      r: 8,
+      p: 1,
+      ...opts,
+    }
+
+    let kdfParams
+    let derivedKey: Buffer
+    switch (v3Params.kdf) {
+      case `pbkdf2`:
+        kdfParams = {
+          dklen: v3Params.dklen,
+          salt: v3Params.salt,
+          c: v3Params.c,
+          prf: 'hmac-sha256',
+        }
+        derivedKey = crypto.pbkdf2Sync(
+          Buffer.from(password),
+          kdfParams.salt,
+          kdfParams.c,
+          kdfParams.dklen,
+          'sha256',
+        )
+        break
+      // case `scrypt`:
+      //   kdfParams = {
+      //     dklen: opts.dklen,
+      //     salt: opts.salt,
+      //     n: opts.n,
+      //     r: opts.r,
+      //     p: opts.p,
+      //   }
+      //   // FIXME: support progress reporting callback
+      //   derivedKey = scryptsy(
+      //     Buffer.from(password),
+      //     kdfParams.salt,
+      //     kdfParams.n,
+      //     kdfParams.r,
+      //     kdfParams.p,
+      //     kdfParams.dklen,
+      //   )
+      //   break
+      default:
+        throw new Error('Unsupported kdf')
+    }
+
+    const cipher: crypto.Cipher = crypto.createCipheriv(
+      v3Params.cipher,
+      derivedKey.slice(0, 16),
+      v3Params.iv,
+    )
+    if (!cipher) {
+      throw new Error('Unsupported cipher')
+    }
+
+    const ciphertext = Buffer.concat([cipher.update(privateKey), cipher.final()])
+    const mac = keccak256(
+      Buffer.concat([derivedKey.slice(16, 32), Buffer.from(ciphertext)]),
+    )
+    return {
+      version: 3,
+      id: uuidv4({ random: v3Params.uuid }),
+      // @ts-ignore - the official V3 keystore spec omits the address key
+      address: privateToAddress(privateKey).toString('hex'),
+      crypto: {
+        ciphertext: ciphertext.toString('hex'),
+        cipherparams: { iv: v3Params.iv.toString('hex') },
+        cipher: v3Params.cipher,
+        kdf: v3Params.kdf,
+        kdfparams: {
+          ...kdfParams,
+          salt: kdfParams.salt.toString('hex'),
+        },
+        mac: mac.toString('hex'),
+      },
+    }
   }
 
   decryptKeystoreV3(keystoreStr: string, pass: string): string {
-    return EtherWallet.fromV3(keystoreStr, pass).getPrivateKeyString()
+    return this.fromV3(keystoreStr, pass).toHexString_()
+  }
+
+  private fromV3(
+    input: string,
+    password: string,
+    nonStrict: boolean = false,
+  ): Buffer {
+    const json = JSON.parse(nonStrict ? input.toLowerCase() : input)
+
+    if (json.version !== 3) {
+      throw new Error('Not a V3 wallet')
+    }
+
+    let derivedKey: Buffer, kdfparams: any
+    if (json.crypto.kdf === 'scrypt') {
+      // kdfparams = json.crypto.kdfparams
+
+      // // FIXME: support progress reporting callback
+      // derivedKey = scryptsy(
+      //   Buffer.from(password),
+      //   Buffer.from(kdfparams.salt, 'hex'),
+      //   kdfparams.n,
+      //   kdfparams.r,
+      //   kdfparams.p,
+      //   kdfparams.dklen,
+      // )
+    } else if (json.crypto.kdf === 'pbkdf2') {
+      kdfparams = json.crypto.kdfparams
+
+      if (kdfparams.prf !== 'hmac-sha256') {
+        throw new Error('Unsupported parameters to PBKDF2')
+      }
+
+      derivedKey = crypto.pbkdf2Sync(
+        Buffer.from(password),
+        Buffer.from(kdfparams.salt, 'hex'),
+        kdfparams.c,
+        kdfparams.dklen,
+        'sha256',
+      )
+    } else {
+      throw new Error('Unsupported key derivation scheme')
+    }
+
+    const ciphertext = Buffer.from(json.crypto.ciphertext, 'hex')
+    const mac = keccak256(Buffer.concat([derivedKey.slice(16, 32), ciphertext]))
+    if (mac.toString('hex') !== json.crypto.mac) {
+      throw new Error('Key derivation failed - possibly wrong passphrase')
+    }
+
+    const decipher = crypto.createDecipheriv(
+      json.crypto.cipher,
+      derivedKey.slice(0, 16),
+      Buffer.from(json.crypto.cipherparams.iv, 'hex'),
+    )
+    const seed = Buffer.concat([decipher.update(ciphertext), decipher.final()])
+    return seed
   }
 
   /**
@@ -230,7 +373,7 @@ export default class EthWallet extends BaseEtherLike {
       chainId: this.chainId,
     }
 
-    const tx = new Tx(rawTx)
+    const tx = new Transaction(rawTx)
     tx.sign(privateKeyBuffer)
     const serializedTx = tx.serialize()
     return {
@@ -238,12 +381,12 @@ export default class EthWallet extends BaseEtherLike {
       txId: '0x' + tx.hash().toString('hex'),
       dataFee: tx.getDataFee().toString(10).multi_(gasPrice),
       allFee: tx.getBaseFee().toString(10).multi_(gasPrice),
-      nonce: tx['nonce'].toDecimalString_().toNumber_(),
-      gasPrice: tx['gasPrice'].toDecimalString_(),
-      gasLimit: tx['gasLimit'].toDecimalString_(),
-      to: tx['to'].toHexString_(),
-      value: tx['value'].toDecimalString_(),
-      data: tx['data'].toHexString_(),
+      nonce: tx.nonce.toDecimalString_().toNumber_(),
+      gasPrice: tx.gasPrice.toDecimalString_(),
+      gasLimit: tx.gasLimit.toDecimalString_(),
+      to: tx.to.toHexString_(),
+      value: tx.value.toDecimalString_(),
+      data: tx.data.toHexString_(),
       from: tx['from'].toHexString_()
     }
   }
@@ -266,7 +409,7 @@ export default class EthWallet extends BaseEtherLike {
       chainId: this.chainId,
     }
 
-    const tx = new Tx(rawTx)
+    const tx = new Transaction(rawTx)
     tx.sign(privateKeyBuffer)
     const serializedTx = tx.serialize()
     return {
@@ -274,12 +417,12 @@ export default class EthWallet extends BaseEtherLike {
       txId: '0x' + tx.hash().toString('hex'),
       dataFee: tx.getDataFee().toString(10).multi_(gasPrice),
       allFee: tx.getBaseFee().toString(10).multi_(gasPrice),
-      nonce: tx['nonce'].toDecimalString_().toNumber_(),
-      gasPrice: tx['gasPrice'].toDecimalString_(),
-      gasLimit: tx['gasLimit'].toDecimalString_(),
-      to: tx['to'].toHexString_(),
-      value: tx['value'].toDecimalString_(),
-      data: tx['data'].toHexString_(),
+      nonce: tx.nonce.toDecimalString_().toNumber_(),
+      gasPrice: tx.gasPrice.toDecimalString_(),
+      gasLimit: tx.gasLimit.toDecimalString_(),
+      to: tx.to.toHexString_(),
+      value: tx.value.toDecimalString_(),
+      data: tx.data.toHexString_(),
       from: tx['from'].toHexString_()
     }
   }
@@ -311,7 +454,7 @@ export default class EthWallet extends BaseEtherLike {
       data: this.encodePayload(this.getMethodId(methodName, methodParamTypes), methodParamTypes, params),
       chainId: this.chainId,
     }
-    const tx = new Tx(rawTx)
+    const tx = new Transaction(rawTx)
     tx.sign(privateKeyBuffer)
     const serializedTx = tx.serialize()
     return {
@@ -319,12 +462,12 @@ export default class EthWallet extends BaseEtherLike {
       txId: '0x' + tx.hash().toString('hex'),
       dataFee: tx.getDataFee().toString(10).multi_(gasPrice),
       allFee: tx.getBaseFee().toString(10).multi_(gasPrice),
-      nonce: tx['nonce'].toDecimalString_().toNumber_(),
-      gasPrice: tx['gasPrice'].toDecimalString_(),
-      gasLimit: tx['gasLimit'].toDecimalString_(),
-      to: tx['to'].toHexString_(),
-      value: tx['value'].toDecimalString_(),
-      data: tx['data'].toHexString_(),
+      nonce: tx.nonce.toDecimalString_().toNumber_(),
+      gasPrice: tx.gasPrice.toDecimalString_(),
+      gasLimit: tx.gasLimit.toDecimalString_(),
+      to: tx.to.toHexString_(),
+      value: tx.value.toDecimalString_(),
+      data: tx.data.toHexString_(),
       from: tx['from'].toHexString_()
     }
   }
@@ -378,7 +521,7 @@ export default class EthWallet extends BaseEtherLike {
       data,
       chainId: this.chainId,
     }
-    const tx = new Tx(rawTx)
+    const tx = new Transaction(rawTx)
     tx.sign(privateKeyBuffer)
     const serializedTx = tx.serialize()
     return {
@@ -386,12 +529,12 @@ export default class EthWallet extends BaseEtherLike {
       txId: '0x' + tx.hash().toString('hex'),
       dataFee: tx.getDataFee().toString(10).multi_(gasPrice),
       allFee: tx.getBaseFee().toString(10).multi_(gasPrice),
-      nonce: tx['nonce'].toDecimalString_().toNumber_(),
-      gasPrice: tx['gasPrice'].toDecimalString_(),
-      gasLimit: tx['gasLimit'].toDecimalString_(),
-      to: tx['to'].toHexString_(),
-      value: tx['value'].toDecimalString_(),
-      data: tx['data'].toHexString_(),
+      nonce: tx.nonce.toDecimalString_().toNumber_(),
+      gasPrice: tx.gasPrice.toDecimalString_(),
+      gasLimit: tx.gasLimit.toDecimalString_(),
+      to: tx.to.toHexString_(),
+      value: tx.value.toDecimalString_(),
+      data: tx.data.toHexString_(),
       from: tx['from'].toHexString_(),
       compileVersion: this.getCompilerVersionOfContract(compiledContract, contractName),
       abi: this.getAbiOfContract(compiledContract, contractName, false)
@@ -457,7 +600,7 @@ export default class EthWallet extends BaseEtherLike {
   }
 
   encodeToTopicHex(str: string): string {
-    return EtherUtil.keccak256(str).toHexString_()
+    return keccak256(str).toHexString_()
   }
 
   /**

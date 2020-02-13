@@ -2,9 +2,9 @@
  * Created by joy on 12/09/2017.
  */
 import BaseCoin from './base_coin'
-import HdKey from 'ethereumjs-wallet/hdkey'
+import HDKey from 'hdkey'
 import { HDPrivateKey } from 'bitcore-lib'
-import { publicToAddress, isValidPublic, isValidAddress, privateToAddress } from 'ethereumjs-util'
+import { publicToAddress, privateToPublic, bufferToHex, isValidPublic, isValidAddress, privateToAddress } from 'ethereumjs-util'
 
   /**
  * 以太坊系基类
@@ -54,17 +54,17 @@ class BaseEtherLike extends BaseCoin {
     privateKey: string,
     publicKey: string,
   } {
-    const node = HdKey.fromExtendedKey(xpriv)
-    const derivedNode = node.derivePath(path)
-    const wallet = derivedNode.getWallet()
+    const node = HDKey.fromExtendedKey(xpriv)
+    const derivedNode = node.derive(path)
+    const publicKey = privateToPublic(derivedNode._privateKey)
     return {
       parentXpriv: xpriv,
       path: path,
-      xpriv: derivedNode.privateExtendedKey(),
-      xpub: derivedNode.publicExtendedKey(),
-      address: wallet.getAddressString(),
-      privateKey: wallet.getPrivateKeyString(),
-      publicKey: wallet.getPublicKeyString(),
+      xpriv: derivedNode.privateExtendedKey,
+      xpub: derivedNode.publicExtendedKey,
+      address: bufferToHex(publicToAddress(publicKey)),
+      privateKey: bufferToHex(derivedNode._privateKey),
+      publicKey: bufferToHex(publicKey),
     }
   }
 
