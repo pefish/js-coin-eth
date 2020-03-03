@@ -24,7 +24,7 @@ describe('EtherscanApiHelper', () => {
       const result = await helper.blockNumber()
       // assert.strictEqual(result, fixtures['geneSeed']['result']['seed'])
     } catch (err) {
-      global.logger.error(err)
+      console.error(err)
       assert.throws(() => {}, err)
     }
   })
@@ -35,7 +35,7 @@ describe('EtherscanApiHelper', () => {
       // logger.error(result)
       assert.strictEqual(result > 0, true)
     } catch (err) {
-      global.logger.error(err)
+      console.error(err)
       assert.throws(() => {}, err)
     }
   })
@@ -47,7 +47,7 @@ describe('EtherscanApiHelper', () => {
       assert.strictEqual(typeof result, 'string')
       assert.strictEqual(result > 0, true)
     } catch (err) {
-      global.logger.error(err)
+      console.error(err)
       assert.throws(() => {}, err)
     }
   })

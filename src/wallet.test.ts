@@ -25,7 +25,7 @@ describe('EthWalletHelper', () => {
       // logger.error('result', result)
       assert.strictEqual(result, '0xec6864c83231b2aaf489ac9d92d7a047fa94118cffc1fbdfc802b85d466a077a')
     } catch (err) {
-      global.logger.error(err)
+      console.error(err)
       assert.throws(() => {}, err)
     }
   })
@@ -47,7 +47,7 @@ describe('EthWalletHelper', () => {
       // logger.error('result1', result1.toString())
       assert.strictEqual(result1[0].toString(), '22800000000')
     } catch (err) {
-      global.logger.error(err)
+      console.error(err)
       assert.throws(() => {}, err)
     }
   })
@@ -58,7 +58,7 @@ describe('EthWalletHelper', () => {
       // logger.error('result', result)
       assert.strictEqual(result, '0x56d7fcd68b219238ce1789f3da653bc9842468b5b63dd8f97a6183e3ced2c67e')
     } catch (err) {
-      global.logger.error(err)
+      console.error(err)
       assert.throws(() => {}, err)
     }
   })
@@ -69,7 +69,7 @@ describe('EthWalletHelper', () => {
       // logger.error(id)
       assert.strictEqual(bool, true)
     } catch (err) {
-      global.logger.error(err)
+      console.error(err)
       assert.throws(() => {}, err)
     }
   })
@@ -84,7 +84,7 @@ describe('EthWalletHelper', () => {
       // logger.error(id)
       assert.strictEqual(id1, '0xa9059cbb')
     } catch (err) {
-      global.logger.error(err)
+      console.error(err)
       assert.throws(() => {}, err)
     }
   })
@@ -111,7 +111,7 @@ describe('EthWalletHelper', () => {
       // logger.error(id)
       assert.strictEqual(id, '0xa9059cbb000000000000000000000000529dab7bad9ef1000c3c0d708878c83fc870f7ae00000000000000000000000000000000000000000000003d2bb21d7ad654d6ef')
     } catch (err) {
-      global.logger.error(err)
+      console.error(err)
       assert.throws(() => {}, err)
     }
   })
@@ -137,10 +137,10 @@ describe('EthWalletHelper', () => {
         '3000000000',
         '1000000'
       )
-      // global.logger.error('result', result)
+      // console.error('result', result)
       assert.strictEqual(result['txId'], '0x82fa95bcc9b12d53eef8f065a6124940e6290f208957dab0e76d4a21790d61f6')
     } catch (err) {
-      global.logger.error(err)
+      console.error(err)
       assert.throws(() => {}, err)
     }
   })
@@ -152,7 +152,7 @@ describe('EthWalletHelper', () => {
       // logger.error(xpriv, result)
       assert.strictEqual(result['address'], '0xc3b6064cb543ef68d0f3314d85f6f89525cedf8f')
     } catch (err) {
-      global.logger.error(err)
+      console.error(err)
       assert.throws(() => {}, err)
     }
   })
@@ -163,7 +163,7 @@ describe('EthWalletHelper', () => {
       // logger.error(address)
       assert.strictEqual(address, '0xc3b6064cb543ef68d0f3314d85f6f89525cedf8f')
     } catch (err) {
-      global.logger.error(err)
+      console.error(err)
       assert.throws(() => {}, err)
     }
   })
@@ -177,7 +177,7 @@ describe('EthWalletHelper', () => {
       // logger.error(result)
       assert.strictEqual(result['params'][0], '4615927614ab4ca911a12fcd04013e0d2fac4bc6')
     } catch (err) {
-      global.logger.error(err)
+      console.error(err)
       assert.throws(() => {}, err)
     }
   })
@@ -188,7 +188,7 @@ describe('EthWalletHelper', () => {
       // logger.error(result)
       assert.strictEqual(result['methodIdHex'], '0xa9059cbb')
     } catch (err) {
-      global.logger.error(err)
+      console.error(err)
       assert.throws(() => {}, err)
     }
   })
@@ -199,7 +199,7 @@ describe('EthWalletHelper', () => {
       // logger.error('result', result)
       assert.strictEqual(result, '0x02852445ee888efc18cdfd36d4d284048d8d70d131225e2fc3f36594a75275a31260c568456138aae5939a12d789da3f5e6bb9c93fbfe41d36468965fa8769b41b')
     } catch (err) {
-      global.logger.error(err)
+      console.error(err)
       assert.throws(() => {}, err)
     }
   })
@@ -210,7 +210,7 @@ describe('EthWalletHelper', () => {
       // logger.error('result', result)
       assert.strictEqual(result.toUpperCase(), '0x50934521b4b6bf6d823beae47da8955156698456'.toUpperCase())
     } catch (err) {
-      global.logger.error(err)
+      console.error(err)
       assert.throws(() => {}, err)
     }
   })
@@ -221,7 +221,7 @@ describe('EthWalletHelper', () => {
       // console.error('result', result)
       assert.strictEqual(JSON.parse(result)['address'].toUpperCase(), 'd5bd43c956e9afa3034958b42410c5acfdfaa720'.toUpperCase())
     } catch (err) {
-      global.logger.error(err)
+      console.error(err)
       assert.throws(() => {}, err)
     }
   })

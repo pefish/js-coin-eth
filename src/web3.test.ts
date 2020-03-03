@@ -24,11 +24,11 @@ describe('Web3Helper', () => {
   it('getLatestBlockNumber', async () => {
     try {
       const result = await walletHelper.browsers['read'].getLatestBlockNumber()
-      global.logger.error(result)
+      console.error(result)
       const result1 = await walletHelper.browsers['write'].getLatestBlockNumber()
-      global.logger.error(result1)
+      console.error(result1)
     } catch (err) {
-      global.logger.error(err)
+      console.error(err)
       assert.throws(() => {}, err)
     }
   })

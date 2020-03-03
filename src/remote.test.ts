@@ -21,10 +21,10 @@ describe('Remote', () => {
   it('eth_gasPrice', async () => {
     try {
       const result = await helper.wrapRequest(`eth`, `gasPrice`)
-      // global.logger.error('result', result)
+      // console.error('result', result)
       assert.strictEqual(result >= 0, true)
     } catch (err) {
-      global.logger.error(err)
+      console.error(err)
       assert.throws(() => {}, err)
     }
   })
@@ -32,10 +32,10 @@ describe('Remote', () => {
   it('getTransactionCount', async () => {
     try {
       const result = await helper.client.eth.getTransactionCount('0xF631f8186f4fBCb6723Bf5e513db35c45e581aD7')
-      // global.logger.error('result', result)
+      // console.error('result', result)
       assert.strictEqual(result >= 0, true)
     } catch (err) {
-      global.logger.error(err)
+      console.error(err)
       assert.throws(() => {}, err)
     }
   })
@@ -43,10 +43,10 @@ describe('Remote', () => {
   it('getDecimals', async () => {
     try {
       const result = await helper.getDecimals('0xF631f8186f4fBCb6723Bf5e513db35c45e581aD7')
-      global.logger.error('result', result)
+      console.error('result', result)
       assert.strictEqual(result, 18)
     } catch (err) {
-      global.logger.error(err)
+      console.error(err)
       assert.throws(() => {}, err)
     }
   })
@@ -54,10 +54,10 @@ describe('Remote', () => {
   it('getTokenBalance', async () => {
     try {
       const result = await helper.getTokenBalance('0xF631f8186f4fBCb6723Bf5e513db35c45e581aD7', `0x529dab7bad9ef1000c3c0d708878c83fc870f7ae`)
-      // global.logger.error('result', result)
+      // console.error('result', result)
       assert.strictEqual(result.gt_(0), true)
     } catch (err) {
-      global.logger.error(err)
+      console.error(err)
       assert.throws(() => {}, err)
     }
   })
@@ -75,10 +75,10 @@ describe('Remote', () => {
           "type": "function"
         }
       ]), `0xF631f8186f4fBCb6723Bf5e513db35c45e581aD7`, `decimals`)
-      // global.logger.error('result', result)
+      // console.error('result', result)
       assert.strictEqual(result.toString(10), `18`)
     } catch (err) {
-      global.logger.error(err)
+      console.error(err)
       assert.throws(() => {}, err)
     }
   })

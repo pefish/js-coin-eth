@@ -621,19 +621,16 @@ export default class EthWallet extends BaseEtherLike {
       gasPrice,
       gasLimit
     )
-    global.logger.info(`成功构造交易。${JSON.stringify(tran)}`)
     await this.remoteClient.wrapRequest(`eth`, `sendRawTransaction`, [tran.txHex])
 
     while (true) {
       try {
-        global.logger.info(`检查 ${tran.txId} 交易中...`)
         const tx = await this.remoteClient.wrapRequest(`eth`, `getTransactionByHash`, [tran.txId])
         if (tx && tx.blockNumber && tx.blockNumber.toString(10).gt_(100)) {
-          global.logger.info(`eth到账成功`)
           break
         }
       } catch (err) {
-        global.logger.error(err)
+        console.error(err)
       }
       await TimeUtil.sleep(3000)
     }
