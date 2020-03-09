@@ -1,7 +1,6 @@
 import '@pefish/js-node-assist'
 import * as utils from 'ethereumjs-util'
 import BN from 'bn.js'
-import ethjsUtil from 'ethjs-util'
 
 export default class ABI {
   static eventID (name, types) {
@@ -260,8 +259,8 @@ function parseTypeArray (type) {
 function parseNumber (arg) {
   var type = typeof arg
   if (type === 'string') {
-    if (ethjsUtil.isHexPrefixed(arg)) {
-      return new BN(ethjsUtil.stripHexPrefix(arg), 16)
+    if (arg.startsWith(`0x`)) {
+      return new BN(arg.substr(2), 16)
     } else {
       return new BN(arg, 10)
     }

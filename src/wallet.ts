@@ -580,7 +580,7 @@ export default class EthWallet extends BaseEtherLike {
    * @param params {array}
    * @returns {*}
    */
-  encodePayload(methodIdHex: string, methodParamTypes: string[], params: string[]) {
+  encodePayload(methodIdHex: string, methodParamTypes: string[], params: string[]): string {
     return methodIdHex + this.encodeParamsHex(methodParamTypes, params)
   }
 
