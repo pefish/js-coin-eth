@@ -1,6 +1,6 @@
 {
   "name": "@pefish/js-coin-eth",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "eth common of js",
   "keywords": [
     "common",
@@ -41,6 +41,7 @@
     "ethereumjs-util": "^6.2.0",
     "hdkey": "^1.1.1",
     "randombytes": "^2.1.0",
+    "scryptsy": "^2.1.0",
     "solc": "^0.5.9",
     "uuid": "^3.4.0",
     "web3": "^1.2.6"

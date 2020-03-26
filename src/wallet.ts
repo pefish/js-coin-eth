@@ -13,7 +13,7 @@ import TimeUtil from '@pefish/js-util-time'
 import randomBytes from 'randombytes'
 import crypto from 'crypto'
 import uuidv4 from 'uuid/v4'
-
+import scryptsy from 'scryptsy'
 export interface TransactionResult {
   txHex: string,
   txId: string,
@@ -233,24 +233,24 @@ export default class EthWallet extends BaseEtherLike {
           'sha256',
         )
         break
-      // case `scrypt`:
-      //   kdfParams = {
-      //     dklen: opts.dklen,
-      //     salt: opts.salt,
-      //     n: opts.n,
-      //     r: opts.r,
-      //     p: opts.p,
-      //   }
-      //   // FIXME: support progress reporting callback
-      //   derivedKey = scryptsy(
-      //     Buffer.from(password),
-      //     kdfParams.salt,
-      //     kdfParams.n,
-      //     kdfParams.r,
-      //     kdfParams.p,
-      //     kdfParams.dklen,
-      //   )
-      //   break
+      case `scrypt`:
+        kdfParams = {
+          dklen: opts.dklen,
+          salt: opts.salt,
+          n: opts.n,
+          r: opts.r,
+          p: opts.p,
+        }
+        // FIXME: support progress reporting callback
+        derivedKey = scryptsy(
+          Buffer.from(password),
+          kdfParams.salt,
+          kdfParams.n,
+          kdfParams.r,
+          kdfParams.p,
+          kdfParams.dklen,
+        )
+        break
       default:
         throw new Error('Unsupported kdf')
     }
@@ -304,17 +304,17 @@ export default class EthWallet extends BaseEtherLike {
 
     let derivedKey: Buffer, kdfparams: any
     if (json.crypto.kdf === 'scrypt') {
-      // kdfparams = json.crypto.kdfparams
+      kdfparams = json.crypto.kdfparams
 
-      // // FIXME: support progress reporting callback
-      // derivedKey = scryptsy(
-      //   Buffer.from(password),
-      //   Buffer.from(kdfparams.salt, 'hex'),
-      //   kdfparams.n,
-      //   kdfparams.r,
-      //   kdfparams.p,
-      //   kdfparams.dklen,
-      // )
+      // FIXME: support progress reporting callback
+      derivedKey = scryptsy(
+        Buffer.from(password),
+        Buffer.from(kdfparams.salt, 'hex'),
+        kdfparams.n,
+        kdfparams.r,
+        kdfparams.p,
+        kdfparams.dklen,
+      )
     } else if (json.crypto.kdf === 'pbkdf2') {
       kdfparams = json.crypto.kdfparams
 
