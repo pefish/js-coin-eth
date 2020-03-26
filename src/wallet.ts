@@ -14,6 +14,7 @@ import randomBytes from 'randombytes'
 import crypto from 'crypto'
 import uuidv4 from 'uuid/v4'
 import scryptsy from 'scryptsy'
+import Common from 'ethereumjs-common';
 export interface TransactionResult {
   txHex: string,
   txId: string,
@@ -27,7 +28,8 @@ export interface TransactionResult {
   data: string,
   from: string,
   compileVersion?: string,
-  abi?: { [x: string]: any }
+  abi?: { [x: string]: any },
+  chainId: number,
 }
 
 /**
@@ -44,6 +46,10 @@ export default class EthWallet extends BaseEtherLike {
 
   initRemoteClient(url: string): void {
     this.remoteClient = new Remote(url)
+  }
+
+  setChainId(chainId: number): void {
+    this.chainId = chainId
   }
 
   /**
@@ -370,10 +376,12 @@ export default class EthWallet extends BaseEtherLike {
       gasLimit: gasLimit.decimalToHexString_(),
       to: toAddress,
       value: amount.decimalToHexString_(),
-      chainId: this.chainId,
     }
-
-    const tx = new Transaction(rawTx)
+    const tx = new Transaction(rawTx, {
+      common: Common.forCustomChain('mainnet', {
+        chainId: this.chainId,
+      }, "byzantium"),
+    })
     tx.sign(privateKeyBuffer)
     const serializedTx = tx.serialize()
     return {
@@ -387,7 +395,8 @@ export default class EthWallet extends BaseEtherLike {
       to: tx.to.toHexString_(),
       value: tx.value.toDecimalString_(),
       data: tx.data.toHexString_(),
-      from: tx['from'].toHexString_()
+      from: tx['from'].toHexString_(),
+      chainId: tx.getChainId(),
     }
   }
 
@@ -406,10 +415,13 @@ export default class EthWallet extends BaseEtherLike {
       to: sourceAddress,
       value: 0x00,
       data: '0x3c5554462d383e2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d20e7be8ee4b8bde79a84e58886e99a94e7aca6202d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a0a' + msg.stringToUtf8HexString_().removeFirst_(2),
-      chainId: this.chainId,
     }
 
-    const tx = new Transaction(rawTx)
+    const tx = new Transaction(rawTx, {
+      common: Common.forCustomChain('mainnet', {
+        chainId: this.chainId,
+      }, "byzantium"),
+    })
     tx.sign(privateKeyBuffer)
     const serializedTx = tx.serialize()
     return {
@@ -423,7 +435,8 @@ export default class EthWallet extends BaseEtherLike {
       to: tx.to.toHexString_(),
       value: tx.value.toDecimalString_(),
       data: tx.data.toHexString_(),
-      from: tx['from'].toHexString_()
+      from: tx['from'].toHexString_(),
+      chainId: tx.getChainId(),
     }
   }
 
@@ -452,9 +465,12 @@ export default class EthWallet extends BaseEtherLike {
       to: contractAddress,
       value: 0x00,
       data: this.encodePayload(this.getMethodId(methodName, methodParamTypes), methodParamTypes, params),
-      chainId: this.chainId,
     }
-    const tx = new Transaction(rawTx)
+    const tx = new Transaction(rawTx, {
+      common: Common.forCustomChain('mainnet', {
+        chainId: this.chainId,
+      }, "byzantium"),
+    })
     tx.sign(privateKeyBuffer)
     const serializedTx = tx.serialize()
     return {
@@ -468,7 +484,8 @@ export default class EthWallet extends BaseEtherLike {
       to: tx.to.toHexString_(),
       value: tx.value.toDecimalString_(),
       data: tx.data.toHexString_(),
-      from: tx['from'].toHexString_()
+      from: tx['from'].toHexString_(),
+      chainId: tx.getChainId(),
     }
   }
 
@@ -519,9 +536,12 @@ export default class EthWallet extends BaseEtherLike {
       gasLimit: gasLimit.decimalToHexString_(),
       value: 0x00,
       data,
-      chainId: this.chainId,
     }
-    const tx = new Transaction(rawTx)
+    const tx = new Transaction(rawTx, {
+      common: Common.forCustomChain('mainnet', {
+        chainId: this.chainId,
+      }, "byzantium"),
+    })
     tx.sign(privateKeyBuffer)
     const serializedTx = tx.serialize()
     return {
@@ -537,7 +557,8 @@ export default class EthWallet extends BaseEtherLike {
       data: tx.data.toHexString_(),
       from: tx['from'].toHexString_(),
       compileVersion: this.getCompilerVersionOfContract(compiledContract, contractName),
-      abi: this.getAbiOfContract(compiledContract, contractName, false)
+      abi: this.getAbiOfContract(compiledContract, contractName, false),
+      chainId: tx.getChainId(),
     }
   }
 

@@ -18,6 +18,7 @@ export interface TransactionResult {
     abi?: {
         [x: string]: any;
     };
+    chainId: number;
 }
 /**
  * 以太坊钱包帮助类
@@ -28,6 +29,7 @@ export default class EthWallet extends BaseEtherLike {
     chainId: number;
     constructor();
     initRemoteClient(url: string): void;
+    setChainId(chainId: number): void;
     /**
      * 获取合约的字节码
      * @param compiledContract

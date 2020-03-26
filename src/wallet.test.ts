@@ -30,6 +30,17 @@ describe('EthWalletHelper', () => {
     }
   })
 
+  it('decodeTxHex', async () => {
+    try {
+      const result = walletHelper.decodeTxHex(`0xf86c028505d21dba0083419ce09490a7c100264a6ef684abdcdef7d7f67e54b9110887038d7ea4c680008026a001671820578358c87a7f768ee248353c2335a483129bef6970a3b4b15a3c98f9a0582b62a182f0749ea9f863098d012c01db3e1cc90e16d3e68e74af84961d9112`)
+      // console.error('result', result)
+      assert.strictEqual(result.txId, '0xe09ba868a4ceccf3840c0ce46014ced470d4fd98cfa7a1f607e76495d41977e6')
+    } catch (err) {
+      console.error(err)
+      assert.throws(() => {}, err)
+    }
+  })
+
   it('decodeParamsHex', async () => {
     try {
 
@@ -139,6 +150,25 @@ describe('EthWalletHelper', () => {
       )
       // console.error('result', result)
       assert.strictEqual(result['txId'], '0x82fa95bcc9b12d53eef8f065a6124940e6290f208957dab0e76d4a21790d61f6')
+    } catch (err) {
+      console.error(err)
+      assert.throws(() => {}, err)
+    }
+  })
+
+  it('buildTranferTx', async () => {
+    try {
+      walletHelper.setChainId(99)
+      const result = walletHelper.buildTranferTx(
+        '0xAEE4F8301B87574A197A057C237C0462CB507B5161EB45CD9FC1315C7681EE31',
+        `0xc3b6064cb543ef68d0f3314d85f6f89525cedf8f`,
+        `10000000`,
+        140,
+        '3000000000',
+        '1000000'
+      )
+      // console.error('result', result)
+      assert.strictEqual(result.chainId, 99)
     } catch (err) {
       console.error(err)
       assert.throws(() => {}, err)

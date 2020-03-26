@@ -1,4 +1,3 @@
-import 'node-assist'
 import assert from "assert"
 import EtherscanApiHelper from './etherscan_api'
 

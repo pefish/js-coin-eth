@@ -1,4 +1,3 @@
-import 'node-assist';
 declare global {
     namespace NodeJS {
         interface Global {
@@ -6,3 +5,4 @@ declare global {
         }
     }
 }
+export {};
