@@ -1,6 +1,5 @@
-/** @module */
 import '@pefish/js-node-assist';
-import BaseEtherLike from './base/base_ether_like';
+import BaseCoin from './base/base_coin';
 import Remote from './remote';
 export interface TransactionResult {
     txHex: string;
@@ -24,7 +23,7 @@ export interface TransactionResult {
  * 以太坊钱包帮助类
  * @extends BaseEtherLike
  */
-export default class EthWallet extends BaseEtherLike {
+export default class EthWallet extends BaseCoin {
     remoteClient: Remote;
     chainId: number;
     constructor();

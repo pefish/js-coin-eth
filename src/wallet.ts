@@ -6,7 +6,7 @@ chainId = (v - 36)/2
 */
 
 import '@pefish/js-node-assist'
-import BaseEtherLike from './base/base_ether_like'
+import BaseCoin from './base/base_coin'
 import ErrorHelper from '@pefish/js-error'
 import abiUtil from './abi'
 import solc from 'solc'
@@ -42,7 +42,7 @@ export interface TransactionResult {
  * 以太坊钱包帮助类
  * @extends BaseEtherLike
  */
-export default class EthWallet extends BaseEtherLike {
+export default class EthWallet extends BaseCoin {
   public remoteClient: Remote
   public chainId: number = 1
 

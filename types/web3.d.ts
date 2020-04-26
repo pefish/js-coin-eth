@@ -1,5 +1,5 @@
-import BaseEtherLike from "./base/base_ether_like";
-export declare class Browser extends BaseEtherLike {
+import BaseCoin from "./base/base_coin";
+export declare class Browser extends BaseCoin {
     contracts: object;
     eth: any;
     constructor(web3: any);

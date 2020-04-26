@@ -24,5 +24,35 @@ declare class BaseCoin {
      * @returns {*}
      */
     getRandomMnemonic(): string;
+    getXprivBySeed(seedHex: string): string;
+    getXpubBySeed(seedHex: string): string;
+    /**
+     * 由公钥得到地址
+     * @param pubKey
+     * @returns {string}
+     */
+    getAddressFromPubKey(pubKey: string): string;
+    isValidPublicKey(pubKey: string): boolean;
+    /**
+     * 校验地址
+     * @param address
+     * @returns {*|Boolean}
+     */
+    isAddress(address: string): boolean;
+    deriveAllByXprivPath(xpriv: string, path: string): {
+        parentXpriv: string;
+        path: string;
+        xpriv: string;
+        xpub: string;
+        address: string;
+        privateKey: string;
+        publicKey: string;
+    };
+    /**
+     * 根据私钥得到地址
+     * @param privateKey
+     * @returns {string}
+     */
+    getAddressFromPrivateKey(privateKey: string): string;
 }
 export default BaseCoin;

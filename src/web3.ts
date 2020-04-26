@@ -1,9 +1,9 @@
 import ErrorHelper from '@pefish/js-error'
 import Web3 from 'web3'
-import BaseEtherLike from "./base/base_ether_like";
+import BaseCoin from "./base/base_coin";
 import abiUtil from './abi'
 
-export class Browser extends BaseEtherLike {
+export class Browser extends BaseCoin {
 
   contracts: object
   eth: any
