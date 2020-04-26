@@ -1,4 +1,10 @@
-/** @module */
+
+/*
+chainId = (v - 35)/2
+or
+chainId = (v - 36)/2
+*/
+
 import '@pefish/js-node-assist'
 import BaseEtherLike from './base/base_ether_like'
 import ErrorHelper from '@pefish/js-error'
@@ -182,7 +188,11 @@ export default class EthWallet extends BaseEtherLike {
     from: string,
     chainId: number,
   } {
-    const tx = new Transaction(txHex)
+    const tx = new Transaction(txHex, {
+      common: Common.forCustomChain('mainnet', {
+        chainId: this.chainId,
+      }, "byzantium"),
+    })
     return {
       txId: '0x' + tx.hash().toString('hex'),
       nonce: tx.nonce.toDecimalString_().toNumber_(),
