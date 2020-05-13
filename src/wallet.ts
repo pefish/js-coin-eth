@@ -518,26 +518,36 @@ export default class EthWallet extends BaseCoin {
   }
 
   /**
-   * 构建部署智能合约的交易
+   * 编译出部署合约的data内容
    * @param compiledContract
-   * @param contractName {string} 要发布哪个Contract
+   * @param contractName  部署的合约名
+   * @param constructorArgs {object} {methodParamTypes, params}
+   */
+  getTxDataFromCompiledContract (compiledContract: any, contractName: string, constructorArgs: {
+    methodParamTypes: string[],
+    params: any[],
+  }) {
+    let data = this.getBytecodeOfContract(compiledContract, contractName)
+    if (constructorArgs !== null) {
+      data += this.encodeParamsHex(constructorArgs.methodParamTypes, constructorArgs.params)
+    }
+    return data
+  }
+
+  /**
+   * 构建原生交易，传入data
+   * @param data {string} data数据
    * @param privateKey
    * @param nonce {number} 十进制
    * @param gasPrice
    * @param gasLimit
-   * @param constructorArgs {object} {methodParamTypes, params}
    */
-  buildDeployContractTx(compiledContract: any, contractName: string, privateKey: string, nonce: number, gasPrice: string = '20000000000', gasLimit: string = '3000000', constructorArgs = null): TransactionResult {
-    // logger.error('1', arguments)
+  buildRawTx(data: string, privateKey: string, nonce: number, gasPrice: string = '20000000000', gasLimit: string = '3000000'): TransactionResult {
     const fromAddress = this.getAddressFromPrivateKey(privateKey)
     if (privateKey.startsWith('0x')) {
       privateKey = privateKey.substring(2, privateKey.length)
     }
     const privateKeyBuffer = new Buffer(privateKey, 'hex')
-    let data = this.getBytecodeOfContract(compiledContract, contractName)
-    if (constructorArgs !== null) {
-      data += this.encodeParamsHex(constructorArgs['methodParamTypes'], constructorArgs['params'])
-    }
 
     const rawTx = {
       from: fromAddress,
@@ -566,8 +576,6 @@ export default class EthWallet extends BaseCoin {
       value: tx.value.toDecimalString_(),
       data: tx.data.toHexString_(),
       from: tx['from'].toHexString_(),
-      compileVersion: this.getCompilerVersionOfContract(compiledContract, contractName),
-      abi: this.getAbiOfContract(compiledContract, contractName, false),
       chainId: tx.getChainId(),
     }
   }

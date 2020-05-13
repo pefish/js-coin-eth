@@ -133,16 +133,24 @@ export default class EthWallet extends BaseCoin {
     buildContractTx(privateKey: string, contractAddress: string, methodName: string, methodParamTypes: string[], params: string[], nonce: number, gasPrice?: string, gasLimit?: string): TransactionResult;
     buildTokenTransferTx(privateKey: string, contractAddress: string, toAddress: string, amount: string, nonce: number, gasPrice?: string, gasLimit?: string): TransactionResult;
     /**
-     * 构建部署智能合约的交易
+     * 编译出部署合约的data内容
      * @param compiledContract
-     * @param contractName {string} 要发布哪个Contract
+     * @param contractName  部署的合约名
+     * @param constructorArgs {object} {methodParamTypes, params}
+     */
+    getTxDataFromCompiledContract(compiledContract: any, contractName: string, constructorArgs: {
+        methodParamTypes: string[];
+        params: any[];
+    }): string;
+    /**
+     * 构建原生交易，传入data
+     * @param data {string} data数据
      * @param privateKey
      * @param nonce {number} 十进制
      * @param gasPrice
      * @param gasLimit
-     * @param constructorArgs {object} {methodParamTypes, params}
      */
-    buildDeployContractTx(compiledContract: any, contractName: string, privateKey: string, nonce: number, gasPrice?: string, gasLimit?: string, constructorArgs?: any): TransactionResult;
+    buildRawTx(data: string, privateKey: string, nonce: number, gasPrice?: string, gasLimit?: string): TransactionResult;
     /**
      * 获取智能合约方法id
      * @param method {string} 如 transfer(address,uint256)
