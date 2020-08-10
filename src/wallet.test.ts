@@ -41,6 +41,16 @@ describe('EthWalletHelper', () => {
     }
   })
 
+  it('getSeedHexByMnemonic', async () => {
+    try {
+      const result = walletHelper.getSeedHexByMnemonic(`hdghdjsdsfhtr`)
+      assert.strictEqual(result, '1d8408003d3ea18e8726af8938a0a404eb4a7e22babe20238697fb828a6b8ffc8d1c495215ad97224323df9d5ccb7153a16309afffde4ee27a8ac6d8edee35d3')
+    } catch (err) {
+      console.error(err)
+      assert.throws(() => {}, err)
+    }
+  })
+
   it('decodeParamsHex', async () => {
     try {
 

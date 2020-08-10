@@ -2,7 +2,7 @@
  * Created by joy on 12/09/2017.
  */
 
-import bip39Lib from 'bip39'
+import * as bip39Lib from 'bip39'
 import HDKey from 'hdkey'
 import { HDPrivateKey } from 'bitcore-lib'
 import { publicToAddress, privateToPublic, bufferToHex, isValidPublic, isValidAddress, privateToAddress } from 'ethereumjs-util'
