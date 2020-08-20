@@ -371,7 +371,7 @@ export default class EthWallet extends BaseCoin {
    * @param amount {string} 单位wei, 十进制
    * @param nonce {number} 十进制。即发送地址已经发送过多少笔交易
    * @param gasPrice {string} 单位wei, 十进制
-   * @param gasLimit {string} 单位wei, 十进制
+   * @param gasLimit {string} 
    * @returns {string}
    */
   buildTranferTx(privateKey: string, toAddress: string, amount: string, nonce: number, gasPrice: string = '20000000000', gasLimit: string = '21000'): TransactionResult {
@@ -416,7 +416,7 @@ export default class EthWallet extends BaseCoin {
    * @param msg {string} 文本信息
    * @param nonce {number} nonce
    * @param gasPrice {string} 单位wei, 十进制
-   * @param gasLimit {string} 单位wei, 十进制
+   * @param gasLimit {string} 
    */
   buildMsgTx(privateKey: string, msg: string, nonce: number, gasPrice: string = '20000000000', gasLimit: string = '900000'): TransactionResult {
     // logger.error(arguments)
@@ -467,7 +467,7 @@ export default class EthWallet extends BaseCoin {
    * @param params {array} 如 ['0x00367f9370A71Cf482A64394dFB2367aa3a34339', '100']
    * @param nonce {number} 十进制
    * @param gasPrice {string} 单位wei, 十进制
-   * @param gasLimit {string} 单位wei, 十进制
+   * @param gasLimit {string} 
    */
   buildContractTx(privateKey: string, contractAddress: string, methodName: string, methodParamTypes: string[], params: string[], nonce: number, gasPrice: string = '20000000000', gasLimit: string = '300000'): TransactionResult {
     const fromAddress = this.getAddressFromPrivateKey(privateKey)
@@ -515,7 +515,7 @@ export default class EthWallet extends BaseCoin {
    * @param amount {string} 单位wei, 十进制
    * @param nonce 
    * @param gasPrice {string} 单位wei, 十进制
-   * @param gasLimit {string} 单位wei, 十进制
+   * @param gasLimit {string} 
    */
   buildTokenTransferTx(privateKey: string, contractAddress: string, toAddress: string, amount: string, nonce: number, gasPrice: string = '20000000000', gasLimit: string = '900000'): TransactionResult {
     return this.buildContractTx(
@@ -558,7 +558,7 @@ export default class EthWallet extends BaseCoin {
    * @param privateKey
    * @param nonce {number} 十进制
    * @param gasPrice {string} 单位wei, 十进制
-   * @param gasLimit {string} 单位wei, 十进制
+   * @param gasLimit {string} 
    */
   buildRawTx(data: string, privateKey: string, nonce: number, gasPrice: string = '20000000000', gasLimit: string = '3000000'): TransactionResult {
     const fromAddress = this.getAddressFromPrivateKey(privateKey)
@@ -667,7 +667,7 @@ export default class EthWallet extends BaseCoin {
    * @param amount 数量（单位最小）
    * @param nonce 
    * @param gasPrice {string} 单位wei, 十进制
-   * @param gasLimit {string} 单位wei, 十进制
+   * @param gasLimit {string} 
    */
   async syncTransfer(privateKey: string, toAddress: string, amount: string, nonce: number, gasPrice: string = '20000000000', gasLimit: string = '21000'): Promise<void> {
     let tran = await this.buildTranferTx(
