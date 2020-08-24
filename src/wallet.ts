@@ -7,7 +7,6 @@ chainId = (v - 36)/2
 
 import '@pefish/js-node-assist'
 import BaseCoin from './base/base_coin'
-import ErrorHelper from '@pefish/js-error'
 import abiUtil from './abi'
 import solc from 'solc'
 import EthCrypto from 'eth-crypto'
@@ -38,6 +37,49 @@ export interface TransactionResult {
   chainId: number,
 }
 
+export interface CompiledContractResult {
+  contracts: {
+    [filename: string]: {
+      [contractName: string]: {
+        metadata: string,
+        [x: string]: any,
+      },
+    }
+  },
+  [x: string]: any,
+}
+
+export interface CompiledContractData {
+  abi: {[x: string]: any}[],
+  evm: {
+    bytecode: {
+      object
+    },
+    [x: string]: any,
+  },
+  metadata: {
+    compiler: {
+      version: string,
+    }
+    language: string,
+    settings: {
+      compilationTarget: {
+        [fileName: string]: string,
+      },
+      evmVersion: string,
+      optimizer: {
+        enable: boolean,
+        runs: number,
+      },
+      libraries: {[x: string]: any},
+      remappings: any[],
+      metadata: {
+        bytecodeHash: string,
+      }
+    }
+  }
+}
+
 export enum ChainIdEnum {
   Mainnet = 1,
   Ropsten = 3,
@@ -46,6 +88,8 @@ export enum ChainIdEnum {
   Kovan = 42,
   PrivateChain = 1337,
 }
+
+const singleContractFilename = "test.sol"
 
 /**
  * 以太坊钱包帮助类
@@ -67,32 +111,43 @@ export default class EthWallet extends BaseCoin {
     this.chainId = chainId
   }
 
-  /**
-   * 获取合约的字节码
-   * @param compiledContract
-   * @param contractName {string} 要获取哪个合约的字节码
-   * @returns {*}
-   */
-  getBytecodeOfContract(compiledContract: any, contractName: string): string {
-    if (!compiledContract['contracts'][`:${contractName}`]) {
-      return null
-    }
-    return '0x' + compiledContract['contracts'][`:${contractName}`]['bytecode']
+  compileContract(contractContent: string): CompiledContractResult {
+    // 需要哪个编译器版本，就下载哪个版本的solc包
+    var input = {
+      language: 'Solidity',
+      sources: {
+        [singleContractFilename]: {
+          content: contractContent,
+        }
+      },
+      settings: {
+        optimizer: {
+          enabled: false,
+          runs: 200
+        },
+        evmVersion: "istanbul",
+        libraries: {},
+        outputSelection: {
+          '*': {
+            '*': ['*']
+          }
+        }
+      }
+    };
+    return JSON.parse(solc.compile(JSON.stringify(input)));
   }
 
-  /**
-   * 编译合约
-   * @param contractStr
-   * @param isOptimize
-   * @returns {*}
-   */
-  compileContract(contractStr: string, isOptimize: number = 1): boolean {
-    const compiled = solc.compile(contractStr, isOptimize)
-    if (Object.keys(compiled['contracts']).length === 0) {
-      throw new ErrorHelper(compiled['errors'])
+  compileContractForData(contractContent: string, targetContractName: string): CompiledContractData {
+    let result: CompiledContractData = null
+    const output = this.compileContract(contractContent)
+    for (var [contractName, data] of Object.entries(output.contracts[singleContractFilename])) {
+      if (contractName === targetContractName) {
+        result = data as unknown as CompiledContractData
+        result.metadata = JSON.parse(data.metadata)
+        return result
+      }
     }
-    // logger.warn('compile warn: ', compiled['errors'])
-    return compiled
+    throw new Error("no target contract")
   }
 
   /**
@@ -149,34 +204,6 @@ export default class EthWallet extends BaseCoin {
       privateKey,
       EthCrypto.cipher.parse(encryptedString)
     )
-  }
-
-  /**
-   * 获取合约的abi
-   * @param compiledContract
-   * @param contractName {string} 哪个合约
-   * @param jsonParse {boolean} 是否需要parse
-   * @returns {*}
-   */
-  getAbiOfContract(compiledContract: any, contractName: string, jsonParse: boolean = true): { [x: string]: any } {
-    if (!compiledContract['contracts'][`:${contractName}`]) {
-      return null
-    }
-    return jsonParse === true ? JSON.parse(compiledContract['contracts'][`:${contractName}`]['interface']) : compiledContract['contracts'][`:${contractName}`]['interface']
-  }
-
-  /**
-   * 获取编译器版本
-   * @param compiledContract
-   * @param contractName
-   * @returns {*}
-   */
-  getCompilerVersionOfContract(compiledContract: any, contractName: string): string {
-    const meta = compiledContract['contracts'][`:${contractName}`]
-    if (!meta) {
-      return null
-    }
-    return JSON.parse(meta['metadata'])['compiler']['version']
   }
 
   /**
@@ -545,23 +572,6 @@ export default class EthWallet extends BaseCoin {
   }
 
   /**
-   * 编译出部署合约的data内容
-   * @param compiledContract
-   * @param contractName  部署的合约名
-   * @param constructorArgs {object} {methodParamTypes, params}
-   */
-  getTxDataFromCompiledContract (compiledContract: any, contractName: string, constructorArgs: {
-    methodParamTypes: string[],
-    params: any[],
-  }) {
-    let data = this.getBytecodeOfContract(compiledContract, contractName)
-    if (constructorArgs !== null) {
-      data += this.encodeParamsHex(constructorArgs.methodParamTypes, constructorArgs.params)
-    }
-    return data
-  }
-
-  /**
    * 构建原生交易，传入data
    * @param data {string} data数据
    * @param privateKey
@@ -573,6 +583,9 @@ export default class EthWallet extends BaseCoin {
     const fromAddress = this.getAddressFromPrivateKey(privateKey)
     if (privateKey.startsWith('0x')) {
       privateKey = privateKey.substring(2, privateKey.length)
+    }
+    if (!data.startsWith('0x')) {
+      data = "0x" + data
     }
     const privateKeyBuffer = new Buffer(privateKey, 'hex')
 

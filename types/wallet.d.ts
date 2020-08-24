@@ -19,6 +19,51 @@ export interface TransactionResult {
     };
     chainId: number;
 }
+export interface CompiledContractResult {
+    contracts: {
+        [filename: string]: {
+            [contractName: string]: {
+                metadata: string;
+                [x: string]: any;
+            };
+        };
+    };
+    [x: string]: any;
+}
+export interface CompiledContractData {
+    abi: {
+        [x: string]: any;
+    }[];
+    evm: {
+        bytecode: {
+            object: any;
+        };
+        [x: string]: any;
+    };
+    metadata: {
+        compiler: {
+            version: string;
+        };
+        language: string;
+        settings: {
+            compilationTarget: {
+                [fileName: string]: string;
+            };
+            evmVersion: string;
+            optimizer: {
+                enable: boolean;
+                runs: number;
+            };
+            libraries: {
+                [x: string]: any;
+            };
+            remappings: any[];
+            metadata: {
+                bytecodeHash: string;
+            };
+        };
+    };
+}
 export declare enum ChainIdEnum {
     Mainnet = 1,
     Ropsten = 3,
@@ -37,20 +82,8 @@ export default class EthWallet extends BaseCoin {
     constructor();
     initRemoteClient(url: string): void;
     setChainId(chainId: number): void;
-    /**
-     * 获取合约的字节码
-     * @param compiledContract
-     * @param contractName {string} 要获取哪个合约的字节码
-     * @returns {*}
-     */
-    getBytecodeOfContract(compiledContract: any, contractName: string): string;
-    /**
-     * 编译合约
-     * @param contractStr
-     * @param isOptimize
-     * @returns {*}
-     */
-    compileContract(contractStr: string, isOptimize?: number): boolean;
+    compileContract(contractContent: string): CompiledContractResult;
+    compileContractForData(contractContent: string, targetContractName: string): CompiledContractData;
     /**
      * 使用私钥签名消息
      * @param privateKey {string} 带0x
@@ -76,23 +109,6 @@ export default class EthWallet extends BaseCoin {
      */
     encryptWithPublicKey(publicKey: string, msg: string): Promise<string>;
     decryptWithPrivateKey(privateKey: string, encryptedString: string): Promise<string>;
-    /**
-     * 获取合约的abi
-     * @param compiledContract
-     * @param contractName {string} 哪个合约
-     * @param jsonParse {boolean} 是否需要parse
-     * @returns {*}
-     */
-    getAbiOfContract(compiledContract: any, contractName: string, jsonParse?: boolean): {
-        [x: string]: any;
-    };
-    /**
-     * 获取编译器版本
-     * @param compiledContract
-     * @param contractName
-     * @returns {*}
-     */
-    getCompilerVersionOfContract(compiledContract: any, contractName: string): string;
     /**
      * 解码txHex
      * @param txHex
@@ -158,16 +174,6 @@ export default class EthWallet extends BaseCoin {
      * @param gasLimit {string}
      */
     buildTokenTransferTx(privateKey: string, contractAddress: string, toAddress: string, amount: string, nonce: number, gasPrice?: string, gasLimit?: string): TransactionResult;
-    /**
-     * 编译出部署合约的data内容
-     * @param compiledContract
-     * @param contractName  部署的合约名
-     * @param constructorArgs {object} {methodParamTypes, params}
-     */
-    getTxDataFromCompiledContract(compiledContract: any, contractName: string, constructorArgs: {
-        methodParamTypes: string[];
-        params: any[];
-    }): string;
     /**
      * 构建原生交易，传入data
      * @param data {string} data数据

@@ -1,6 +1,6 @@
 {
   "name": "@pefish/js-coin-eth",
-  "version": "0.3.10",
+  "version": "0.4.0",
   "description": "eth common of js",
   "keywords": [
     "common",
@@ -42,7 +42,6 @@
     "hdkey": "^1.1.1",
     "randombytes": "^2.1.0",
     "scryptsy": "^2.1.0",
-    "solc": "^0.5.9",
     "uuid": "^3.4.0",
     "web3": "^1.2.6"
   },
@@ -52,6 +51,7 @@
     "@types/mocha": "^5.2.6",
     "@types/node": "^11.13.7",
     "ts-node": "^8.1.0",
-    "typescript": "^3.4.5"
+    "typescript": "^3.4.5",
+    "solc": "0.6.12"
   }
 }
