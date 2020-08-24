@@ -38,13 +38,22 @@ export interface TransactionResult {
   chainId: number,
 }
 
+export enum ChainId {
+  Mainnet = 1,
+  Ropsten = 3,
+  Rinkeby = 4,
+  Goerli = 5,
+  Kovan = 42,
+  PrivateChain = 1337,
+}
+
 /**
  * 以太坊钱包帮助类
  * @extends BaseEtherLike
  */
 export default class EthWallet extends BaseCoin {
   public remoteClient: Remote
-  public chainId: number = 1
+  public chainId: number = ChainId.Mainnet
 
   constructor() {
     super()
