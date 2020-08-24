@@ -1,5 +1,5 @@
 
-import EthWallet, { TransactionResult } from './wallet'
+import EthWallet, { TransactionResult, ChainIdEnum } from './wallet'
 import EthRemote from './remote'
 import Web3 from './web3'
 import EtherscanApi from './etherscan_api'
@@ -10,4 +10,5 @@ export {
   Web3,
   EtherscanApi,
   TransactionResult,
+  ChainIdEnum,
 }

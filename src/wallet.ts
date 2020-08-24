@@ -38,7 +38,7 @@ export interface TransactionResult {
   chainId: number,
 }
 
-export enum ChainId {
+export enum ChainIdEnum {
   Mainnet = 1,
   Ropsten = 3,
   Rinkeby = 4,
@@ -53,7 +53,7 @@ export enum ChainId {
  */
 export default class EthWallet extends BaseCoin {
   public remoteClient: Remote
-  public chainId: number = ChainId.Mainnet
+  public chainId: number = ChainIdEnum.Mainnet
 
   constructor() {
     super()
