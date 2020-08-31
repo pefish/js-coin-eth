@@ -8,7 +8,6 @@ chainId = (v - 36)/2
 import '@pefish/js-node-assist'
 import BaseCoin from './base/base_coin'
 import abiUtil from './abi'
-import solc from 'solc'
 import EthCrypto from 'eth-crypto'
 import { Transaction } from 'ethereumjs-tx'
 import Web3 from 'web3'
@@ -112,6 +111,7 @@ export default class EthWallet extends BaseCoin {
   }
 
   compileContract(contractContent: string): CompiledContractResult {
+    const solcLib = require("solc")
     // 需要哪个编译器版本，就下载哪个版本的solc包
     var input = {
       language: 'Solidity',
@@ -134,7 +134,7 @@ export default class EthWallet extends BaseCoin {
         }
       }
     };
-    return JSON.parse(solc.compile(JSON.stringify(input)));
+    return JSON.parse(solcLib.compile(JSON.stringify(input)));
   }
 
   compileContractForData(contractContent: string, targetContractName: string): CompiledContractData {
