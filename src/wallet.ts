@@ -468,7 +468,7 @@ export default class EthWallet extends BaseCoin {
       from: sourceAddress,
       to: sourceAddress,
       value: 0x00,
-      data: '0x3c5554462d383e2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d20e7be8ee4b8bde79a84e58886e99a94e7aca6202d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a0a' + msg.stringToUtf8HexString_().removeFirst_(2),
+      data: '0x3c5554462d383e2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d20e7be8ee4b8bde79a84e58886e99a94e7aca6202d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a0a' + msg.toUtf8HexString_().removeFirst_(2),
     }
 
     const tx = new Transaction(rawTx, {

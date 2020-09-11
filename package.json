@@ -1,6 +1,6 @@
 {
   "name": "@pefish/js-coin-eth",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "eth common of js",
   "keywords": [
     "common",
@@ -30,7 +30,7 @@
   "dependencies": {
     "@parity/api": "^5.1.13",
     "@pefish/js-error": "^0.1.1",
-    "@pefish/js-node-assist": "^0.6.15",
+    "@pefish/js-node-assist": "^0.6.18",
     "@pefish/js-util-httprequest": "^0.0.11",
     "@pefish/js-util-time": "^0.1.0",
     "bip39": "^3.0.2",
@@ -50,8 +50,8 @@
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.6",
     "@types/node": "^11.13.7",
+    "solc": "0.6.12",
     "ts-node": "^8.1.0",
-    "typescript": "^3.4.5",
-    "solc": "0.6.12"
+    "typescript": "^3.4.5"
   }
 }
