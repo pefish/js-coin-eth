@@ -29,6 +29,28 @@ describe('Remote', () => {
     }
   })
 
+  it('getNextNonce', async () => {
+    try {
+      const result = await helper.getNextNonce("0x8d6AE15f6E3bc537FFD94339d3134Aa13Bb1fB6c")
+      // console.error('result', result)
+      assert.strictEqual(result >= 0, true)
+    } catch (err) {
+      console.error(err)
+      assert.throws(() => {}, err)
+    }
+  })
+
+  it('estimateGasPrice', async () => {
+    try {
+      const result = await helper.estimateGasPrice("1000".shiftedBy_(9))
+      // console.error('result', result)
+      assert.strictEqual(result.gt_(0), true)
+    } catch (err) {
+      console.error(err)
+      assert.throws(() => {}, err)
+    }
+  })
+
   it('getTransactionCount', async () => {
     try {
       const result = await helper.client.eth.getTransactionCount('0xF631f8186f4fBCb6723Bf5e513db35c45e581aD7')

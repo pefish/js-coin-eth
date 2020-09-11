@@ -5,6 +5,7 @@ export default class Remote {
     constructor(url: string);
     timeoutFunc(): Promise<void>;
     wrapRequest(moduleName: string, method: string, params?: any[]): Promise<any>;
+    getNextNonce(address: string): Promise<number>;
     /**
      * 调用智能合约的方法(constant为true的函数)
      * @param abiStr {string} 合约的abi
@@ -15,6 +16,11 @@ export default class Remote {
      */
     callContract(abiStr: string, contractAddress: string, funName: string, params?: any[], opts?: {}): Promise<any>;
     getTokenBalance(contractAddress: string, address: string): Promise<string>;
+    /**
+     * 评估gasprice
+     * @param upGasPrice 上限。单位gwei
+     * @param downGasPrice 下限。单位gwei
+     */
     estimateGasPrice(upGasPrice: string, downGasPrice?: string): Promise<string>;
     getDecimals(contractAddress: any): Promise<number>;
 }

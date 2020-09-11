@@ -23,6 +23,11 @@ export default class Remote {
     ])
   }
 
+  async getNextNonce(address: string): Promise<number> {
+    const result = await this.wrapRequest("eth", `getTransactionCount`, [address, `pending`])
+    return result.toString().toNumber_()
+  }
+
   /**
    * 调用智能合约的方法(constant为true的函数)
    * @param abiStr {string} 合约的abi
@@ -77,6 +82,11 @@ export default class Remote {
     ])
   }
 
+  /**
+   * 评估gasprice
+   * @param upGasPrice 上限。单位gwei
+   * @param downGasPrice 下限。单位gwei
+   */
   async estimateGasPrice (upGasPrice: string, downGasPrice: string = `2`.shiftedBy_(9)): Promise<string> {
     if (upGasPrice.lt_(downGasPrice)) {
       return downGasPrice
