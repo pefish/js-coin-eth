@@ -21,10 +21,10 @@ export default class ABI {
     for (let i = 0; i < types.length; i++) {
       var type = elementaryName(types[i])
       var value = values[i]
-      var cur = encodeSingle(type, value)
+      var cur = encodeSingle(type, value)  // bytes的话就是长度加内容
 
       // Use the head/tail method for storing dynamic data
-      if (isDynamic(type)) {
+      if (isDynamic(type)) {  // string、bytes、数组都是动态类型
         output.push(encodeSingle('uint256', headLength))
         data.push(cur)
         headLength += cur.length
@@ -248,7 +248,7 @@ function parseTypeNxM (type) {
 }
 
 // Parse N in type[<N>] where "type" can itself be an array type.
-function parseTypeArray (type) {
+function parseTypeArray (type): string | number | null {
   var tmp = type.match(/(.*)\[(.*?)\]$/)
   if (tmp) {
     return tmp[2] === '' ? 'dynamic' : parseInt(tmp[2], 10)
@@ -335,9 +335,9 @@ function encodeSingle (type, arg) {
   } else if (type === 'bytes') {
     arg = new Buffer(arg)
 
-    ret = Buffer.concat([ encodeSingle('uint256', arg.length), arg ])
+    ret = Buffer.concat([ encodeSingle('uint256', arg.length), arg ])  // 长度加内容
 
-    if ((arg.length % 32) !== 0) {
+    if ((arg.length % 32) !== 0) {  // 内容是32字节的整数倍，不是就填充0
       ret = Buffer.concat([ ret, utils.zeros(32 - (arg.length % 32)) ])
     }
 
@@ -466,25 +466,34 @@ function decodeSingle (parsedType, data, offset) {
   throw new Error('Unsupported or invalid type: ' + parsedType.name)
 }
 
+type ParseTypeResult = {
+  rawType?: string,
+  isArray?: boolean,
+  name: string,
+  size: any,
+  memoryUsage: number,
+  subArray?: ParseTypeResult
+}
+
 // Parse the given type
 // @returns: {} containing the type itself, memory usage and (including size and subArray if applicable)
-function parseType (type) {
-  var size
-  var ret
+function parseType (type: string): ParseTypeResult {
+  var size: string | number | null
+  var ret: ParseTypeResult
   if (isArray(type)) {
     size = parseTypeArray(type)
-    var subArray = type.slice(0, type.lastIndexOf('['))
-    subArray = parseType(subArray)
+    var newType = type.slice(0, type.lastIndexOf('['))
+    const subArray = parseType(newType)
     ret = {
       isArray: true,
       name: type,
       size: size,
-      memoryUsage: size === 'dynamic' ? 32 : subArray.memoryUsage * size,
+      memoryUsage: size === 'dynamic' ? 32 : subArray.memoryUsage * (size as number),
       subArray: subArray
     }
     return ret
   } else {
-    var rawType
+    var rawType: string
     switch (type) {
       case 'address':
         rawType = 'uint160'
@@ -499,7 +508,8 @@ function parseType (type) {
     ret = {
       rawType: rawType,
       name: type,
-      memoryUsage: 32
+      memoryUsage: 32,
+      size: 0,
     }
 
     if (type.startsWith('bytes') && type !== 'bytes' || type.startsWith('uint') || type.startsWith('int')) {

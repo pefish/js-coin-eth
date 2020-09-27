@@ -1,4 +1,4 @@
-import Remote from "../src/remote";
+import "@pefish/js-node-assist"
 import Starter from '@pefish/js-util-starter'
 import Timer from '@pefish/js-util-time'
 import TimeUtil from "@pefish/js-util-time";

@@ -82,6 +82,7 @@ export default class EthWallet extends BaseCoin {
     constructor();
     initRemoteClient(url: string): void;
     setChainId(chainId: number): void;
+    zeroAddress(): string;
     compileContract(contractContent: string): CompiledContractResult;
     compileContractForData(contractContent: string, targetContractName: string): CompiledContractData;
     /**

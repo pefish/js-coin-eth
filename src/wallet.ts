@@ -110,6 +110,10 @@ export default class EthWallet extends BaseCoin {
     this.chainId = chainId
   }
 
+  zeroAddress (): string {
+    return "0x0000000000000000000000000000000000000000"
+  }
+
   compileContract(contractContent: string): CompiledContractResult {
     const solcLib = require("solc")
     // 需要哪个编译器版本，就下载哪个版本的solc包
