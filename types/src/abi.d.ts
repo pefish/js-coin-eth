@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import '@pefish/js-node-assist';
 export default class ABI {
     static eventID(name: any, types: any): Buffer;

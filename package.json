@@ -1,6 +1,6 @@
 {
   "name": "@pefish/js-coin-eth",
-  "version": "0.6.1",
+  "version": "0.7.1",
   "description": "eth common of js",
   "keywords": [
     "common",
@@ -23,20 +23,19 @@
   },
   "scripts": {
     "build": "rm -rf lib && rm -rf types && tsc",
-    "test": "mocha --timeout 15000 --require ts-node/register src/**/*.test.ts",
-    "t": "mocha --timeout 15000 --require ts-node/register",
-    "prepublish": "yarn build"
+    "test": "mocha --exit --timeout 15000 --require ts-node/register src/**/*.test.ts",
+    "t": "mocha --exit --timeout 15000 --require ts-node/register",
+    "prepublish": "yarn build && yarn test"
   },
   "dependencies": {
     "@parity/api": "^5.1.13",
-    "@pefish/js-error": "^0.1.1",
-    "@pefish/js-node-assist": "^0.6.18",
-    "@pefish/js-util-httprequest": "^0.0.11",
+    "@pefish/js-node-assist": "^1.0.0",
     "@pefish/js-util-time": "^0.1.0",
     "bip39": "^3.0.2",
     "bitcore-lib": "^8.3.4",
     "bn.js": "^4.11.8",
     "eth-crypto": "^1.5.0",
+    "ethereumjs-common": "1.5.0",
     "ethereumjs-tx": "^2.1.2",
     "ethereumjs-util": "^6.2.0",
     "hdkey": "^1.1.1",
@@ -46,12 +45,11 @@
     "web3": "^1.2.6"
   },
   "devDependencies": {
-    "@pefish/js-util-starter": "^0.0.7",
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.6",
     "@types/node": "^11.13.7",
     "solc": "0.6.12",
-    "ts-node": "^8.1.0",
-    "typescript": "^3.4.5"
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.3"
   }
 }

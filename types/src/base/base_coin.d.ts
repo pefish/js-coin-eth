@@ -1,6 +1,7 @@
 /**
  * Created by joy on 12/09/2017.
  */
+/// <reference types="node" />
 /**
  * 虚拟货币基类
  */

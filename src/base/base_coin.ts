@@ -6,6 +6,7 @@ import * as bip39Lib from 'bip39'
 import HDKey from 'hdkey'
 import { HDPrivateKey } from 'bitcore-lib'
 import { publicToAddress, privateToPublic, bufferToHex, isValidPublic, isValidAddress, privateToAddress } from 'ethereumjs-util'
+import { StringUtil } from '@pefish/js-node-assist';
 
 /**
  * 虚拟货币基类
@@ -53,11 +54,11 @@ class BaseCoin {
    * @returns {string}
    */
   getAddressFromPubKey (pubKey: string): string {
-    return `0x${publicToAddress(pubKey.hexToBuffer_(), true).toString('hex')}`
+    return `0x${publicToAddress(StringUtil.hexToBuffer_(pubKey), true).toString('hex')}`
   }
 
   isValidPublicKey (pubKey: string): boolean {
-    return isValidPublic(pubKey.hexToBuffer_(), true)
+    return isValidPublic(StringUtil.hexToBuffer_(pubKey), true)
   }
 
   /**
@@ -98,7 +99,7 @@ class BaseCoin {
    * @returns {string}
    */
   getAddressFromPrivateKey (privateKey: string): string {
-    return `0x${privateToAddress(privateKey.hexToBuffer_()).toString('hex')}`
+    return `0x${privateToAddress(StringUtil.hexToBuffer_(privateKey)).toString('hex')}`
   }
 }
 

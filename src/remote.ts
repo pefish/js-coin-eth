@@ -1,4 +1,5 @@
 import Api from '@parity/api'
+import { StringUtil } from '@pefish/js-node-assist';
 
 export default class Remote {
   timeout: number
@@ -10,7 +11,7 @@ export default class Remote {
     this.timeout = 10000
   }
 
-  async timeoutFunc(): Promise<void> {
+  async timeoutFunc(): Promise<any> {
     return new Promise((_, reject) =>
       setTimeout(() => reject(new Error('timeout')), this.timeout)
     )
@@ -25,7 +26,7 @@ export default class Remote {
 
   async getNextNonce(address: string): Promise<number> {
     const result = await this.wrapRequest("eth", `getTransactionCount`, [address, `pending`])
-    return result.toString().toNumber_()
+    return StringUtil.toNumber_(result.toString())
   }
 
   /**
@@ -87,22 +88,23 @@ export default class Remote {
    * @param upGasPrice 上限。单位gwei
    * @param downGasPrice 下限。单位gwei
    */
-  async estimateGasPrice (upGasPrice: string, downGasPrice: string = `2`.shiftedBy_(9)): Promise<string> {
-    if (upGasPrice.lt_(downGasPrice)) {
+  async estimateGasPrice (upGasPrice: string, downGasPrice: string = StringUtil.shiftedBy_(`2`, 9)): Promise<string> {
+    if (StringUtil.lt_(upGasPrice, downGasPrice)) {
       return downGasPrice
     }
     let gasPrice: string
-    let proposeGasPrice = (await this.wrapRequest(`eth`, `gasPrice`)).toString(10).multi_(1.2);
+    const chainGasPrice: string = (await this.wrapRequest(`eth`, `gasPrice`)).toString(10)
+    let proposeGasPrice = StringUtil.multi_(chainGasPrice, 1.2);
     if (!proposeGasPrice) {
-      gasPrice = downGasPrice.add_(upGasPrice).div_(2)
-    } else if (proposeGasPrice.lt_(downGasPrice)) {
+      gasPrice = StringUtil.div_(StringUtil.add_(downGasPrice, upGasPrice), 2)
+    } else if (StringUtil.lt_(proposeGasPrice, downGasPrice)) {
       gasPrice = downGasPrice
-    } else if (proposeGasPrice.gt_(upGasPrice)) {
+    } else if (StringUtil.gt_(proposeGasPrice, upGasPrice)) {
       gasPrice = upGasPrice;
     } else {
       gasPrice = proposeGasPrice
     }
-    return gasPrice.remainDecimal_(0)
+    return StringUtil.remainDecimal_(gasPrice, 0)
   }
 
   async getDecimals(contractAddress): Promise<number> {
@@ -119,7 +121,8 @@ export default class Remote {
         }
       ]
       const contract = this.client.newContract(abi, contractAddress)
-      return (await contract.instance[`decimals`].call({}, [])).toString(10).toNumber_()
+      const decimals: string = (await contract.instance[`decimals`].call({}, [])).toString(10)
+      return StringUtil.toNumber_(decimals)
     }
 
     return Promise.race([

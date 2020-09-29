@@ -1,6 +1,7 @@
 import '@pefish/js-node-assist'
 import assert from "assert"
 import Remote from "./remote";
+import { StringUtil } from '@pefish/js-node-assist';
 
 declare global {
   namespace NodeJS {
@@ -42,9 +43,9 @@ describe('Remote', () => {
 
   it('estimateGasPrice', async () => {
     try {
-      const result = await helper.estimateGasPrice("1000".shiftedBy_(9))
+      const result = await helper.estimateGasPrice(StringUtil.shiftedBy_("1000", 9))
       // console.error('result', result)
-      assert.strictEqual(result.gt_(0), true)
+      assert.strictEqual(StringUtil.gt_(result, 0), true)
     } catch (err) {
       console.error(err)
       assert.throws(() => {}, err)
@@ -65,7 +66,7 @@ describe('Remote', () => {
   it('getDecimals', async () => {
     try {
       const result = await helper.getDecimals('0xF631f8186f4fBCb6723Bf5e513db35c45e581aD7')
-      console.error('result', result)
+      // console.error('result', result)
       assert.strictEqual(result, 18)
     } catch (err) {
       console.error(err)
@@ -77,7 +78,7 @@ describe('Remote', () => {
     try {
       const result = await helper.getTokenBalance('0xF631f8186f4fBCb6723Bf5e513db35c45e581aD7', `0x529dab7bad9ef1000c3c0d708878c83fc870f7ae`)
       // console.error('result', result)
-      assert.strictEqual(result.gt_(0), true)
+      assert.strictEqual(StringUtil.gt_(result, 0), true)
     } catch (err) {
       console.error(err)
       assert.throws(() => {}, err)

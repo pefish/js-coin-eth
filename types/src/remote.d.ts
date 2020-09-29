@@ -3,7 +3,7 @@ export default class Remote {
     timeout: number;
     client: Api;
     constructor(url: string);
-    timeoutFunc(): Promise<void>;
+    timeoutFunc(): Promise<any>;
     wrapRequest(moduleName: string, method: string, params?: any[]): Promise<any>;
     getNextNonce(address: string): Promise<number>;
     /**
