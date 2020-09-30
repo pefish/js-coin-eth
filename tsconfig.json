@@ -23,6 +23,6 @@
     "allowSyntheticDefaultImports": true
   },
   "include": [
-    "src/**/*", "test/test.ts"
+    "src/**/*"
   ]
 }
