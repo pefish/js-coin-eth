@@ -51,36 +51,91 @@ export default class Remote {
   }
 
   async getTokenBalance(contractAddress: string, address: string): Promise<string> {
-    const doFun = async () => {
-      const abi = [
-        {
-          "constant": true,
-          "inputs": [
-            {
-              "name": "_owner",
-              "type": "address"
-            }
-          ],
-          "name": "balanceOf",
-          "outputs": [
-            {
-              "name": "balance",
-              "type": "uint256"
-            }
-          ],
-          "payable": false,
-          "stateMutability": "view",
-          "type": "function"
-        }
-      ]
-      const contract = this.client.newContract(abi, contractAddress)
-      return (await contract.instance[`balanceOf`].call({}, [address])).toString(10)
-    }
+    const result = await this.callContract(JSON.stringify([
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "name": "_owner",
+            "type": "address"
+          }
+        ],
+        "name": "balanceOf",
+        "outputs": [
+          {
+            "name": "balance",
+            "type": "uint256"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      }
+    ]), contractAddress, "balanceOf", [address])
+    return result.toString(10)
+  }
 
-    return Promise.race([
-      doFun(),
-      this.timeoutFunc()
-    ])
+  async getBalance(address: string): Promise<string> {
+    const result = await this.wrapRequest("eth", "getBalance", [address, "pending"])
+    return result.toString(10)
+  }
+
+  async getTransactionByHash(txHash: string): Promise<{
+    blockHash: string,
+    blockNumber: number,
+    from: string,
+    gas: number,
+    gasPrice: number,
+    hash: string,
+    input: string,
+    nonce: number,
+    r: string,
+    s: string,
+    to: string,
+    transactionIndex: number,
+    v: string,
+    value: number
+  }> {
+    const result = await this.wrapRequest("eth", "getTransactionByHash", [txHash])
+    return result
+  }
+
+  async getTransactionReceipt(txHash: string): Promise<{
+    blockHash: string,
+    blockNumber: number,
+    contractAddress: string,
+    cumulativeGasUsed: number,
+    from: string,
+    gasUsed: number,
+    logs: {
+      address: string,
+      blockHash: string,
+      blockNumber: string,
+      data: string,
+      logIndex: string,
+      removed: boolean,
+      topics: string[],
+      transactionHash: string,
+      transactionIndex: string
+    }[],
+    logsBloom: string,
+    status: string,
+    to: string,
+    transactionHash: string,
+    transactionIndex: number
+  }> {
+    const result = await this.wrapRequest("eth", "getTransactionReceipt", [txHash])
+    return result
+  }
+
+  async getTransactionCount(address: string): Promise<number> {
+    const result = await this.wrapRequest("eth", "getTransactionCount", [address])
+    return StringUtil.toNumber_(result.toString(10))
+  }
+
+  async sendRawTransaction(txHex: string): Promise<string> {
+    const result = await this.wrapRequest("eth", "sendRawTransaction", [txHex])
+    return result
   }
 
   /**
@@ -88,7 +143,7 @@ export default class Remote {
    * @param upGasPrice 上限。单位gwei
    * @param downGasPrice 下限。单位gwei
    */
-  async estimateGasPrice (upGasPrice: string, downGasPrice: string = StringUtil.shiftedBy_(`2`, 9)): Promise<string> {
+  async estimateGasPrice(upGasPrice: string, downGasPrice: string = StringUtil.shiftedBy_(`2`, 9)): Promise<string> {
     if (StringUtil.lt_(upGasPrice, downGasPrice)) {
       return downGasPrice
     }
@@ -108,26 +163,17 @@ export default class Remote {
   }
 
   async getDecimals(contractAddress): Promise<number> {
-    const doFun = async () => {
-      const abi = [
-        {
-          "constant": true,
-          "inputs": [],
-          "name": "decimals",
-          "outputs": [{ "name": "", "type": "uint8" }],
-          "payable": false,
-          "stateMutability": "view",
-          "type": "function"
-        }
-      ]
-      const contract = this.client.newContract(abi, contractAddress)
-      const decimals: string = (await contract.instance[`decimals`].call({}, [])).toString(10)
-      return StringUtil.toNumber_(decimals)
-    }
-
-    return Promise.race([
-      doFun(),
-      this.timeoutFunc()
-    ])
+    const result = await this.callContract(JSON.stringify([
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "decimals",
+        "outputs": [{ "name": "", "type": "uint8" }],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      }
+    ]), contractAddress, "decimals", [])
+    return StringUtil.toNumber_(result.toString(10))
   }
 }
