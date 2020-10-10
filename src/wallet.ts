@@ -5,7 +5,6 @@ or
 chainId = (v - 36)/2
 */
 
-import '@pefish/js-node-assist'
 import BaseCoin from './base/base_coin'
 import abiUtil from './abi'
 import EthCrypto from 'eth-crypto'
@@ -236,7 +235,7 @@ export default class EthWallet extends BaseCoin {
     })
     return {
       txId: '0x' + tx.hash().toString('hex'),
-      nonce: StringUtil.toNumber_(BufferUtil.toDecimalString_(tx.nonce)),
+      nonce: StringUtil.start(BufferUtil.toDecimalString_(tx.nonce)).toNumber(),
       gasPrice: BufferUtil.toDecimalString_(tx.gasPrice),
       gasLimit: BufferUtil.toDecimalString_(tx.gasLimit),
       to: BufferUtil.toHexString_(tx.to),
@@ -254,7 +253,7 @@ export default class EthWallet extends BaseCoin {
     const salt = Buffer.from('dc9e4a98886738bd8aae134a1f89aaa5a502c3fbd10e336136d4d5fe47448ad6', 'hex');
     const iv = Buffer.from('cecacd85e9cb89788b5aab2f93361233', 'hex');
     const uuid = Buffer.from('7e59dc028d42d09db29aa8a0f862cc81', 'hex');
-    return JSON.stringify(this.toV3(StringUtil.hexToBuffer_(privateKey), pass, { kdf: 'pbkdf2', uuid: uuid, salt: salt, iv: iv }))
+    return JSON.stringify(this.toV3(StringUtil.hexToBuffer(privateKey), pass, { kdf: 'pbkdf2', uuid: uuid, salt: salt, iv: iv }))
   }
 
   private toV3(privateKey: Buffer, password: string, opts?: any): any {
@@ -422,11 +421,11 @@ export default class EthWallet extends BaseCoin {
     }
     const privateKeyBuffer = new Buffer(privateKey, 'hex')
     const rawTx = {
-      nonce: StringUtil.decimalToHexString_(nonce.toString()),
-      gasPrice: StringUtil.decimalToHexString_(gasPrice),
-      gasLimit: StringUtil.decimalToHexString_(gasLimit),
+      nonce: StringUtil.decimalToHexString(nonce.toString()),
+      gasPrice: StringUtil.decimalToHexString(gasPrice),
+      gasLimit: StringUtil.decimalToHexString(gasLimit),
       to: toAddress,
-      value: StringUtil.decimalToHexString_(amount),
+      value: StringUtil.decimalToHexString(amount),
     }
     const tx = new Transaction(rawTx, {
       common: Common.forCustomChain('mainnet', {
@@ -438,9 +437,9 @@ export default class EthWallet extends BaseCoin {
     return {
       txHex: '0x' + serializedTx.toString('hex'),
       txId: '0x' + tx.hash().toString('hex'),
-      dataFee: StringUtil.multi_(tx.getDataFee().toString(10), gasPrice),
-      allFee: StringUtil.multi_(tx.getBaseFee().toString(10), gasPrice),
-      nonce: StringUtil.toNumber_(BufferUtil.toDecimalString_(tx.nonce)),
+      dataFee: StringUtil.start(tx.getDataFee().toString(10)).multi(gasPrice).end(),
+      allFee: StringUtil.start(tx.getBaseFee().toString(10)).multi(gasPrice).end(),
+      nonce: StringUtil.start(BufferUtil.toDecimalString_(tx.nonce)).toNumber(),
       gasPrice: BufferUtil.toDecimalString_(tx.gasPrice),
       gasLimit: BufferUtil.toDecimalString_(tx.gasLimit),
       to: BufferUtil.toHexString_(tx.to),
@@ -467,13 +466,13 @@ export default class EthWallet extends BaseCoin {
     const privateKeyBuffer = new Buffer(privateKey, 'hex')
     const sourceAddress = this.getAddressFromPrivateKey(privateKey)
     const rawTx = {
-      nonce: StringUtil.decimalToHexString_(nonce.toString()),
-      gasPrice: StringUtil.decimalToHexString_(gasPrice),
-      gasLimit: StringUtil.decimalToHexString_(gasLimit),
+      nonce: StringUtil.decimalToHexString(nonce.toString()),
+      gasPrice: StringUtil.decimalToHexString(gasPrice),
+      gasLimit: StringUtil.decimalToHexString(gasLimit),
       from: sourceAddress,
       to: sourceAddress,
       value: 0x00,
-      data: '0x3c5554462d383e2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d20e7be8ee4b8bde79a84e58886e99a94e7aca6202d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a0a' + StringUtil.removeFirst_(StringUtil.toUtf8HexString_(msg), 2),
+      data: '0x3c5554462d383e2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d20e7be8ee4b8bde79a84e58886e99a94e7aca6202d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a0a' + StringUtil.removeFirst(StringUtil.toUtf8HexString(msg), 2),
     }
 
     const tx = new Transaction(rawTx, {
@@ -486,9 +485,9 @@ export default class EthWallet extends BaseCoin {
     return {
       txHex: '0x' + serializedTx.toString('hex'),
       txId: '0x' + tx.hash().toString('hex'),
-      dataFee: StringUtil.multi_(tx.getDataFee().toString(10), gasPrice),
-      allFee: StringUtil.multi_(tx.getBaseFee().toString(10), gasPrice),
-      nonce: StringUtil.toNumber_(BufferUtil.toDecimalString_(tx.nonce)),
+      dataFee: StringUtil.start(tx.getDataFee().toString(10)).multi(gasPrice).end(),
+      allFee: StringUtil.start(tx.getBaseFee().toString(10)).multi(gasPrice).end(),
+      nonce: StringUtil.start(BufferUtil.toDecimalString_(tx.nonce)).toNumber(),
       gasPrice: BufferUtil.toDecimalString_(tx.gasPrice),
       gasLimit: BufferUtil.toDecimalString_(tx.gasLimit),
       to: BufferUtil.toHexString_(tx.to),
@@ -510,7 +509,7 @@ export default class EthWallet extends BaseCoin {
    * @param gasPrice {string} 单位wei, 十进制
    * @param gasLimit {string} 
    */
-  buildContractTx(privateKey: string, contractAddress: string, methodName: string, methodParamTypes: string[], params: string[], nonce: number, gasPrice: string = '20000000000', gasLimit: string = '300000'): TransactionResult {
+  buildContractTx(privateKey: string, contractAddress: string, methodName: string, methodParamTypes: string[], params: any[], nonce: number, gasPrice: string = '20000000000', gasLimit: string = '300000'): TransactionResult {
     const fromAddress = this.getAddressFromPrivateKey(privateKey)
     if (privateKey.startsWith('0x')) {
       privateKey = privateKey.substring(2, privateKey.length)
@@ -518,9 +517,9 @@ export default class EthWallet extends BaseCoin {
     const privateKeyBuffer = new Buffer(privateKey, 'hex')
     const rawTx = {
       from: fromAddress,
-      nonce: StringUtil.decimalToHexString_(nonce.toString()),
-      gasPrice: StringUtil.decimalToHexString_(gasPrice),
-      gasLimit: StringUtil.decimalToHexString_(gasLimit),
+      nonce: StringUtil.decimalToHexString(nonce.toString()),
+      gasPrice: StringUtil.decimalToHexString(gasPrice),
+      gasLimit: StringUtil.decimalToHexString(gasLimit),
       to: contractAddress,
       value: 0x00,
       data: this.encodePayload(this.getMethodId(methodName, methodParamTypes), methodParamTypes, params),
@@ -535,9 +534,9 @@ export default class EthWallet extends BaseCoin {
     return {
       txHex: '0x' + serializedTx.toString('hex'),
       txId: '0x' + tx.hash().toString('hex'),
-      dataFee: StringUtil.multi_(tx.getDataFee().toString(10), gasPrice),
-      allFee: StringUtil.multi_(tx.getBaseFee().toString(10), gasPrice),
-      nonce: StringUtil.toNumber_(BufferUtil.toDecimalString_(tx.nonce)),
+      dataFee: StringUtil.start(tx.getDataFee().toString(10)).multi(gasPrice).end(),
+      allFee: StringUtil.start(tx.getBaseFee().toString(10)).multi(gasPrice).end(),
+      nonce: StringUtil.start(BufferUtil.toDecimalString_(tx.nonce)).toNumber(),
       gasPrice: BufferUtil.toDecimalString_(tx.gasPrice),
       gasLimit: BufferUtil.toDecimalString_(tx.gasLimit),
       to: BufferUtil.toHexString_(tx.to),
@@ -596,9 +595,9 @@ export default class EthWallet extends BaseCoin {
 
     const rawTx = {
       from: fromAddress,
-      nonce: StringUtil.decimalToHexString_(nonce.toString()),
-      gasPrice: StringUtil.decimalToHexString_(gasPrice),
-      gasLimit: StringUtil.decimalToHexString_(gasLimit),
+      nonce: StringUtil.decimalToHexString(nonce.toString()),
+      gasPrice: StringUtil.decimalToHexString(gasPrice),
+      gasLimit: StringUtil.decimalToHexString(gasLimit),
       value: 0x00,
       data,
     }
@@ -612,9 +611,9 @@ export default class EthWallet extends BaseCoin {
     return {
       txHex: '0x' + serializedTx.toString('hex'),
       txId: '0x' + tx.hash().toString('hex'),
-      dataFee: StringUtil.multi_(tx.getDataFee().toString(10), gasPrice),
-      allFee: StringUtil.multi_(tx.getBaseFee().toString(10), gasPrice),
-      nonce: StringUtil.toNumber_(BufferUtil.toDecimalString_(tx.nonce)),
+      dataFee: StringUtil.start(tx.getDataFee().toString(10)).multi(gasPrice).end(),
+      allFee: StringUtil.start(tx.getBaseFee().toString(10)).multi(gasPrice).end(),
+      nonce: StringUtil.start(BufferUtil.toDecimalString_(tx.nonce)).toNumber(),
       gasPrice: BufferUtil.toDecimalString_(tx.gasPrice),
       gasLimit: BufferUtil.toDecimalString_(tx.gasLimit),
       to: BufferUtil.toHexString_(tx.to),
@@ -664,7 +663,7 @@ export default class EthWallet extends BaseCoin {
    * @param params {array}
    * @returns {*}
    */
-  encodePayload(methodIdHex: string, methodParamTypes: string[], params: string[]): string {
+  encodePayload(methodIdHex: string, methodParamTypes: string[], params: any[]): string {
     return methodIdHex + this.encodeParamsHex(methodParamTypes, params)
   }
 
@@ -674,7 +673,7 @@ export default class EthWallet extends BaseCoin {
    * @param params
    * @returns {*}
    */
-  encodeParamsHex(methodParamTypes: string[], params: string[]): string {
+  encodeParamsHex(methodParamTypes: string[], params: any[]): string {
     return BufferUtil.toHexString_(abiUtil.rawEncode(methodParamTypes, params), false)
   }
 
@@ -707,17 +706,24 @@ export default class EthWallet extends BaseCoin {
     )
     await this.remoteClient.wrapRequest(`eth`, `sendRawTransaction`, [tran.txHex])
 
+    await this.waitConfirm(tran.txId, false)
+  }
+
+  async waitConfirm (txHash: string, printLog: boolean = true): Promise<void> {
     while (true) {
       try {
-        const tx = await this.remoteClient.wrapRequest(`eth`, `getTransactionByHash`, [tran.txId])
-        if (tx && tx.blockNumber && tx.blockNumber.toString(10).gt_(100)) {
+        const tx = await this.remoteClient.getTransactionByHash(txHash)
+        if (tx && tx.blockNumber && StringUtil.start(tx.blockNumber.toString(10)).gt(100)) {
           break
         }
       } catch (err) {
         console.error(err)
       }
+      printLog && console.log(`${txHash} 未确认`)
       await TimeUtil.sleep(3000)
     }
+    printLog && console.log(`${txHash} 已确认！！`)
+    return
   }
 }
 

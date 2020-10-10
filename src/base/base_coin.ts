@@ -54,11 +54,11 @@ class BaseCoin {
    * @returns {string}
    */
   getAddressFromPubKey (pubKey: string): string {
-    return `0x${publicToAddress(StringUtil.hexToBuffer_(pubKey), true).toString('hex')}`
+    return `0x${publicToAddress(StringUtil.hexToBuffer(pubKey), true).toString('hex')}`
   }
 
   isValidPublicKey (pubKey: string): boolean {
-    return isValidPublic(StringUtil.hexToBuffer_(pubKey), true)
+    return isValidPublic(StringUtil.hexToBuffer(pubKey), true)
   }
 
   /**
@@ -99,7 +99,7 @@ class BaseCoin {
    * @returns {string}
    */
   getAddressFromPrivateKey (privateKey: string): string {
-    return `0x${privateToAddress(StringUtil.hexToBuffer_(privateKey)).toString('hex')}`
+    return `0x${privateToAddress(StringUtil.hexToBuffer(privateKey)).toString('hex')}`
   }
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "@pefish/js-coin-eth",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "eth common of js",
   "keywords": [
     "common",
@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@parity/api": "^5.1.13",
-    "@pefish/js-node-assist": "^1.0.0",
+    "@pefish/js-node-assist": "^2.0.2",
     "@pefish/js-util-time": "^0.1.0",
     "bip39": "^3.0.2",
     "bitcore-lib": "^8.3.4",

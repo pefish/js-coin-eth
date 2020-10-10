@@ -26,7 +26,7 @@ export default class Remote {
 
   async getNextNonce(address: string): Promise<number> {
     const result = await this.wrapRequest("eth", `getTransactionCount`, [address, `pending`])
-    return StringUtil.toNumber_(result.toString())
+    return StringUtil.start(result.toString()).toNumber()
   }
 
   /**
@@ -130,7 +130,7 @@ export default class Remote {
 
   async getTransactionCount(address: string): Promise<number> {
     const result = await this.wrapRequest("eth", "getTransactionCount", [address])
-    return StringUtil.toNumber_(result.toString(10))
+    return StringUtil.start(result.toString(10)).toNumber()
   }
 
   async sendRawTransaction(txHex: string): Promise<string> {
@@ -143,23 +143,23 @@ export default class Remote {
    * @param upGasPrice 上限。单位gwei
    * @param downGasPrice 下限。单位gwei
    */
-  async estimateGasPrice(upGasPrice: string, downGasPrice: string = StringUtil.shiftedBy_(`2`, 9)): Promise<string> {
-    if (StringUtil.lt_(upGasPrice, downGasPrice)) {
+  async estimateGasPrice(upGasPrice: string, downGasPrice: string = "2000000000"): Promise<string> {
+    if (StringUtil.start(upGasPrice).lt(downGasPrice)) {
       return downGasPrice
     }
     let gasPrice: string
     const chainGasPrice: string = (await this.wrapRequest(`eth`, `gasPrice`)).toString(10)
-    let proposeGasPrice = StringUtil.multi_(chainGasPrice, 1.2);
+    let proposeGasPrice = StringUtil.start(chainGasPrice).multi(1.2).end();
     if (!proposeGasPrice) {
-      gasPrice = StringUtil.div_(StringUtil.add_(downGasPrice, upGasPrice), 2)
-    } else if (StringUtil.lt_(proposeGasPrice, downGasPrice)) {
+      gasPrice = StringUtil.start(downGasPrice).add(upGasPrice).div(2).end()
+    } else if (StringUtil.start(proposeGasPrice).lt(downGasPrice)) {
       gasPrice = downGasPrice
-    } else if (StringUtil.gt_(proposeGasPrice, upGasPrice)) {
+    } else if (StringUtil.start(proposeGasPrice).gt(upGasPrice)) {
       gasPrice = upGasPrice;
     } else {
       gasPrice = proposeGasPrice
     }
-    return StringUtil.remainDecimal_(gasPrice, 0)
+    return StringUtil.start(gasPrice).remainDecimal(0).end()
   }
 
   async getDecimals(contractAddress): Promise<number> {
@@ -174,6 +174,6 @@ export default class Remote {
         "type": "function"
       }
     ]), contractAddress, "decimals", [])
-    return StringUtil.toNumber_(result.toString(10))
+    return StringUtil.start(result.toString(10)).toNumber()
   }
 }

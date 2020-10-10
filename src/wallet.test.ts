@@ -1,4 +1,3 @@
-import '@pefish/js-node-assist'
 import assert from "assert"
 import EthWalletHelper from './wallet'
 

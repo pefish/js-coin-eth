@@ -1,4 +1,3 @@
-import '@pefish/js-node-assist';
 declare global {
     namespace NodeJS {
         interface Global {
@@ -6,3 +5,4 @@ declare global {
         }
     }
 }
+export {};

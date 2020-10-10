@@ -1,4 +1,3 @@
-import '@pefish/js-node-assist';
 import BaseCoin from './base/base_coin';
 import Remote from './remote';
 export interface TransactionResult {
@@ -163,7 +162,7 @@ export default class EthWallet extends BaseCoin {
      * @param gasPrice {string} 单位wei, 十进制
      * @param gasLimit {string}
      */
-    buildContractTx(privateKey: string, contractAddress: string, methodName: string, methodParamTypes: string[], params: string[], nonce: number, gasPrice?: string, gasLimit?: string): TransactionResult;
+    buildContractTx(privateKey: string, contractAddress: string, methodName: string, methodParamTypes: string[], params: any[], nonce: number, gasPrice?: string, gasLimit?: string): TransactionResult;
     /**
      *
      * @param privateKey
@@ -207,14 +206,14 @@ export default class EthWallet extends BaseCoin {
      * @param params {array}
      * @returns {*}
      */
-    encodePayload(methodIdHex: string, methodParamTypes: string[], params: string[]): string;
+    encodePayload(methodIdHex: string, methodParamTypes: string[], params: any[]): string;
     /**
      * 编码参数成hex，不带0x
      * @param methodParamTypes
      * @param params
      * @returns {*}
      */
-    encodeParamsHex(methodParamTypes: string[], params: string[]): string;
+    encodeParamsHex(methodParamTypes: string[], params: any[]): string;
     decodeParamsHex(methodParamTypes: string[], paramsHex: string): any[];
     encodeToTopicHex(str: string): string;
     /**
@@ -227,4 +226,5 @@ export default class EthWallet extends BaseCoin {
      * @param gasLimit {string}
      */
     syncTransfer(privateKey: string, toAddress: string, amount: string, nonce: number, gasPrice?: string, gasLimit?: string): Promise<void>;
+    waitConfirm(txHash: string, printLog?: boolean): Promise<void>;
 }

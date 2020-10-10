@@ -1,4 +1,3 @@
-import '@pefish/js-node-assist'
 import * as utils from 'ethereumjs-util'
 import BN from 'bn.js'
 
