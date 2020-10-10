@@ -25,8 +25,7 @@ export default class Remote {
   }
 
   async getNextNonce(address: string): Promise<number> {
-    const result = await this.wrapRequest("eth", `getTransactionCount`, [address, `pending`])
-    return StringUtil.start(result.toString()).toNumber()
+    return await this.getTransactionCount(address)
   }
 
   /**
@@ -129,7 +128,7 @@ export default class Remote {
   }
 
   async getTransactionCount(address: string): Promise<number> {
-    const result = await this.wrapRequest("eth", "getTransactionCount", [address])
+    const result = await this.wrapRequest("eth", "getTransactionCount", [address, "pending"])
     return StringUtil.start(result.toString(10)).toNumber()
   }
 
