@@ -168,8 +168,10 @@ contract FixedSupplyToken {
 \t报道这个案子最详细的，是《北京晨报》，但是，这家报社在这个月，关门了。这当然是一个巧合，但，世间所有的巧合，都有极大的信息量可供解读。我只希望，呦呦鹿鸣的命运，不是北京晨报的命运。
         `,
         140,
-        '3000000000',
-        1000000
+        {
+          gasPrice: '3000000000',
+          gasLimit: 1000000
+        }
       )
       // console.error('result', result)
       assert.strictEqual(result['txId'], '0x82fa95bcc9b12d53eef8f065a6124940e6290f208957dab0e76d4a21790d61f6')
@@ -187,8 +189,10 @@ contract FixedSupplyToken {
         `0xc3b6064cb543ef68d0f3314d85f6f89525cedf8f`,
         `10000000`,
         140,
-        '3000000000',
-        1000000
+        {
+          gasPrice: '3000000000',
+          gasLimit: 1000000
+        }
       )
       // console.error('result', result)
       assert.strictEqual(result.chainId, 99)

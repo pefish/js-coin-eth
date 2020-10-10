@@ -141,7 +141,10 @@ export default class EthWallet extends BaseCoin {
      * @param gasLimit {number}
      * @returns {string}
      */
-    buildTranferTx(privateKey: string, toAddress: string, amount: string, nonce: number, gasPrice?: string, gasLimit?: number): TransactionResult;
+    buildTranferTx(privateKey: string, toAddress: string, amount: string, nonce: number, opts?: {
+        gasPrice?: string;
+        gasLimit?: number;
+    }): TransactionResult;
     /**
      * 构建文本交易
      * @param privateKey
@@ -150,7 +153,11 @@ export default class EthWallet extends BaseCoin {
      * @param gasPrice {string} 单位wei, 十进制
      * @param gasLimit {number}
      */
-    buildMsgTx(privateKey: string, msg: string, nonce: number, gasPrice?: string, gasLimit?: number): TransactionResult;
+    buildMsgTx(privateKey: string, msg: string, nonce: number, opts?: {
+        gasPrice?: string;
+        gasLimit?: number;
+        value?: string;
+    }): TransactionResult;
     /**
      * 构建调用智能合约交易(调用constant为false的函数修改区块链数据)
      * @param privateKey
@@ -162,7 +169,11 @@ export default class EthWallet extends BaseCoin {
      * @param gasPrice {string} 单位wei, 十进制
      * @param gasLimit {number}
      */
-    buildContractTx(privateKey: string, contractAddress: string, methodName: string, methodParamTypes: string[], params: any[], nonce: number, gasPrice?: string, gasLimit?: number): TransactionResult;
+    buildContractTx(privateKey: string, contractAddress: string, methodName: string, methodParamTypes: string[], params: any[], nonce: number, opts?: {
+        gasPrice?: string;
+        gasLimit?: number;
+        value?: string;
+    }): TransactionResult;
     /**
      *
      * @param privateKey
@@ -170,10 +181,12 @@ export default class EthWallet extends BaseCoin {
      * @param toAddress
      * @param amount {string} 单位wei, 十进制
      * @param nonce
-     * @param gasPrice {string} 单位wei, 十进制
-     * @param gasLimit {number}
      */
-    buildTokenTransferTx(privateKey: string, contractAddress: string, toAddress: string, amount: string, nonce: number, gasPrice?: string, gasLimit?: number): TransactionResult;
+    buildTokenTransferTx(privateKey: string, contractAddress: string, toAddress: string, amount: string, nonce: number, opts?: {
+        gasPrice?: string;
+        gasLimit?: number;
+        value?: string;
+    }): TransactionResult;
     /**
      * 构建原生交易，传入data
      * @param data {string} data数据
@@ -182,7 +195,11 @@ export default class EthWallet extends BaseCoin {
      * @param gasPrice {string} 单位wei, 十进制
      * @param gasLimit {number}
      */
-    buildRawTx(data: string, privateKey: string, nonce: number, gasPrice?: string, gasLimit?: number): TransactionResult;
+    buildRawTx(data: string, privateKey: string, nonce: number, opts?: {
+        gasPrice?: string;
+        gasLimit?: number;
+        value?: string;
+    }): TransactionResult;
     /**
      * 获取智能合约方法id
      * @param method {string} 如 transfer(address,uint256)
@@ -225,6 +242,9 @@ export default class EthWallet extends BaseCoin {
      * @param gasPrice {string} 单位wei, 十进制
      * @param gasLimit {number}
      */
-    syncTransfer(privateKey: string, toAddress: string, amount: string, nonce: number, gasPrice?: string, gasLimit?: number): Promise<void>;
+    syncTransfer(privateKey: string, toAddress: string, amount: string, nonce: number, opts?: {
+        gasPrice?: string;
+        gasLimit?: number;
+    }): Promise<void>;
     waitConfirm(txHash: string, printLog?: boolean): Promise<TransactionInfo>;
 }
