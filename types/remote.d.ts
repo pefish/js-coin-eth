@@ -1,4 +1,20 @@
 import Api from '@parity/api';
+export interface TransactionInfo {
+    blockHash: string;
+    blockNumber: number;
+    from: string;
+    gas: number;
+    gasPrice: number;
+    hash: string;
+    input: string;
+    nonce: number;
+    r: string;
+    s: string;
+    to: string;
+    transactionIndex: number;
+    v: string;
+    value: number;
+}
 export default class Remote {
     timeout: number;
     client: Api;
@@ -17,22 +33,7 @@ export default class Remote {
     callContract(abiStr: string, contractAddress: string, funName: string, params?: any[], opts?: {}): Promise<any>;
     getTokenBalance(contractAddress: string, address: string): Promise<string>;
     getBalance(address: string): Promise<string>;
-    getTransactionByHash(txHash: string): Promise<{
-        blockHash: string;
-        blockNumber: number;
-        from: string;
-        gas: number;
-        gasPrice: number;
-        hash: string;
-        input: string;
-        nonce: number;
-        r: string;
-        s: string;
-        to: string;
-        transactionIndex: number;
-        v: string;
-        value: number;
-    }>;
+    getTransactionByHash(txHash: string): Promise<TransactionInfo>;
     getTransactionReceipt(txHash: string): Promise<{
         blockHash: string;
         blockNumber: number;

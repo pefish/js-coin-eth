@@ -1,6 +1,23 @@
 import Api from '@parity/api'
 import { StringUtil } from '@pefish/js-node-assist';
 
+
+export interface TransactionInfo {
+  blockHash: string,
+  blockNumber: number,
+  from: string,
+  gas: number,
+  gasPrice: number,
+  hash: string,
+  input: string,
+  nonce: number,
+  r: string,
+  s: string,
+  to: string,
+  transactionIndex: number,
+  v: string,
+  value: number
+}
 export default class Remote {
   timeout: number
   client: Api
@@ -79,22 +96,7 @@ export default class Remote {
     return result.toString(10)
   }
 
-  async getTransactionByHash(txHash: string): Promise<{
-    blockHash: string,
-    blockNumber: number,
-    from: string,
-    gas: number,
-    gasPrice: number,
-    hash: string,
-    input: string,
-    nonce: number,
-    r: string,
-    s: string,
-    to: string,
-    transactionIndex: number,
-    v: string,
-    value: number
-  }> {
+  async getTransactionByHash(txHash: string): Promise<TransactionInfo> {
     const result = await this.wrapRequest("eth", "getTransactionByHash", [txHash])
     return result
   }

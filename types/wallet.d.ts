@@ -1,5 +1,5 @@
 import BaseCoin from './base/base_coin';
-import Remote from './remote';
+import Remote, { TransactionInfo } from './remote';
 export interface TransactionResult {
     txHex: string;
     txId: string;
@@ -226,5 +226,5 @@ export default class EthWallet extends BaseCoin {
      * @param gasLimit {number}
      */
     syncTransfer(privateKey: string, toAddress: string, amount: string, nonce: number, gasPrice?: string, gasLimit?: number): Promise<void>;
-    waitConfirm(txHash: string, printLog?: boolean): Promise<void>;
+    waitConfirm(txHash: string, printLog?: boolean): Promise<TransactionInfo>;
 }

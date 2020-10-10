@@ -11,7 +11,7 @@ import EthCrypto from 'eth-crypto'
 import { Transaction } from 'ethereumjs-tx'
 import Web3 from 'web3'
 import { keccak256, privateToAddress } from 'ethereumjs-util'
-import Remote from './remote'
+import Remote, { TransactionInfo } from './remote'
 import TimeUtil from '@pefish/js-util-time'
 import randomBytes from 'randombytes'
 import crypto from 'crypto'
@@ -709,10 +709,11 @@ export default class EthWallet extends BaseCoin {
     await this.waitConfirm(tran.txId, false)
   }
 
-  async waitConfirm (txHash: string, printLog: boolean = true): Promise<void> {
+  async waitConfirm (txHash: string, printLog: boolean = true): Promise<TransactionInfo> {
+    let tx: TransactionInfo
     while (true) {
       try {
-        const tx = await this.remoteClient.getTransactionByHash(txHash)
+        tx = await this.remoteClient.getTransactionByHash(txHash)
         if (tx && tx.blockNumber && StringUtil.start(tx.blockNumber.toString(10)).gt(100)) {
           break
         }
@@ -723,7 +724,7 @@ export default class EthWallet extends BaseCoin {
       await TimeUtil.sleep(3000)
     }
     printLog && console.log(`${txHash} 已确认！！`)
-    return
+    return tx
   }
 }
 
