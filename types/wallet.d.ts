@@ -212,7 +212,7 @@ export default class EthWallet extends BaseCoin {
      * @param payloadTx {string} 如 0xa9059cbb000000000000000000000000fb7d9853a1d7d96591530ec0a8f66aff35cb1e2100000000000000000000000000000000000000000000000098a7d9b8314c0000
      * @param methodParamTypes {array} ['uint256', 'address']
      */
-    decodePayload(payloadTx: string, methodParamTypes: string[]): {
+    decodePayload(methodParamTypes: string[], payloadTx: string): {
         methodIdHex: string;
         params: any[];
     };

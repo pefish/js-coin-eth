@@ -671,11 +671,11 @@ export default class EthWallet extends BaseCoin {
    * @param payloadTx {string} 如 0xa9059cbb000000000000000000000000fb7d9853a1d7d96591530ec0a8f66aff35cb1e2100000000000000000000000000000000000000000000000098a7d9b8314c0000
    * @param methodParamTypes {array} ['uint256', 'address']
    */
-  decodePayload(payloadTx: string, methodParamTypes: string[]): {
+  decodePayload(methodParamTypes: string[], payloadTx: string): {
     methodIdHex: string,
     params: any[],
   } {
-    const dataBuf = new Buffer(payloadTx.replace(/^0x/, ``), `hex`)
+    const dataBuf = Buffer.from(payloadTx.replace(/^0x/, ``), `hex`)
     const methodId = dataBuf.slice(0, 4).toString(`hex`)
     const inputsBuf = dataBuf.slice(4)
     const params = abiUtil.rawDecode(methodParamTypes, inputsBuf)

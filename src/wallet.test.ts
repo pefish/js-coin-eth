@@ -227,10 +227,10 @@ contract FixedSupplyToken {
 
   it('decodePayload', async () => {
     try {
-      const result = walletHelper.decodePayload('0xa9059cbb0000000000000000000000004615927614ab4ca911a12fcd04013e0d2fac4bc6000000000000000000000000000000000000000000000000a688906bd8b00000', [
+      const result = walletHelper.decodePayload([
         'address',
         'uint256'
-      ])
+      ], "0xa9059cbb0000000000000000000000004615927614ab4ca911a12fcd04013e0d2fac4bc6000000000000000000000000000000000000000000000000a688906bd8b00000")
       // console.error(result)
       assert.strictEqual(result['params'][0], '4615927614ab4ca911a12fcd04013e0d2fac4bc6')
     } catch (err) {
@@ -241,7 +241,7 @@ contract FixedSupplyToken {
 
   it('decodePayload 仅仅methodIdHex', async () => {
     try {
-      const result = walletHelper.decodePayload('0xa9059cbb0000000000000000000000004615927614ab4ca911a12fcd04013e0d2fac4bc6000000000000000000000000000000000000000000000000a688906bd8b00000', [])
+      const result = walletHelper.decodePayload([], "0xa9059cbb0000000000000000000000004615927614ab4ca911a12fcd04013e0d2fac4bc6000000000000000000000000000000000000000000000000a688906bd8b00000")
       // console.error(result)
       assert.strictEqual(result['methodIdHex'], '0xa9059cbb')
     } catch (err) {
