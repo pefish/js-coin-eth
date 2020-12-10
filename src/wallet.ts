@@ -1,10 +1,3 @@
-
-/*
-chainId = (v - 35)/2
-or
-chainId = (v - 36)/2
-*/
-
 import BaseCoin from './base/base_coin'
 import abiUtil from './abi'
 import EthCrypto from 'eth-crypto'
@@ -79,15 +72,6 @@ export interface CompiledContractData {
   }
 }
 
-export enum ChainIdEnum {
-  Mainnet = 1,
-  Ropsten = 3,
-  Rinkeby = 4,
-  Goerli = 5,
-  Kovan = 42,
-  PrivateChain = 1337,
-}
-
 const singleContractFilename = "test.sol"
 
 /**
@@ -96,22 +80,23 @@ const singleContractFilename = "test.sol"
  */
 export default class EthWallet extends BaseCoin {
   public remoteClient: Remote
-  public chainId: number = ChainIdEnum.Mainnet
+  public chainId: number
 
   constructor() {
     super()
   }
 
-  initRemoteClient(url: string): void {
+  async init(url: string): Promise<void> {
     this.remoteClient = new Remote(url)
-  }
-
-  setChainId(chainId: number): void {
-    this.chainId = chainId
+    this.chainId = await this.remoteClient.getChainId()
   }
 
   zeroAddress (): string {
     return "0x0000000000000000000000000000000000000000"
+  }
+
+  oneAddress (): string {
+    return "0x0000000000000000000000000000000000000001"
   }
 
   compileContract(contractContent: string): CompiledContractResult {

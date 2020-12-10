@@ -33,6 +33,7 @@ export default class Remote {
     callContract(abiStr: string, contractAddress: string, funName: string, params?: any[], opts?: {}): Promise<any>;
     getTokenBalance(contractAddress: string, address: string): Promise<string>;
     getBalance(address: string): Promise<string>;
+    getChainId(): Promise<number>;
     getTransactionByHash(txHash: string): Promise<TransactionInfo>;
     getTransactionReceipt(txHash: string): Promise<{
         blockHash: string;

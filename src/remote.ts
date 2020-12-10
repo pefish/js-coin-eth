@@ -35,6 +35,9 @@ export default class Remote {
   }
 
   async wrapRequest(moduleName: string, method: string, params: any[] = []) {
+    if (!this.client[moduleName][method]) {
+      throw new Error("method not exist")
+    }
     return Promise.race([
       this.client[moduleName][method](...params),
       this.timeoutFunc()
@@ -94,6 +97,11 @@ export default class Remote {
   async getBalance(address: string): Promise<string> {
     const result = await this.wrapRequest("eth", "getBalance", [address, "pending"])
     return result.toString(10)
+  }
+
+  async getChainId(): Promise<number> {
+    const result = await this.wrapRequest("eth", "chainId", [])
+    return result.toNumber()
   }
 
   async getTransactionByHash(txHash: string): Promise<TransactionInfo> {

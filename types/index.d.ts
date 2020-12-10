@@ -1,3 +1,3 @@
-import EthWallet, { TransactionResult, ChainIdEnum, CompiledContractResult, CompiledContractData } from './wallet';
+import EthWallet, { TransactionResult, CompiledContractResult, CompiledContractData } from './wallet';
 import EthRemote from './remote';
-export { EthWallet, EthRemote, TransactionResult, ChainIdEnum, CompiledContractResult, CompiledContractData, };
+export { EthWallet, EthRemote, TransactionResult, CompiledContractResult, CompiledContractData, };

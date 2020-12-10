@@ -63,14 +63,6 @@ export interface CompiledContractData {
         };
     };
 }
-export declare enum ChainIdEnum {
-    Mainnet = 1,
-    Ropsten = 3,
-    Rinkeby = 4,
-    Goerli = 5,
-    Kovan = 42,
-    PrivateChain = 1337
-}
 /**
  * 以太坊钱包帮助类
  * @extends BaseEtherLike
@@ -79,9 +71,9 @@ export default class EthWallet extends BaseCoin {
     remoteClient: Remote;
     chainId: number;
     constructor();
-    initRemoteClient(url: string): void;
-    setChainId(chainId: number): void;
+    init(url: string): Promise<void>;
     zeroAddress(): string;
+    oneAddress(): string;
     compileContract(contractContent: string): CompiledContractResult;
     compileContractForData(contractContent: string, targetContractName: string): CompiledContractData;
     /**

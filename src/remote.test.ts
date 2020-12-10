@@ -15,7 +15,7 @@ describe('Remote', () => {
   let helper: Remote
 
   before(async () => {
-    helper = new Remote(`https://mainnet.infura.io/v3/aaa3fc062661462784b334a1a5c51940`)
+    helper = new Remote(`https://mainnet.infura.io/v3/9442f24048d94dbd9a588d3e4e2eac8b`)
   })
 
   it('eth_gasPrice', async () => {
@@ -78,6 +78,17 @@ describe('Remote', () => {
       const result = await helper.getBalance(`0x529dab7bad9ef1000c3c0d708878c83fc870f7ae`)
       // console.error('result', result)
       assert.strictEqual(StringUtil.start(result).gt(0), true)
+    } catch (err) {
+      console.error(err)
+      assert.throws(() => {}, err)
+    }
+  })
+
+  it('getChainId', async () => {
+    try {
+      const result = await helper.getChainId()
+      // console.error('result', result)
+      assert.strictEqual(result, 1)
     } catch (err) {
       console.error(err)
       assert.throws(() => {}, err)

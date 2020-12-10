@@ -8,6 +8,7 @@ describe('EthWalletHelper', () => {
 
   before(async () => {
     walletHelper = new EthWalletHelper()
+    await walletHelper.init("https://mainnet.infura.io/v3/9442f24048d94dbd9a588d3e4e2eac8b")
   })
 
   it('compileContractForData', async () => {
@@ -183,7 +184,6 @@ contract FixedSupplyToken {
 
   it('buildTranferTx', async () => {
     try {
-      walletHelper.setChainId(99)
       const result = walletHelper.buildTranferTx(
         '0xAEE4F8301B87574A197A057C237C0462CB507B5161EB45CD9FC1315C7681EE31',
         `0xc3b6064cb543ef68d0f3314d85f6f89525cedf8f`,
@@ -195,7 +195,7 @@ contract FixedSupplyToken {
         }
       )
       // console.error('result', result)
-      assert.strictEqual(result.chainId, 99)
+      assert.strictEqual(result.chainId, walletHelper.chainId)
     } catch (err) {
       console.error(err)
       assert.throws(() => {}, err)
