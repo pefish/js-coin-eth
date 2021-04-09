@@ -1,14 +1,13 @@
 import assert from "assert"
 import EthWalletHelper from './wallet'
 
-
 describe('EthWalletHelper', () => {
 
   let walletHelper: EthWalletHelper, rpcHelper
 
   before(async () => {
     walletHelper = new EthWalletHelper()
-    await walletHelper.init("https://mainnet.infura.io/v3/9442f24048d94dbd9a588d3e4e2eac8b")
+    // await walletHelper.init("https://mainnet.infura.io/v3/9442f24048d94dbd9a588d3e4e2eac8b")
   })
 
   it('compileContractForData', async () => {
@@ -46,9 +45,9 @@ contract FixedSupplyToken {
 
   it('decodeTxHex', async () => {
     try {
-      const result = walletHelper.decodeTxHex(`0xf86c028505d21dba0083419ce09490a7c100264a6ef684abdcdef7d7f67e54b9110887038d7ea4c680008026a001671820578358c87a7f768ee248353c2335a483129bef6970a3b4b15a3c98f9a0582b62a182f0749ea9f863098d012c01db3e1cc90e16d3e68e74af84961d9112`)
+      const result = walletHelper.decodeTxHex(`0xf90100818c84b2d05e00830f42409418177d9743c1dfd9f4b9922986b3d7dbdc6683a680b89a3c5554462d383e2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d20e7be8ee4b8bde79a84e58886e99a94e7aca6202d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a0a090909e998bfe9878c5037e59198e5b7a5e5be97e799bde8a180e79785e8baabe69585efbc8ce7949fe5898de7a79fe4ba86e887aae5a682e794b2e9869be688bf0d0a0a09e4bda0e5a5bd0a09e4bda0e5a4a7e788b70a202020202020202025a03a782c67d135133c9a6bcb48859265a3b40b2b5137108db84421c756e9e89226a06eaa79108826d4229c16e92e45d7240211e0597ad93946a755e70b956c8f5b64`)
       // console.error('result', result)
-      assert.strictEqual(result.txId, '0xe09ba868a4ceccf3840c0ce46014ced470d4fd98cfa7a1f607e76495d41977e6')
+      assert.strictEqual(result.txId, '0x592b251a0469d65bf591cb4fad53c8d58e4c2b69a01ebd96850a10b787bfe2c0')
     } catch (err) {
       console.error(err)
       assert.throws(() => {}, err)
@@ -59,6 +58,39 @@ contract FixedSupplyToken {
     try {
       const result = walletHelper.getSeedHexByMnemonic(`hdghdjsdsfhtr`)
       assert.strictEqual(result, '1d8408003d3ea18e8726af8938a0a404eb4a7e22babe20238697fb828a6b8ffc8d1c495215ad97224323df9d5ccb7153a16309afffde4ee27a8ac6d8edee35d3')
+    } catch (err) {
+      console.error(err)
+      assert.throws(() => {}, err)
+    }
+  })
+
+  it('encodeParamsHex', async () => {
+    try {
+      const result = walletHelper.encodeParamsHex([`address`, `uint256`], ["0xd5bd43c956e9afa3034958b42410c5acfdfaa720", "1000"])
+      // console.error('result', result)
+      assert.strictEqual(result, '000000000000000000000000d5bd43c956e9afa3034958b42410c5acfdfaa72000000000000000000000000000000000000000000000000000000000000003e8')
+    } catch (err) {
+      console.error(err)
+      assert.throws(() => {}, err)
+    }
+  })
+
+  it('encodeParamsHexV2', async () => {
+    try {
+      const result = walletHelper.encodeParamsHexV2([
+        {
+          "internalType":"address",
+          "name":"",
+          "type":"address"
+        },
+        {
+          "internalType":"uint256",
+          "name":"",
+          "type":"uint256"
+        }
+      ] as any, ["0xd5bd43c956e9afa3034958b42410c5acfdfaa720", "1000"])
+      // console.error('result', result)
+      assert.strictEqual(result, '000000000000000000000000d5bd43c956e9afa3034958b42410c5acfdfaa72000000000000000000000000000000000000000000000000000000000000003e8')
     } catch (err) {
       console.error(err)
       assert.throws(() => {}, err)
@@ -81,6 +113,28 @@ contract FixedSupplyToken {
       const result1 = walletHelper.decodeParamsHex([`uint256`], `0x000000000000000000000000000000000000000000000000000000054efc6400`)
       // console.error('result1', result1.toString())
       assert.strictEqual(result1[0].toString(), '22800000000')
+    } catch (err) {
+      console.error(err)
+      assert.throws(() => {}, err)
+    }
+  })
+
+  it('decodeParamsHexV2', async () => {
+    try {
+
+      const input = `0000000000000000000000000000000000000000000000000000000000000297000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000001000000000000000000000000888888866c6441627a6e60ca22eded32e7e377d400000000000000000000000000000000000000000000000000000000000003e800000000000000000000000000000000000000000000000000000000000000033636330000000000000000000000000000000000000000000000000000000000`
+      const result = walletHelper.decodeParamsHexV2([
+        {"internalType":"uint256","name":"tokenId","type":"uint256"},
+        {
+          "components":[{"internalType":"address payable","name":"recipient","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"}],
+          "internalType":"struct ERC721Base.Fee[]",
+          "name":"_fees",
+          "type":"tuple[]",
+        },
+        {"internalType":"string","name":"tokenURI","type":"string"}
+      ] as any, input)
+      // console.error('result', result)
+      assert.strictEqual(result[0].toString(), "663")
     } catch (err) {
       console.error(err)
       assert.throws(() => {}, err)
@@ -156,17 +210,8 @@ contract FixedSupplyToken {
       const result = walletHelper.buildMsgTx(
         '0xAEE4F8301B87574A197A057C237C0462CB507B5161EB45CD9FC1315C7681EE31',
         `\t\t\t阿里P7员工得白血病身故，生前租了自如甲醛房\r\n
-\t爱人姓王，一家一直住在北京。今年，王同学拿到了阿里巴巴offer，职位是“交互设计专家”，级别P7。对于37岁的王同学来说，前景看好，试问，如今还有多少比BAT更好的互联网工作呢？于是，他只身一人，离京赴杭州阿里巴巴总部入职。按照阿里惯例，得了一个花名：安时，工号165243。
-\t一切都很顺利，包括租了一个自如的房间。房子本来是复式，自如将其改造了，二层可以独立使用，里面包括客厅、卧室、储藏间、卫生间。家具也都是自如配置的。王同学就住在这里。
-\t到了7月，他和妻子说，很不舒服。随后回京，在301医院等医院检查，发现血小板减少；随后，在首都医科大学附属北京朝阳医院，确诊为急性髓系白血病；7月13日，病情恶化，去世。
-\t王同学今年1月做了全面体检，以便入职阿里巴巴。体检报告显示，各项身体指标正常，包括血常规，各项数值均在参考范围内。这个病从哪里来呢？在医院，隔壁床的病人得了完全一样的病，一问，说估计是房间刚刚装修导致。王同学在北京的房屋已居住了十几年，工作的阿里巴巴滨江园区办公楼也已使用十几年，可以排除，他病逝后，妻子来到杭州，对那套自如房子进行了检测。结果显示：甲醛超标。妻子说，丈夫在杭州的时候，大多数时间都是夏天，正热，开着空调，恐怕也很难做到敞开通风。
-\t王同学去世后，留下一个女儿，刚刚三周岁。王同学的爱人，向法院提交了起诉书。然后，他们接到了什么呢？接到了自如公司的短信，发到已去世的王同学手机：“诉讼书表明您已经没有继续履约的能力，现解除合同。”
-\t“没有对空气污染做任何说明，而且，我们已经付过房租，仍然有房屋的使用权。”她很生气：“然后就接到自如的电话，表示就在房间外面，要收房。他们还是进去了。”
-\t故事到这里，我也写不下去了。
-\t这个故事，没有人性。好冷血。
-\t请注意，以上，都是最近发生的事情。在我上一篇文章发出后，自如公司的公关人员和我进行了沟通，“我们很重视，感谢监督指正”“健康是非常重要的问题”云云。但是，随后就投诉呦呦鹿鸣侵权，按照微信规则，要么我承认侵权，可以减半处罚；要么不承认侵权，侵权如成立则要把呦呦鹿鸣封号。
-\t回头看王同学这个案子，原告会胜诉吗？我很不乐观。2016年，北京有一位自如租客，妻子怀孕住进去的，胎儿6个月时得了白血病，不得不引产，而房屋检测显示甲醛污染严重。他起诉了。法院委托两家司法鉴定机构进行鉴定，但都说“超出鉴定技术能力”，拒绝了委托。随后，一审法院说：现有证据未能证明该种情形下与白血病的发病存在关系，赔偿请求于法无据，不予支持。
-\t报道这个案子最详细的，是《北京晨报》，但是，这家报社在这个月，关门了。这当然是一个巧合，但，世间所有的巧合，都有极大的信息量可供解读。我只希望，呦呦鹿鸣的命运，不是北京晨报的命运。
+\t你好
+\t你大爷
         `,
         140,
         {
@@ -175,7 +220,7 @@ contract FixedSupplyToken {
         }
       )
       // console.error('result', result)
-      assert.strictEqual(result['txId'], '0x82fa95bcc9b12d53eef8f065a6124940e6290f208957dab0e76d4a21790d61f6')
+      assert.strictEqual(result['txId'], '0x592b251a0469d65bf591cb4fad53c8d58e4c2b69a01ebd96850a10b787bfe2c0')
     } catch (err) {
       console.error(err)
       assert.throws(() => {}, err)

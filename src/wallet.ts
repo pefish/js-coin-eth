@@ -12,6 +12,9 @@ import uuidv4 from 'uuid/v4'
 import scryptsy from 'scryptsy'
 import Common from 'ethereumjs-common';
 import { StringUtil, BufferUtil } from '@pefish/js-node-assist';
+import * as ethers from "ethers"
+
+
 export interface TransactionResult {
   txHex: string,
   txId: string,
@@ -80,7 +83,7 @@ const singleContractFilename = "test.sol"
  */
 export default class EthWallet extends BaseCoin {
   public remoteClient: Remote
-  public chainId: number
+  public chainId: number = 1
 
   constructor() {
     super()
@@ -229,7 +232,7 @@ export default class EthWallet extends BaseCoin {
       v: BufferUtil.toHexString(tx.v),
       r: BufferUtil.toHexString(tx.r),
       s: BufferUtil.toHexString(tx.s),
-      from: BufferUtil.toHexString(tx[`from`]),
+      from: BufferUtil.toHexString(tx.getSenderAddress()),
       chainId: tx.getChainId(),
     }
   }
@@ -409,7 +412,7 @@ export default class EthWallet extends BaseCoin {
     if (privateKey.startsWith('0x')) {
       privateKey = privateKey.substring(2, privateKey.length)
     }
-    const privateKeyBuffer = new Buffer(privateKey, 'hex')
+    const privateKeyBuffer = Buffer.from(privateKey, 'hex')
     const rawTx = {
       nonce: StringUtil.start(nonce).toHexString().end(),
       gasPrice: StringUtil.start(gasPrice).toHexString().end(),
@@ -435,7 +438,7 @@ export default class EthWallet extends BaseCoin {
       to: BufferUtil.toHexString(tx.to),
       value: BufferUtil.toDecimalString(tx.value),
       data: BufferUtil.toHexString(tx.data),
-      from: BufferUtil.toHexString(tx['from']),
+      from: this.getAddressFromPrivateKey(privateKey),
       chainId: tx.getChainId(),
     }
   }
@@ -460,7 +463,7 @@ export default class EthWallet extends BaseCoin {
     if (privateKey.startsWith('0x')) {
       privateKey = privateKey.substring(2, privateKey.length)
     }
-    const privateKeyBuffer = new Buffer(privateKey, 'hex')
+    const privateKeyBuffer = Buffer.from(privateKey, 'hex')
     const sourceAddress = this.getAddressFromPrivateKey(privateKey)
     const rawTx = {
       nonce: StringUtil.start(nonce).toHexString().end(),
@@ -490,7 +493,7 @@ export default class EthWallet extends BaseCoin {
       to: BufferUtil.toHexString(tx.to),
       value: BufferUtil.toDecimalString(tx.value),
       data: BufferUtil.toHexString(tx.data),
-      from: BufferUtil.toHexString(tx['from']),
+      from: sourceAddress,
       chainId: tx.getChainId(),
     }
   }
@@ -519,7 +522,7 @@ export default class EthWallet extends BaseCoin {
     if (privateKey.startsWith('0x')) {
       privateKey = privateKey.substring(2, privateKey.length)
     }
-    const privateKeyBuffer = new Buffer(privateKey, 'hex')
+    const privateKeyBuffer = Buffer.from(privateKey, 'hex')
     const rawTx = {
       from: fromAddress,
       nonce: StringUtil.start(nonce).toHexString().end(),
@@ -547,7 +550,7 @@ export default class EthWallet extends BaseCoin {
       to: BufferUtil.toHexString(tx.to),
       value: BufferUtil.toDecimalString(tx.value),
       data: BufferUtil.toHexString(tx.data),
-      from: BufferUtil.toHexString(tx['from']),
+      from: fromAddress,
       chainId: tx.getChainId(),
     }
   }
@@ -605,7 +608,7 @@ export default class EthWallet extends BaseCoin {
     if (!data.startsWith('0x')) {
       data = "0x" + data
     }
-    const privateKeyBuffer = new Buffer(privateKey, 'hex')
+    const privateKeyBuffer = Buffer.from(privateKey, 'hex')
 
     const rawTx = {
       from: fromAddress,
@@ -633,7 +636,7 @@ export default class EthWallet extends BaseCoin {
       to: BufferUtil.toHexString(tx.to),
       value: BufferUtil.toDecimalString(tx.value),
       data: BufferUtil.toHexString(tx.data),
-      from: BufferUtil.toHexString(tx['from']),
+      from: fromAddress,
       chainId: tx.getChainId(),
     }
   }
@@ -691,9 +694,21 @@ export default class EthWallet extends BaseCoin {
     return BufferUtil.toHexString(abiUtil.rawEncode(methodParamTypes, params), false)
   }
 
+  encodeParamsHexV2(methodParamTypes: string[], params: any[]): string {
+    const result = ethers.utils.defaultAbiCoder.encode(methodParamTypes, params)
+    return result.substring(2)
+  }
+
   decodeParamsHex(methodParamTypes: string[], paramsHex: string): any[] {
-    const dataBuf = new Buffer(paramsHex.replace(/^0x/, ``), `hex`)
+    const dataBuf = Buffer.from(paramsHex.replace(/^0x/, ``), `hex`)
     return abiUtil.rawDecode(methodParamTypes, dataBuf)
+  }
+
+  decodeParamsHexV2(methodParamTypes: (string | ethers.ethers.utils.ParamType)[], paramsHex: string): ethers.ethers.utils.Result {
+    if (!paramsHex.startsWith("0x")) {
+      paramsHex = "0x" + paramsHex
+    }
+    return ethers.utils.defaultAbiCoder.decode(methodParamTypes, paramsHex)
   }
 
   encodeToTopicHex(str: string): string {
