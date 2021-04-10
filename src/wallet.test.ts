@@ -124,14 +124,23 @@ contract FixedSupplyToken {
 
       const input = `0000000000000000000000000000000000000000000000000000000000000297000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000001000000000000000000000000888888866c6441627a6e60ca22eded32e7e377d400000000000000000000000000000000000000000000000000000000000003e800000000000000000000000000000000000000000000000000000000000000033636330000000000000000000000000000000000000000000000000000000000`
       const result = walletHelper.decodeParamsHexV2([
-        {"internalType":"uint256","name":"tokenId","type":"uint256"},
         {
-          "components":[{"internalType":"address payable","name":"recipient","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"}],
-          "internalType":"struct ERC721Base.Fee[]",
-          "name":"_fees",
-          "type":"tuple[]",
+          type:"uint256"
         },
-        {"internalType":"string","name":"tokenURI","type":"string"}
+        {
+          components:[
+            {
+              type:"address"
+            },
+            {
+              type:"uint256"
+            }
+          ],
+          type: "tuple[]",
+        },
+        {
+          type:"string"
+        }
       ] as any, input)
       // console.error('result', result)
       assert.strictEqual(result[0].toString(), "663")
