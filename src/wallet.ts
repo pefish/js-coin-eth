@@ -704,11 +704,11 @@ export default class EthWallet extends BaseCoin {
     return abiUtil.rawDecode(methodParamTypes, dataBuf)
   }
 
-  decodeParamsHexV2(methodParamTypes: (string | ethers.ethers.utils.ParamType)[], paramsHex: string): ethers.ethers.utils.Result {
+  decodeParamsHexV2(methodParamTypes: (string | ethers.ethers.utils.ParamType)[], paramsHex: string): any[] {
     if (!paramsHex.startsWith("0x")) {
       paramsHex = "0x" + paramsHex
     }
-    return ethers.utils.defaultAbiCoder.decode(methodParamTypes, paramsHex)
+    return ethers.utils.defaultAbiCoder.decode(methodParamTypes, paramsHex).slice()
   }
 
   encodeToTopicHex(str: string): string {

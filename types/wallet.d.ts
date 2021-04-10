@@ -226,7 +226,7 @@ export default class EthWallet extends BaseCoin {
     encodeParamsHex(methodParamTypes: string[], params: any[]): string;
     encodeParamsHexV2(methodParamTypes: string[], params: any[]): string;
     decodeParamsHex(methodParamTypes: string[], paramsHex: string): any[];
-    decodeParamsHexV2(methodParamTypes: (string | ethers.ethers.utils.ParamType)[], paramsHex: string): ethers.ethers.utils.Result;
+    decodeParamsHexV2(methodParamTypes: (string | ethers.ethers.utils.ParamType)[], paramsHex: string): any[];
     encodeToTopicHex(str: string): string;
     /**
      * 同步性转账
