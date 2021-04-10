@@ -1,6 +1,6 @@
 {
   "name": "@pefish/js-coin-eth",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "eth common of js",
   "keywords": [
     "common",
@@ -25,7 +25,7 @@
     "build": "rm -rf lib && rm -rf types && tsc",
     "test": "mocha --exit --timeout 15000 --require ts-node/register src/**/*.test.ts",
     "t": "mocha --exit --timeout 15000 --require ts-node/register",
-    "prepublish": "yarn build && yarn test"
+    "prepublishOnly": "yarn build && yarn test"
   },
   "dependencies": {
     "@parity/api": "^5.1.13",

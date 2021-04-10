@@ -1,5 +1,6 @@
 import BaseCoin from './base/base_coin';
 import Remote, { TransactionInfo } from './remote';
+import * as ethers from "ethers";
 export interface TransactionResult {
     txHex: string;
     txId: string;
@@ -223,7 +224,9 @@ export default class EthWallet extends BaseCoin {
      * @returns {*}
      */
     encodeParamsHex(methodParamTypes: string[], params: any[]): string;
+    encodeParamsHexV2(methodParamTypes: string[], params: any[]): string;
     decodeParamsHex(methodParamTypes: string[], paramsHex: string): any[];
+    decodeParamsHexV2(methodParamTypes: (string | ethers.ethers.utils.ParamType)[], paramsHex: string): ethers.ethers.utils.Result;
     encodeToTopicHex(str: string): string;
     /**
      * 同步性转账
