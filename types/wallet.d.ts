@@ -185,8 +185,6 @@ export default class EthWallet extends BaseCoin {
      * @param data {string} data数据
      * @param privateKey
      * @param nonce {number} 十进制
-     * @param gasPrice {string} 单位wei, 十进制
-     * @param gasLimit {number}
      */
     buildRawTx(data: string, privateKey: string, nonce: number, opts?: {
         gasPrice?: string;
@@ -224,7 +222,7 @@ export default class EthWallet extends BaseCoin {
      * @returns {*}
      */
     encodeParamsHex(methodParamTypes: string[], params: any[]): string;
-    encodeParamsHexV2(methodParamTypes: string[], params: any[]): string;
+    encodeParamsHexV2(methodParamTypes: (string | ethers.ethers.utils.ParamType)[], params: any[]): string;
     decodeParamsHex(methodParamTypes: string[], paramsHex: string): any[];
     decodeParamsHexV2(methodParamTypes: (string | ethers.ethers.utils.ParamType)[], paramsHex: string): any[];
     encodeToTopicHex(str: string): string;

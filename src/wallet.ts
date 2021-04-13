@@ -589,8 +589,6 @@ export default class EthWallet extends BaseCoin {
    * @param data {string} data数据
    * @param privateKey
    * @param nonce {number} 十进制
-   * @param gasPrice {string} 单位wei, 十进制
-   * @param gasLimit {number} 
    */
   buildRawTx(data: string, privateKey: string, nonce: number, opts?: {
     gasPrice?: string,
@@ -694,7 +692,7 @@ export default class EthWallet extends BaseCoin {
     return BufferUtil.toHexString(abiUtil.rawEncode(methodParamTypes, params), false)
   }
 
-  encodeParamsHexV2(methodParamTypes: string[], params: any[]): string {
+  encodeParamsHexV2(methodParamTypes:(string | ethers.ethers.utils.ParamType)[], params: any[]): string {
     const result = ethers.utils.defaultAbiCoder.encode(methodParamTypes, params)
     return result.substring(2)
   }
@@ -735,7 +733,7 @@ export default class EthWallet extends BaseCoin {
       nonce,
       opts,
     )
-    await this.remoteClient.wrapRequest(`eth`, `sendRawTransaction`, [tran.txHex])
+    await this.remoteClient.wrapRequest(`sendRawTransaction`, [tran.txHex])
 
     await this.waitConfirm(tran.txId, false)
   }

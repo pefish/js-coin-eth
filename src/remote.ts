@@ -1,6 +1,5 @@
-import Api from '@parity/api'
 import { StringUtil } from '@pefish/js-node-assist';
-
+import * as ethers from "ethers"
 
 export interface TransactionInfo {
   blockHash: string,
@@ -20,11 +19,10 @@ export interface TransactionInfo {
 }
 export default class Remote {
   timeout: number
-  client: Api
+  provider: ethers.providers.JsonRpcProvider
 
   constructor(url: string) {
-    let provider = new Api.Provider.Http(url)
-    this.client = new Api(provider)
+    this.provider = new ethers.providers.JsonRpcProvider(url)
     this.timeout = 10000
   }
 
@@ -34,12 +32,9 @@ export default class Remote {
     )
   }
 
-  async wrapRequest(moduleName: string, method: string, params: any[] = []) {
-    if (!this.client[moduleName][method]) {
-      throw new Error("method not exist")
-    }
+  async wrapRequest(method: string, params: any[] = []) {
     return Promise.race([
-      this.client[moduleName][method](...params),
+      this.provider.send(method, params),
       this.timeoutFunc()
     ])
   }
@@ -53,14 +48,12 @@ export default class Remote {
    * @param abiStr {string} 合约的abi
    * @param contractAddress {string} 合约地址
    * @param funName {string} 要调用的函数名
-   * @param opts
    * @param params
    */
-  async callContract(abiStr: string, contractAddress: string, funName: string, params = [], opts: {} = {}): Promise<any> {
+  async callContract(abiStr: string, contractAddress: string, funName: string, params = []): Promise<any> {
     const doFun = async () => {
-      const abi = JSON.parse(abiStr)
-      const contract = this.client.newContract(abi, contractAddress)
-      return await contract.instance[funName].call(opts, params)
+      const contract = new ethers.Contract(contractAddress, abiStr, this.provider);
+      return await contract[funName](...params)
     }
 
     return Promise.race([
@@ -95,17 +88,17 @@ export default class Remote {
   }
 
   async getBalance(address: string): Promise<string> {
-    const result = await this.wrapRequest("eth", "getBalance", [address, "pending"])
+    const result = await this.wrapRequest("eth_getBalance", [address, "pending"])
     return result.toString(10)
   }
 
   async getChainId(): Promise<number> {
-    const result = await this.wrapRequest("eth", "chainId", [])
-    return result.toNumber()
+    const result = await this.wrapRequest("eth_chainId", [])
+    return StringUtil.start(result).toNumber()
   }
 
   async getTransactionByHash(txHash: string): Promise<TransactionInfo> {
-    const result = await this.wrapRequest("eth", "getTransactionByHash", [txHash])
+    const result = await this.wrapRequest("eth_getTransactionByHash", [txHash])
     return result
   }
 
@@ -133,17 +126,17 @@ export default class Remote {
     transactionHash: string,
     transactionIndex: number
   }> {
-    const result = await this.wrapRequest("eth", "getTransactionReceipt", [txHash])
+    const result = await this.wrapRequest("eth_getTransactionReceipt", [txHash])
     return result
   }
 
   async getTransactionCount(address: string): Promise<number> {
-    const result = await this.wrapRequest("eth", "getTransactionCount", [address, "pending"])
+    const result = await this.wrapRequest("eth_getTransactionCount", [address, "pending"])
     return StringUtil.start(result.toString(10)).toNumber()
   }
 
   async sendRawTransaction(txHex: string): Promise<string> {
-    const result = await this.wrapRequest("eth", "sendRawTransaction", [txHex])
+    const result = await this.wrapRequest("eth_sendRawTransaction", [txHex])
     return result
   }
 
@@ -157,7 +150,7 @@ export default class Remote {
       return downGasPrice
     }
     let gasPrice: string
-    const chainGasPrice: string = (await this.wrapRequest(`eth`, `gasPrice`)).toString(10)
+    const chainGasPrice: string = (await this.wrapRequest(`eth_gasPrice`)).toString(10)
     let proposeGasPrice = StringUtil.start(chainGasPrice).multi(1.2).end();
     if (!proposeGasPrice) {
       gasPrice = StringUtil.start(downGasPrice).add(upGasPrice).div(2).end()
