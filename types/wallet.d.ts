@@ -75,6 +75,7 @@ export default class EthWallet extends BaseCoin {
     init(url: string): Promise<void>;
     zeroAddress(): string;
     oneAddress(): string;
+    maxUint256(): string;
     compileContract(contractContent: string): CompiledContractResult;
     compileContractForData(contractContent: string, targetContractName: string): CompiledContractData;
     /**

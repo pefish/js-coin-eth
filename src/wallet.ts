@@ -102,6 +102,10 @@ export default class EthWallet extends BaseCoin {
     return "0x0000000000000000000000000000000000000001"
   }
 
+  maxUint256 (): string {
+    return "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+  }
+
   compileContract(contractContent: string): CompiledContractResult {
     const solcLib = require("solc")
     // 需要哪个编译器版本，就下载哪个版本的solc包

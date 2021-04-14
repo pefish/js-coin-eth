@@ -336,5 +336,16 @@ contract FixedSupplyToken {
       assert.throws(() => {}, err)
     }
   })
+
+  it('maxUint256', async () => {
+    try {
+      const result = walletHelper.encodeParamsHex(["uint256"], [walletHelper.maxUint256()])
+      // console.error('result', result)
+      assert.strictEqual(result, 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff')
+    } catch (err) {
+      console.error(err)
+      assert.throws(() => {}, err)
+    }
+  })
 })
 
