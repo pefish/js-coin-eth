@@ -166,9 +166,13 @@ export default class EthWallet extends BaseCoin {
    * @param msg {string} 源消息
    */
   recoverSignerAddress(signature: string, msg: string): string {
+    return this.recoverSignerAddressByMsgHash(signature, EthCrypto.hash.keccak256(msg))
+  }
+
+  recoverSignerAddressByMsgHash(signature: string, msgHash: string): string {
     return EthCrypto.recover(
-      signature,
-      EthCrypto.hash.keccak256(msg) // signed message hash
+        signature,
+        msgHash // signed message hash
     )
   }
 
@@ -179,9 +183,16 @@ export default class EthWallet extends BaseCoin {
    * @returns {any}
    */
   recoverSignerPublicKey(signature: string, msg: string): string {
-    return EthCrypto.recoverPublicKey(
+    return this.recoverSignerPublicKeyByMsgHash(
       signature,
-      EthCrypto.hash.keccak256(msg) // signed message hash
+      EthCrypto.hash.keccak256(msg)
+    )
+  }
+
+  recoverSignerPublicKeyByMsgHash(signature: string, msgHash: string): string {
+    return EthCrypto.recoverPublicKey(
+        signature,
+        msgHash // signed message hash
     )
   }
 

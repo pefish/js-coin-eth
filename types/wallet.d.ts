@@ -91,6 +91,7 @@ export default class EthWallet extends BaseCoin {
      * @param msg {string} 源消息
      */
     recoverSignerAddress(signature: string, msg: string): string;
+    recoverSignerAddressByMsgHash(signature: string, msgHash: string): string;
     /**
      * 从签名中得到签名者公钥
      * @param signature
@@ -98,6 +99,7 @@ export default class EthWallet extends BaseCoin {
      * @returns {any}
      */
     recoverSignerPublicKey(signature: string, msg: string): string;
+    recoverSignerPublicKeyByMsgHash(signature: string, msgHash: string): string;
     /**
      * 使用公钥加密字符串，只有私钥能解开
      */
