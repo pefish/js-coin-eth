@@ -1,6 +1,6 @@
 import BaseCoin from './base/base_coin'
 import abiUtil from './abi'
-import EthCrypto from 'eth-crypto'
+import EthCrypto, { Signature } from 'eth-crypto'
 import { Transaction } from 'ethereumjs-tx'
 import Web3 from 'web3'
 import { keccak256, privateToAddress } from 'ethereumjs-util'
@@ -158,6 +158,31 @@ export default class EthWallet extends BaseCoin {
       privateKey,
       messageHash
     )
+  }
+
+  decodeSignature (signature: string): Signature {
+    if (!signature.startsWith("0x")) {
+      signature = "0x" + signature
+    }
+    return EthCrypto.vrs.fromString(signature);
+  }
+
+  /**
+   * v、r、s 编码成签名字符串
+   * @param vrs
+   * @return 带有 0x
+   */
+  encodeSignature (vrs: Signature): string {
+    if (!vrs.r.startsWith("0x")) {
+      vrs.r = "0x" + vrs.r
+    }
+    if (!vrs.v.startsWith("0x")) {
+      vrs.v = "0x" + vrs.v
+    }
+    if (!vrs.s.startsWith("0x")) {
+      vrs.s = "0x" + vrs.s
+    }
+    return EthCrypto.vrs.toString(vrs);
   }
 
   /**

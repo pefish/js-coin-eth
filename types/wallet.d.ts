@@ -1,4 +1,5 @@
 import BaseCoin from './base/base_coin';
+import { Signature } from 'eth-crypto';
 import Remote, { TransactionInfo } from './remote';
 import * as ethers from "ethers";
 export interface TransactionResult {
@@ -85,6 +86,13 @@ export default class EthWallet extends BaseCoin {
      * @returns {string}
      */
     signMessage(privateKey: string, msg: string): string;
+    decodeSignature(signature: string): Signature;
+    /**
+     * v、r、s 编码成签名字符串
+     * @param vrs
+     * @return 带有 0x
+     */
+    encodeSignature(vrs: Signature): string;
     /**
      * 从签名中得到签名者地址。ECDSA算法中，只能是公约加密私钥解密、私钥签名公钥验证。私钥加密公钥不能解密,只能根据签名结果以及明文得到加密者公钥
      * @param signature {string} 私钥对msg签名后的值，从中可以得到r、s、v

@@ -315,6 +315,34 @@ contract FixedSupplyToken {
     }
   })
 
+  it('decodeSignature', async () => {
+    try {
+      const result = walletHelper.decodeSignature('02852445ee888efc18cdfd36d4d284048d8d70d131225e2fc3f36594a75275a31260c568456138aae5939a12d789da3f5e6bb9c93fbfe41d36468965fa8769b41b')
+      // console.error('result', result)
+      assert.strictEqual(result.v, '0x1b')
+      assert.strictEqual(result.r, '0x02852445ee888efc18cdfd36d4d284048d8d70d131225e2fc3f36594a75275a3')
+      assert.strictEqual(result.s, '0x1260c568456138aae5939a12d789da3f5e6bb9c93fbfe41d36468965fa8769b4')
+    } catch (err) {
+      console.error(err)
+      assert.throws(() => {}, err)
+    }
+  })
+
+  it('encodeSignature', async () => {
+    try {
+      const result = walletHelper.encodeSignature({
+        v: "0x1b",
+        r: "0x02852445ee888efc18cdfd36d4d284048d8d70d131225e2fc3f36594a75275a3",
+        s: "1260c568456138aae5939a12d789da3f5e6bb9c93fbfe41d36468965fa8769b4",
+      })
+      // console.error('result', result)
+      assert.strictEqual(result, '0x02852445ee888efc18cdfd36d4d284048d8d70d131225e2fc3f36594a75275a31260c568456138aae5939a12d789da3f5e6bb9c93fbfe41d36468965fa8769b41b')
+    } catch (err) {
+      console.error(err)
+      assert.throws(() => {}, err)
+    }
+  })
+
   it('recoverSignerAddress', async () => {
     try {
       const result = walletHelper.recoverSignerAddress('0x02852445ee888efc18cdfd36d4d284048d8d70d131225e2fc3f36594a75275a31260c568456138aae5939a12d789da3f5e6bb9c93fbfe41d36468965fa8769b41b', 'test data')
