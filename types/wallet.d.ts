@@ -86,6 +86,12 @@ export default class EthWallet extends BaseCoin {
      * @returns {string}
      */
     signMessage(privateKey: string, msg: string): string;
+    keccak256HashForEther(msg: string): string;
+    /**
+     * 签名字符串解码成 v、r、s
+     * @param signature
+     * @return 带有 0x
+     */
     decodeSignature(signature: string): Signature;
     /**
      * v、r、s 编码成签名字符串
@@ -107,6 +113,12 @@ export default class EthWallet extends BaseCoin {
      * @returns {any}
      */
     recoverSignerPublicKey(signature: string, msg: string): string;
+    /**
+     * 对字符串进行 keccak256 hash
+     * @param msg
+     * @return 带有 0x
+     */
+    keccak256Hash(msg: string): string;
     recoverSignerPublicKeyByMsgHash(signature: string, msgHash: string): string;
     /**
      * 使用公钥加密字符串，只有私钥能解开

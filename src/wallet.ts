@@ -153,11 +153,16 @@ export default class EthWallet extends BaseCoin {
    * @returns {string}
    */
   signMessage(privateKey: string, msg: string): string {
-    const messageHash = EthCrypto.hash.keccak256(msg)
+    const messageHash = this.keccak256HashForEther(msg)
     return EthCrypto.sign(
       privateKey,
       messageHash
     )
+  }
+
+  keccak256HashForEther (msg: string): string {
+    const newMsg = '\x19Ethereum Signed Message:\n' + msg.length + msg
+    return this.keccak256Hash(newMsg)
   }
 
   /**
@@ -196,7 +201,7 @@ export default class EthWallet extends BaseCoin {
    * @param msg {string} 源消息
    */
   recoverSignerAddress(signature: string, msg: string): string {
-    return this.recoverSignerAddressByMsgHash(signature, EthCrypto.hash.keccak256(msg))
+    return this.recoverSignerAddressByMsgHash(signature, this.keccak256HashForEther(msg))
   }
 
   recoverSignerAddressByMsgHash(signature: string, msgHash: string): string {
@@ -215,8 +220,17 @@ export default class EthWallet extends BaseCoin {
   recoverSignerPublicKey(signature: string, msg: string): string {
     return this.recoverSignerPublicKeyByMsgHash(
       signature,
-      EthCrypto.hash.keccak256(msg)
+      this.keccak256HashForEther(msg)
     )
+  }
+
+  /**
+   * 对字符串进行 keccak256 hash
+   * @param msg
+   * @return 带有 0x
+   */
+  keccak256Hash (msg: string): string {
+    return EthCrypto.hash.keccak256(msg)
   }
 
   recoverSignerPublicKeyByMsgHash(signature: string, msgHash: string): string {

@@ -306,9 +306,31 @@ contract FixedSupplyToken {
 
   it('signMessage', async () => {
     try {
-      const result = walletHelper.signMessage('0xc752dd09198bd21fe41e953c79e2c6667f68eb8d89a22a93d6843dbe39a42c25', 'test data')
+      const result = walletHelper.signMessage('4afc37894e7e4771eba8cb885b654eead3b78651d4db1e6af006d9e11f700f1f', 'hello')
       // console.error('result', result)
-      assert.strictEqual(result, '0x02852445ee888efc18cdfd36d4d284048d8d70d131225e2fc3f36594a75275a31260c568456138aae5939a12d789da3f5e6bb9c93fbfe41d36468965fa8769b41b')
+      assert.strictEqual(result, '0xf315c40961c73b55f1e4cf4f2665c5cf70fda8f8f3a545e0788fe1f66e21f6d13d49ff33d300b9c5f9f943f095b5fc2838dbbb4d5820bc696fd974d284aa19751c')
+    } catch (err) {
+      console.error(err)
+      assert.throws(() => {}, err)
+    }
+  })
+
+  it('keccak256Hash', async () => {
+    try {
+      const result = walletHelper.keccak256Hash('test data')
+      // console.error('result', result)
+      assert.strictEqual(result, '0x7d92c840d5f0ac4f83543201db6005d78414059c778169efa3760f67a451e7ef')
+    } catch (err) {
+      console.error(err)
+      assert.throws(() => {}, err)
+    }
+  })
+
+  it('keccak256HashForEther', async () => {
+    try {
+      const result = walletHelper.keccak256HashForEther('hello')
+      // console.error('result', result)
+      assert.strictEqual(result, '0x50b2c43fd39106bafbba0da34fc430e1f91e3c96ea2acee2bc34119f92b37750')
     } catch (err) {
       console.error(err)
       assert.throws(() => {}, err)
@@ -345,9 +367,9 @@ contract FixedSupplyToken {
 
   it('recoverSignerAddress', async () => {
     try {
-      const result = walletHelper.recoverSignerAddress('0x02852445ee888efc18cdfd36d4d284048d8d70d131225e2fc3f36594a75275a31260c568456138aae5939a12d789da3f5e6bb9c93fbfe41d36468965fa8769b41b', 'test data')
+      const result = walletHelper.recoverSignerAddress('f315c40961c73b55f1e4cf4f2665c5cf70fda8f8f3a545e0788fe1f66e21f6d13d49ff33d300b9c5f9f943f095b5fc2838dbbb4d5820bc696fd974d284aa19751c', 'hello')
       // console.error('result', result)
-      assert.strictEqual(result.toUpperCase(), '0x50934521b4b6bf6d823beae47da8955156698456'.toUpperCase())
+      assert.strictEqual(result.toUpperCase(), '0xC3BF2dF684d91248b01278499184cC30C5bE45C3'.toUpperCase())
     } catch (err) {
       console.error(err)
       assert.throws(() => {}, err)
