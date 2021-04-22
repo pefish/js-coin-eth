@@ -160,6 +160,11 @@ export default class EthWallet extends BaseCoin {
     )
   }
 
+  /**
+   * 签名字符串解码成 v、r、s
+   * @param signature
+   * @return 带有 0x
+   */
   decodeSignature (signature: string): Signature {
     if (!signature.startsWith("0x")) {
       signature = "0x" + signature
