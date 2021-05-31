@@ -701,7 +701,7 @@ export default class EthWallet extends BaseCoin {
   /**
    * 获取智能合约方法id
    * @param method {string} 如 transfer(address,uint256)
-   * @returns {string}
+   * @returns {string} 带有 0x
    */
   getMethodIdV1(method: string): string {
     return new Web3(``).utils.sha3(method).substr(0, 10)

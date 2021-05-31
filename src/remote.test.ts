@@ -164,7 +164,28 @@ describe('Remote', () => {
               1,
               "10000000000000000",
               250
-            ]
+            ],
+            // 下面对象的方式也可以
+            // {
+            //   "key": {
+            //     "owner":"0x16E0DE5A880036149406FFe1804633B7287eCd48",
+            //     "salt":475,
+            //     "sellAsset":{
+            //       "token":"0xc100f97441920a04ceafdb771c28e5cc52d9a71d",
+            //       "tokenId":"357217719797417338",
+            //       "assetType":2,
+            //       "tokenURI":"http://192.168.60.171:8080/api/nft/v1/token/detail?token_id=357217719797417338"
+            //     },
+            //     "buyAsset":{
+            //       "token":"0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
+            //       "tokenId":"0",
+            //       "assetType":0,
+            //       "tokenURI":"http://192.168.60.171:8080/api/nft/v1/token/detail?token_id=357217719797417338"
+            //     }
+            //   },
+            //   "sellPrice":"1000000000000000",
+            //   "sellerFee":"250"
+            // }
           ],
       )
       // console.error('result', result)
