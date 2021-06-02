@@ -187,6 +187,21 @@ contract FixedSupplyToken {
     }
   })
 
+  it('getMethodIdV2', async () => {
+    try {
+      const id = walletHelper.getMethodIdV2('transfer(address,uint256)')
+      // console.error(id)
+      assert.strictEqual(id, '0xa9059cbb')
+
+      const id1 = walletHelper.getMethodIdV2('prepareMessage(((address,uint256,(address,uint256,string,uint8),(address,uint256,string,uint8)),uint256,uint256))')
+      // console.log(id1)
+      assert.strictEqual(id1, '0x16acebbd')
+    } catch (err) {
+      console.error(err)
+      assert.throws(() => {}, err)
+    }
+  })
+
   it('encodePayload', async () => {
     try {
       const id = walletHelper.encodePayload(

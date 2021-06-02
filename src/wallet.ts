@@ -13,6 +13,7 @@ import scryptsy from 'scryptsy'
 import Common from 'ethereumjs-common';
 import { StringUtil, BufferUtil } from '@pefish/js-node-assist';
 import * as ethers from "ethers"
+import {utils} from "ethers";
 
 
 export interface TransactionResult {
@@ -705,6 +706,10 @@ export default class EthWallet extends BaseCoin {
    */
   getMethodIdV1(method: string): string {
     return new Web3(``).utils.sha3(method).substr(0, 10)
+  }
+
+  getMethodIdV2(method: string): string {
+    return utils.id(method).substr(0, 10)
   }
 
   getMethodId(methodName: string, methodParamTypes: string[]): string {
